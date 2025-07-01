@@ -14,6 +14,10 @@ The core gameplay loop revolves around leveling up your character and making it 
 ## Players
 Players are divided into two classes, Gunslingers who use guns and Mages who use spells. Players also have an exp system (undetermined how this works rn) and stats that can be leveled up with points based on your level (undetermined as well).
 
+Players will have base stats that can be upgraded (implemented later on):
+- 250 hp
+- 6 meters/sec movement speed
+
 ### Gunslingers
 Gunslingers use guns. Guns can be bought (shop at spawn? Main menu shop?) or crafted from materials from sentries/bosses. Guns will primarily shoot hitscan bullets, with a few exceptions (such as heat seeking missiles and RPG rockets, etc). Guns have their own weight classes and handling requirements (your “handling” stat needs to be high enough to use certain guns). Each gun also has a set magazine size, but players will have infinite ammo on most guns, with only a small amount of guns requiring special ammo to be crafted (RPG rockets for example). Swapping guns, how many guns players can have in their inventory, secondaries, all need to be considered but I’m too lazy to consider them rn so [insert future considerations here]. Headshots deal extra damage (hitting closer to the center of the player). Automatic guns have recoil. Spread will increase when the player is shooting while moving.
 
@@ -21,6 +25,7 @@ Gunslingers use guns. Guns can be bought (shop at spawn? Main menu shop?) or cra
 
 ### Mages
 mages [expand on this]
+- mana shield to make mages vs guns more balanced
 
 ### Building
 [out of scope? fortnite?]
