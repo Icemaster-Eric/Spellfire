@@ -1,17 +1,17 @@
 from socketify import App, AppOptions, OpCode, CompressOptions
 from game import (
-    ws_open, ws_message, ws_close,
+    ws_open, ws_message, ws_close, auth,
 )
 
 
 app = App()
 
-
 def shutdown(res, req):
     res.end("Shutting down server...")
     app.close()
 
-
+app.get("/shutdown", shutdown)
+app.post("/api/token", auth)
 app.ws(
     "/*",
     {
@@ -26,8 +26,6 @@ app.ws(
         "close": ws_close,
     },
 )
-app.any("/", lambda res, req: res.end("Nothing to see here!"))
-app.get("/shutdown", shutdown)
 app.listen(
     3000,
     lambda config: print("Listening on port http://localhost:%d" % (config.port)),
