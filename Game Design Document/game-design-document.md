@@ -33,8 +33,11 @@ mages [expand on this]
 ## Sentries
 literally arras.io tanks [expand on this]
 
-## Environment
-[needs improvement]
+## World / Environment
+### Environment
+- 
+
+**old writeup**
 The world is procedurally generated with world wrapping, and it is split into different biomes:
 Plains (the grass makes this area naturally impossible for gamers) 
 Boss - Earth Golem, Hephaestus (spawn area maybe)

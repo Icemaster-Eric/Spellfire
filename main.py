@@ -15,7 +15,7 @@ app.post("/api/token", auth)
 app.ws(
     "/*",
     {
-        "compression": CompressOptions.DISABLED,
+        "compression": CompressOptions.DEDICATED_COMPRESSOR_4KB,
         "max_payload_length": 16 * 1024 * 1024,
         "idle_timeout": 12,
         "open": ws_open,

@@ -3,6 +3,14 @@ from socketify import WebSocket, OpCode, Response, Request
 from aiohttp import ClientSession
 
 
+class Game:
+    def __init__(self):
+        pass
+
+
+game = Game()
+
+
 async def auth(res: Response, req: Request):
     body: dict = await res.get_json() # type: ignore
     async with ClientSession() as session:
@@ -21,11 +29,6 @@ async def auth(res: Response, req: Request):
     res.send({"access_token": access_token}, "text/json", end_connection=True)
 
 
-class Game:
-    def __init__(self):
-        pass
-
-
 def ws_open(ws: WebSocket):
     print("A WebSocket got connected!")
     ws.send("Hello World!", OpCode.TEXT)
@@ -39,6 +42,3 @@ def ws_message(ws: WebSocket, message, opcode):
 
 def ws_close(ws: WebSocket, code, message):
     print("websocket closed")
-
-
-game = Game()
