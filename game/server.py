@@ -3,14 +3,6 @@ from socketify import WebSocket, OpCode, Response, Request
 from aiohttp import ClientSession
 
 
-class Game:
-    def __init__(self):
-        pass
-
-
-game = Game()
-
-
 async def auth(res: Response, req: Request):
     body: dict = await res.get_json() # type: ignore
     async with ClientSession() as session:

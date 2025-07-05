@@ -3,6 +3,7 @@ A comprehensive list of every gun, tactical item and throwable.
 
 - Gun spread should slowly increase per shot until it reaches the maximum spread value, including a first-shot accuracy stat (?)
 - Headshots (to be implemented later)
+- Crafting ammo? (tracer rounds, armor piercing, etc)
 
 Damage: Damage per bullet
 Fire Rate: bullets / second

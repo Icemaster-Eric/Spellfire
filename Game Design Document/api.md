@@ -25,13 +25,15 @@ A complete list of the different websocket events and data that are sent between
         - If the player is new, update database with new player info
         - If the player is returning, grab info from database
     - Send initial environment/state information
-        - [to be determined]
+        ```py
+        {
+            ""
+        }
+        ```
 
 - `on_message` `type:actions`
     - [to be determined]
 
-- `on_message` `type:craft`
-    - [to be determined]
-
 - `on_close`
-    - [to be determined]
+    - Save player state to database
+    - Remove player from current game
