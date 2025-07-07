@@ -17,7 +17,7 @@ A complete list of the different websocket events and data that are sent between
         # normal auth flow
         {"discord_id": 1037122721787344428, ...}
         # guests don't need authentication, but data isn't permanent/saved in database
-        {"guest": True, ...} # no discord_id field
+        {"guest": True, "username": str, ...} # no discord_id field
         ```
     - Verify authentication credentials
         - Check "waiting" list for discord_id
