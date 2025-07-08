@@ -25,9 +25,9 @@ func main() {
 	fmt.Println("Timestamp:", msg.Timestamp)
 	for _, p := range msg.Packets {
 		switch v := p.Packet.(type) {
-		case server.PlayerEnterGamePacket:
+		case server.ClientEnterGamePacket:
 			fmt.Println("Enter Game Packet")
-		case server.PlayerMovePacket:
+		case server.ClientMovePacket:
 			fmt.Printf("Move Packet: %v\n", v.Movement)
 		default:
 			fmt.Println("Unknown packet type")

@@ -6,6 +6,26 @@ import (
 	"time"
 )
 
+type ClientEnterGamePacket struct {
+	Type string `json:"type"`
+}
+
+type ClientMovePacket struct {
+	Type     string     `json:"type"`
+	Movement [2]float64 `json:"movement"`
+}
+
+type ClientMessage struct {
+	Timestamp UnixTime        `json:"timestamp"`
+	Packets   []PacketWrapper `json:"packets"`
+}
+
+type ServerMessage struct {
+	Timestamp UnixTime `json:"timestamp"`
+	Entities  []any    `json:"entities"`
+	Events    []any    `json:"events"`
+}
+
 type Packet any
 
 type PacketWrapper struct {
@@ -22,13 +42,13 @@ func (pw *PacketWrapper) UnmarshalJSON(data []byte) error {
 
 	switch temp.Type {
 	case "enter_game":
-		var p PlayerEnterGamePacket
+		var p ClientEnterGamePacket
 		if err := json.Unmarshal(data, &p); err != nil {
 			return err
 		}
 		pw.Packet = p
 	case "move":
-		var p PlayerMovePacket
+		var p ClientMovePacket
 		if err := json.Unmarshal(data, &p); err != nil {
 			return err
 		}
@@ -37,20 +57,6 @@ func (pw *PacketWrapper) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("unknown type: %s", temp.Type)
 	}
 	return nil
-}
-
-type PlayerEnterGamePacket struct {
-	Type string `json:"type"`
-}
-
-type PlayerMovePacket struct {
-	Type string `json:"type"`
-	Movement [2]float64 `json:"movement"`
-}
-
-type ClientMessage struct {
-	Timestamp UnixTime `json:"timestamp"`
-	Packets []PacketWrapper `json:"packets"`
 }
 
 type UnixTime time.Time
