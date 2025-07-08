@@ -9,8 +9,10 @@ import (
 
 func NewRouter() *http.ServeMux {
 	world := game.World{}
-	handler := server.NewServer(&world)
-	upgrader := server.NewUpgrader(handler)
+	srv := server.NewServer(&world)
+	upgrader := server.NewUpgrader(srv)
+
+	srv.Run()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +20,7 @@ func NewRouter() *http.ServeMux {
 		w.Write([]byte("OK"))
 	})
 	mux.HandleFunc("POST /api/token", oauth)
-	mux.HandleFunc("/connect", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		socket, err := upgrader.Upgrade(w, r)
 		if err != nil {
 			log.Printf("Accept: %s", err.Error())

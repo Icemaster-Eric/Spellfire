@@ -34,26 +34,34 @@ func NewServer(w *game.World) *Server {
 	}
 }
 
-func MustLoad[T any](session gws.SessionStorage, key string) (v T) {
-	if value, exist := session.Load(key); exist {
-		v, _ = value.(T)
+func (s *Server) Run() {
+	ticker := time.NewTicker(time.Second / game.TickRate)
+	defer ticker.Stop()
+
+	last := time.Now()
+	for range ticker.C {
+		now := time.Now()
+		dt := now.Sub(last).Seconds()
+		last = now
+		s.World.Tick(dt)
+
+		// send updates to clients
 	}
-	return
 }
 
-func (c *Server) OnOpen(socket *gws.Conn) {
+func (s *Server) OnOpen(socket *gws.Conn) {
 	name := MustLoad[string](socket.Session(), "name")
-	if conn, ok := c.sessions.Load(name); ok {
+	if conn, ok := s.sessions.Load(name); ok {
 		conn.WriteClose(1000, []byte("connection is replaced"))
 	}
 	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
-	c.sessions.Store(name, socket)
+	s.sessions.Store(name, socket)
 	log.Printf("%s connected\n", name)
 }
 
-func (c *Server) OnClose(socket *gws.Conn, err error) {
+func (s *Server) OnClose(socket *gws.Conn, err error) {
 	name := MustLoad[string](socket.Session(), "name")
-	sharding := c.sessions.GetSharding(name)
+	sharding := s.sessions.GetSharding(name)
 	sharding.Lock()
 	defer sharding.Unlock()
 
@@ -67,32 +75,27 @@ func (c *Server) OnClose(socket *gws.Conn, err error) {
 	log.Printf("onerror, name=%s, msg=%s\n", name, err.Error())
 }
 
-func (c *Server) OnPing(socket *gws.Conn, payload []byte) {
-	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
-	_ = socket.WriteString("pong")
-}
-
-func (c *Server) OnPong(socket *gws.Conn, payload []byte) {}
-
 type Input struct {
 	To   string `json:"to"`
 	Text string `json:"text"`
 }
 
-func (c *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
+func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 	defer message.Close()
 
 	// Chrome WebSocket does not support the ping method, so ping is simulated within a text frame.
 	if b := message.Bytes(); len(b) == 4 && string(b) == "ping" {
-		c.OnPing(socket, nil)
+		s.OnPing(socket, nil)
 		return
 	}
 
 	var input = &Input{}
 	_ = json.Unmarshal(message.Bytes(), input)
-	if conn, ok := c.sessions.Load(input.To); ok {
+	if conn, ok := s.sessions.Load(input.To); ok {
 		_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
 	}
+
+	// send packet to World
 }
 
 func NewUpgrader(handler gws.Event) *gws.Upgrader {
@@ -120,4 +123,18 @@ func NewUpgrader(handler gws.Event) *gws.Upgrader {
 			return true
 		},
 	})
+}
+
+func (s *Server) OnPing(socket *gws.Conn, payload []byte) {
+	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
+	_ = socket.WriteString("pong")
+}
+
+func (s *Server) OnPong(socket *gws.Conn, payload []byte) {}
+
+func MustLoad[T any](session gws.SessionStorage, key string) (v T) {
+	if value, exist := session.Load(key); exist {
+		v, _ = value.(T)
+	}
+	return
 }
