@@ -13,4 +13,9 @@ export class PhysicsDriver {
             if (entity) entity.velocity = new StaticVelocity(newVelocity); 
         }
     }
+    update() {
+        for (const entity of this.gameStateLoop) {
+            
+        }
+    }
 }

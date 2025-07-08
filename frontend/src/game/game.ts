@@ -14,7 +14,7 @@ export class Game {
     }
     static async init(): Promise<Game> {
         const app = new Application();
-
+        this.app = app;
         await app.init({
             background: "red",
             resizeTo: window,
@@ -28,7 +28,7 @@ export class Game {
         const physicsDriver = new PhysicsDriver(state);
         controls.subscribeTo("move", (payload) => {
             if (state.world.isInitialized()) {
-                physicsDriver.setVelocity(state.world.clientPlayerId, payload.direction)
+                physicsDriver.setEntityVelocity(state.world.clientPlayerId, payload.direction);
             }
             
         })
