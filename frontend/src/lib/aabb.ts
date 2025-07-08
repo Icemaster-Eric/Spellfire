@@ -3,6 +3,7 @@ import type { Vec2 } from "./vec2";
 export type AABB = [...Vec2, ...Vec2];
 
 const aabbFuncs = {
+    __proto__: null,
     size,
     center,
     containsPoint,

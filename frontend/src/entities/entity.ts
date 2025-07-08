@@ -1,7 +1,7 @@
 import type { Container, Point, Rectangle } from "pixi.js";
 import { vec2, type Vec2 } from "../lib/vec2";
 import { aabb, type AABB } from "../lib/aabb";
-import type { Velocity } from "../physics/velocity";
+import { StaticVelocity, type Velocity } from "../physics/velocity";
 
 type Attributes = {
     doCSP: boolean;
@@ -22,7 +22,7 @@ export abstract class Entity {
         this.sprite.position.set(...this.position);
         const spriteSize = aabb.size(this.shape.aabb());
         this.sprite.setSize(...spriteSize);
-        this.sprite.origin.set(...vec2.scale(spriteSize, .5));
+        this.sprite.origin.set(...vec2.scale(spriteSize, 0.5));
         this.sprite.rotation = this.rotation;
     }
     velocity: Velocity;

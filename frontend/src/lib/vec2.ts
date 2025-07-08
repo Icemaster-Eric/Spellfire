@@ -1,6 +1,7 @@
 export type Vec2 = [number, number];
 
 const vec2Funcs = {
+    __proto__: null,
     add,
     fromAngle,
     toPoint,
@@ -12,7 +13,7 @@ const vec2Funcs = {
     normalize,
     distance,
     dot,
-    length,
+    magnitude,
     rotate,
     reflect,
     perpendicular,
@@ -80,7 +81,7 @@ function dot(a: Vec2, b: Vec2): number {
     return a[0] * b[0] + a[1] * b[1];
 }
 
-function length(v: Vec2): number {
+function magnitude(v: Vec2): number {
     return Math.hypot(v[0], v[1]);
 }
 

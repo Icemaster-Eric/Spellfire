@@ -2,39 +2,42 @@ import { Publisher } from "../communication/publisher";
 import type { Service } from "../communication/service";
 import type { Vec2 } from "../lib/vec2";
 
-type PacketEntity = {
-    id: number,
-    type: "player" | "rock" | "tree"
-    position: [number, number],
-    rotation: number,
-    shape: { type: "circle", radius: number }
-}
+export type PacketEntity = {
+    id: number;
+    type: "player" | "rock" | "tree";
+    position: [number, number];
+    rotation: number;
+    shape: { type: "circle"; radius: number };
+};
 type ServerPackets = {
     initialize: {
-        entities: Array<PacketEntity>,
-        playerId: Array<PacketEntity>
-    },
+        entities: Array<PacketEntity>;
+        playerId: number;
+    };
     update: {
-        entities: Array<PacketEntity>
-    }
-}
+        entities: Array<PacketEntity>;
+    };
+};
 
 type ClientPackets = {
-    enter_game: {},
+    enter_game: {};
     move: {
-        movement: [number, number]
-    }
-}
+        movement: [number, number];
+    };
+};
 
 type ConnectionCommands = {
-    send: 
-        | { type: "enter_game"; payload: ClientPackets["enter_game"] }
-        | { type: "move"; payload: ClientPackets["move"] }
-}
-export class Connection extends Publisher<ServerPackets> implements Service<ConnectionCommands> {
+    send:
+        | { type: "enter_game" } & ClientPackets["enter_game"]
+        | { type: "move" } & ClientPackets["move"]
+};
+export class Connection
+    extends Publisher<ServerPackets>
+    implements Service<ConnectionCommands>
+{
     _subscribers = {
         initialize: [],
-        update: []
+        update: [],
     };
     ws: WebSocket;
     constructor(wsURL: string) {
@@ -45,17 +48,21 @@ export class Connection extends Publisher<ServerPackets> implements Service<Conn
             const data = JSON.parse(data_);
             switch (data.key) {
                 case "initialize":
-                    this.publish("initialize", {});
+                    this.publish("initialize", { playerId: data.client_id as number, entities: data.entities as PacketEntity[] });
                     break;
                 case "update":
-                    this.publish("update", {})
+                    this.publish("update", { entities: data.entities as PacketEntity[] });
                     break;
             }
         };
         this.ws.onclose = ({ reason }) => {};
     }
-    run() {
-
+    run<C extends keyof ConnectionCommands>(command: C, commandData: ConnectionCommands[C]) {
+        switch (command) {
+            case "send":
+                this.ws.send(JSON.stringify({ ...commandData }));
+                break;
+        }
     }
     parseAndDelegateServerPacket() {
 
