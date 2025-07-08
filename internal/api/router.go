@@ -1,16 +1,30 @@
 package api
 
 import (
+	"github.com/Icemaster-Eric/Spellfire-Backend/internal/game"
+	"github.com/Icemaster-Eric/Spellfire-Backend/internal/server"
+	"log"
 	"net/http"
 )
 
 func NewRouter() *http.ServeMux {
+	world := game.World{}
+	handler := server.NewServer(&world)
+	upgrader := server.NewUpgrader(handler)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
 	mux.HandleFunc("POST /api/token", oauth)
-	mux.HandleFunc("/connect", handleWebSocket)
+	mux.HandleFunc("/connect", func(w http.ResponseWriter, r *http.Request) {
+		socket, err := upgrader.Upgrade(w, r)
+		if err != nil {
+			log.Printf("Accept: %s", err.Error())
+			return
+		}
+		socket.ReadLoop()
+	})
 	return mux
 }
