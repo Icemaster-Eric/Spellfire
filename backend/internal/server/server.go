@@ -1,10 +1,11 @@
 package server
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"github.com/Icemaster-Eric/Spellfire-Backend/internal/game"
 	"github.com/lxzan/gws"
 	"log"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -57,6 +58,10 @@ func (s *Server) OnOpen(socket *gws.Conn) {
 	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
 	s.sessions.Store(name, socket)
 	log.Printf("%s connected\n", name)
+
+	// spawn player in World
+	entityID := s.World.SpawnPlayer(name)
+	socket.WriteMessage(gws.OpcodeText, fmt.Appendf(nil, "%d", entityID))
 }
 
 func (s *Server) OnClose(socket *gws.Conn, err error) {
@@ -75,11 +80,6 @@ func (s *Server) OnClose(socket *gws.Conn, err error) {
 	log.Printf("onerror, name=%s, msg=%s\n", name, err.Error())
 }
 
-type Input struct {
-	To   string `json:"to"`
-	Text string `json:"text"`
-}
-
 func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 	defer message.Close()
 
@@ -89,11 +89,11 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 		return
 	}
 
-	var input = &Input{}
-	_ = json.Unmarshal(message.Bytes(), input)
-	if conn, ok := s.sessions.Load(input.To); ok {
-		_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
-	}
+	// var input = &Input{}
+	// _ = json.Unmarshal(message.Bytes(), input)
+	// if conn, ok := s.sessions.Load(input.To); ok {
+	// 	_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
+	// }
 
 	// send packet to World
 }
