@@ -6,12 +6,17 @@ import "types.proto";
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;proto";
 
 enum EntityType {
-  PLAYER = 0;
+  ENTITY_TYPE_UNSPECIFIED = 0;
+  PLAYER = 1;
 }
 
-// enum EntityAttribute {}
+enum EntityAttribute {
+  ENTITY_ATTRIBUTE_UNSPECIFIED = 0;
+}
 
-// enum EntityState {}
+enum EntityState {
+  ENTITY_STATE_UNSPECIFIED = 0;
+}
 
 message Entity {
   uint32 id = 1;
@@ -19,18 +24,20 @@ message Entity {
   Vec2 position = 3;
   float rotation = 4;
   Vec2 velocity = 5;
-  // repeated EntityAttribute attributes = 6;
-  // repeated EntityState states = 7;
+  repeated EntityAttribute attributes = 6;
+  repeated EntityState states = 7;
 }
 
-// enum ServerEventType {}
+enum ServerEventType {
+  SERVER_EVENT_TYPE_UNSPECIFIED = 0;
+}
 
-// message ServerEvent {
-//   ServerEventType type = 1;
-// }
+message ServerEvent {
+  ServerEventType type = 1;
+}
 
 message ServerPacket {
   Timestamp timestamp = 1;
   repeated Entity entities = 2;
-  // repeated ServerEvent events = 3;
+  repeated ServerEvent events = 3;
 }

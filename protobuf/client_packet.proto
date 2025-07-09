@@ -6,7 +6,8 @@ import "types.proto";
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;proto";
 
 enum ClientEventType {
-  ENTER_GAME = 0;
+  CLIENT_EVENT_TYPE_UNSPECIFIED = 0;
+  ENTER_GAME = 1;
 }
 
 message ClientEvent {
