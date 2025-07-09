@@ -1,0 +1,14 @@
+syntax = "proto3";
+package spellfire;
+
+option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;proto";
+
+message Vec2 {
+  float x = 1;
+  float y = 2;
+}
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}

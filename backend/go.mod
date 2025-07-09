@@ -1,4 +1,4 @@
-module github.com/Icemaster-Eric/Spellfire-Backend
+module github.com/Icemaster-Eric/Spellfire/backend
 
 go 1.24.4
 

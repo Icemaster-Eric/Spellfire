@@ -10,7 +10,7 @@ A complete list of the different websocket events and data that are sent between
     ```
 - Returns the access token
 
-### `WebSocket` `/`
+### `WebSocket` `/ws`
 - `on_connect`
     - Wait for client to send authentication credentials
         ```py
