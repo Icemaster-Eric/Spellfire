@@ -9,9 +9,9 @@ enum EntityType {
   PLAYER = 0;
 }
 
-enum EntityAttribute {}
+// enum EntityAttribute {}
 
-enum EntityState {}
+// enum EntityState {}
 
 message Entity {
   uint32 id = 1;
@@ -19,18 +19,18 @@ message Entity {
   Vec2 position = 3;
   float rotation = 4;
   Vec2 velocity = 5;
-  repeated EntityAttribute attributes = 6;
-  repeated EntityState states = 7;
+  // repeated EntityAttribute attributes = 6;
+  // repeated EntityState states = 7;
 }
 
-enum ServerEventType {}
+// enum ServerEventType {}
 
-message ServerEvent {
-  ServerEventType type = 0;
-}
+// message ServerEvent {
+//   ServerEventType type = 1;
+// }
 
 message ServerPacket {
   Timestamp timestamp = 1;
   repeated Entity entities = 2;
-  repeated ServerEvent events = 3;
+  // repeated ServerEvent events = 3;
 }
