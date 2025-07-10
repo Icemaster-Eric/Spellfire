@@ -1,7 +1,10 @@
 import { Graphics } from "pixi.js";
 import { Entity } from "../entity";
+import { Circle } from "../../math/shape";
+import { entitySpec } from "../entitySpec";
 
 export class Bush extends Entity {
+    shape = new Circle(entitySpec.DEFAULT_BUSH_RADIUS);
     sprite = bushSprite();
     updateSprite(): void {
         super.updateSprite();

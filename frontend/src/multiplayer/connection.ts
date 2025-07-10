@@ -1,70 +1,87 @@
 import { Publisher } from "../communication/publisher";
 import type { Service } from "../communication/service";
-import type { Vec2 } from "../lib/vec2";
-
-export type PacketEntity = {
-    id: number;
-    type: "player" | "rock" | "tree";
-    position: [number, number];
-    rotation: number;
-    shape: { type: "circle"; radius: number };
-};
-type ServerPackets = {
-    initialize: {
-        entities: Array<PacketEntity>;
-        playerId: number;
-    };
-    update: {
-        entities: Array<PacketEntity>;
-    };
-};
-
-type ClientPackets = {
-    enter_game: {};
-    move: {
-        movement: [number, number];
-    };
-};
+import { vec2, type Vec2 } from "../math/vec2";
+import {
+    type ClientEvent,
+    type ServerEvent,
+    type PacketEntity,
+    clientEventToProtobufEvent,
+    parseServerPacket,
+} from "./packets";
+import { spellfire } from "./pb-spec";
 
 type ConnectionCommands = {
-    send:
-        | { type: "enter_game" } & ClientPackets["enter_game"]
-        | { type: "move" } & ClientPackets["move"]
+    send: ClientEvent;
 };
+type ConnectionMessages = {
+    open: {};
+} & { [K in ServerEvent as `packet_${K["type"]}`]: Omit<ServerEvent, "type"> };
+
 export class Connection
-    extends Publisher<ServerPackets>
+    extends Publisher<ConnectionMessages>
     implements Service<ConnectionCommands>
 {
     _subscribers = {
-        initialize: [],
-        update: [],
+        open: [],
+        packet_initialize: [],
+        packet_update: [],
     };
+    queuedOutboundPackets: Array<ClientEvent> = [];
     ws: WebSocket;
     constructor(wsURL: string) {
         super();
         this.ws = new WebSocket(wsURL);
-        this.ws.onopen = (ev) => {};
-        this.ws.onmessage = ({ data: data_ }) => {
-            const data = JSON.parse(data_);
-            switch (data.key) {
+        this.ws.binaryType = "arraybuffer";
+        this.ws.onopen = (ev) => {
+            this.publish("open", {});
+            setTimeout(() => {
+                this.sendOutboundPackets();
+            }, 1000 / 30);
+        };
+        this.ws.onmessage = ({ data: encodedData }) => {
+            parseServerPacket(encodedData as ArrayBuffer);
+            switch (data) {
                 case "initialize":
-                    this.publish("initialize", { playerId: data.client_id as number, entities: data.entities as PacketEntity[] });
+                    this.publish("packet_initialize", {
+                        playerId: data.client_id as number,
+                        entities: data.entities as PacketEntity[],
+                    });
                     break;
                 case "update":
-                    this.publish("update", { entities: data.entities as PacketEntity[] });
+                    this.publish("packet_update", {
+                        entities: data.entities as PacketEntity[],
+                    });
                     break;
             }
         };
         this.ws.onclose = ({ reason }) => {};
     }
-    run<C extends keyof ConnectionCommands>(command: C, commandData: ConnectionCommands[C]) {
+    run<C extends keyof ConnectionCommands>(
+        command: C,
+        commandData: ConnectionCommands[C],
+    ) {
         switch (command) {
             case "send":
-                this.ws.send(JSON.stringify({ ...commandData }));
+                switch (commandData.type) {
+                    case "enter_game":
+                        this.queuedOutboundPackets.push({ type: "enter_game" });
+                        break;
+                }
                 break;
         }
     }
-    parseAndDelegateServerPacket() {
-
+    sendOutboundPackets() {
+        this.ws.send(this.serializeOutboundPackets());
+        this.queuedOutboundPackets.length = 0;
     }
+    serializeOutboundPackets(): Uint8Array {
+        let clientPacket = spellfire.ClientPacket.create({
+            timestamp: spellfire.Timestamp.create({
+                ms: Date.now(),
+            }),
+            events: this.queuedOutboundPackets.map(clientEventToProtobufEvent),
+        });
+        return spellfire.ClientPacket.encode(clientPacket).finish();
+    }
+    deserializeServerPacket() {}
 }

@@ -1,4 +1,3 @@
-import "./style.css";
 import "./startScreen";
 import { getTokenFromDiscordSdk } from "./auth/discordActivities";
 

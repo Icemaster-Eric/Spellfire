@@ -1,15 +1,13 @@
 import type { Container, Point, Rectangle } from "pixi.js";
-import { vec2, type Vec2 } from "../lib/vec2";
-import { aabb, type AABB } from "../lib/aabb";
+import { vec2, type Vec2 } from "../math/vec2";
+import { aabb } from "../math/aabb";
 import { StaticVelocity, type Velocity } from "../physics/velocity";
+import type { Shape } from "../math/shape";
 
 type Attributes = {
     doCSP: boolean;
 };
 
-abstract class Shape {
-    abstract aabb(): AABB;
-}
 export abstract class Entity {
     id: number;
     // abstract boundingBox: Rectangle;
@@ -20,27 +18,21 @@ export abstract class Entity {
     abstract sprite: Container;
     updateSprite(): void {
         this.sprite.position.set(...this.position);
-        const spriteSize = aabb.size(this.shape.aabb());
+        const spriteSize = aabb.size(this.shape.aabb(vec2(0)));
         this.sprite.setSize(...spriteSize);
         this.sprite.origin.set(...vec2.scale(spriteSize, 0.5));
         this.sprite.rotation = this.rotation;
     }
-    velocity: Velocity;
+    velocity: Velocity = new StaticVelocity(vec2(0));
     position: Vec2;
-    shape: Shape;
-    rotation: number;
+    abstract shape: Shape;
+    rotation: number = 0;
     constructor(
         id: number,
-        velocity: Velocity,
         position: Vec2,
-        rotation: number,
-        shape: Shape,
     ) {
         this.id = id;
-        this.velocity = velocity;
         this.position = position;
-        this.rotation = rotation;
-        this.shape = shape;
     }
     //static attributes: Attributes;
 }

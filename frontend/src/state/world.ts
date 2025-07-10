@@ -12,6 +12,17 @@ export class World {
         this.entities = entities;
         this.clientPlayerId = clientPlayerId;
     }
+    update(entities: Array<Entity>) {
+        if (!this.isInitialized()) return;
+        for (const entity of entities) {
+            let entityToUpdateIdx = this.entities.findIndex((entity_) => entity_.id === entity.id);
+            if (entityToUpdateIdx !== -1) {
+                this.entities[entityToUpdateIdx] = entity;
+            } else {
+                this.entities.push(entity);
+            }
+        }
+    }
     getClientPlayer(): Player {
         if (!this.isInitialized()) {
             throw new Error("World is not initialized.");

@@ -1,10 +1,10 @@
 import { Publisher } from "../communication/publisher";
-import { vec2, type Vec2 } from "../lib/vec2";
+import { vec2, type Vec2 } from "../math/vec2";
 import type { Keybinds } from "../state/settings";
 
 type ControlMessages = {
-    move: { direction: Vec2 }
-}
+    move: { direction: Vec2 };
+};
 
 export class Controls extends Publisher<ControlMessages> {
     constructor(keybinds: Keybinds) {
@@ -14,9 +14,9 @@ export class Controls extends Publisher<ControlMessages> {
             if (action) {
                 this.publish(action.type, action.payload);
             }
-        })
+        });
     }
     _subscribers = {
-        move: []
-    }
+        move: [],
+    };
 }

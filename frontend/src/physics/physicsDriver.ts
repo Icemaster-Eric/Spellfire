@@ -1,4 +1,4 @@
-import { vec2, type Vec2 } from "../lib/vec2";
+import { vec2, type Vec2 } from "../math/vec2";
 import type { GameState } from "../state/gameState";
 import { StaticVelocity } from "./velocity";
 
@@ -10,7 +10,7 @@ export class PhysicsDriver {
     setEntityVelocity(entityId: number, newVelocity: Vec2) {
         if (this.gameStateRef.world.isInitialized()) {
             let entity = this.gameStateRef.world.getEntity(entityId);
-            if (entity) entity.velocity = new StaticVelocity(newVelocity); 
+            if (entity) entity.velocity = new StaticVelocity(newVelocity);
         }
     }
     update() {
@@ -18,7 +18,10 @@ export class PhysicsDriver {
             return;
         }
         for (const entity of this.gameStateRef.world.entities) {
-            entity.position = vec2.add(entity.position, entity.velocity.calculate());
+            entity.position = vec2.add(
+                entity.position,
+                entity.velocity.calculate(),
+            );
         }
     }
 }

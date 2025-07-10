@@ -1,4 +1,4 @@
-import { type Vec2, vec2 } from "../lib/vec2";
+import { type Vec2, vec2 } from "../math/vec2";
 
 export type EasingFunc = (n: number) => number;
 export const easing: { [fn: string]: EasingFunc } = {
