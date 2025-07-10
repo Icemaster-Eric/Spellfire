@@ -22,7 +22,7 @@ message Entity {
   uint32 id = 1;
   EntityType type = 2;
   Vec2 position = 3;
-  float rotation = 4;
+  double rotation = 4;
   Vec2 velocity = 5;
   repeated EntityAttribute attributes = 6;
   repeated EntityState states = 7;

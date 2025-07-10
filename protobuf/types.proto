@@ -4,11 +4,10 @@ package spellfire;
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
 message Vec2 {
-  float x = 1;
-  float y = 2;
+  double x = 1;
+  double y = 2;
 }
 
 message Timestamp {
-  int64 seconds = 1;
-  int32 nanos = 2;
+  uint64 ms = 1;
 }
