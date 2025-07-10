@@ -10,22 +10,59 @@ enum EntityType {
   PLAYER = 1;
 }
 
-enum EntityAttribute {
-  ENTITY_ATTRIBUTE_UNSPECIFIED = 0;
+enum ColliderType {
+    COLLIDER_TYPE_UNSPECIFIED = 0;
+    COLLIDER_TYPE_CIRCLE = 1;
+    COLLIDER_TYPE_RECT = 2;
+}
+message Collider {
+    ColliderType type = 1;
+    double rotation = 2;
+    double width = 3;
+    double height = 4;
+    double radius = 5;
+    Vec2 position = 6;
+    Vec2 velocity = 7;
 }
 
-enum EntityState {
-  ENTITY_STATE_UNSPECIFIED = 0;
+enum Sprite {
+    SPRITE_NONE = 0;
+    SPRITE_PLAYER = 1;
+    SPRITE_BUSH = 2;
+    SPRITE_TREE = 3;
+    SPRITE_ROCK = 4;
+}
+message RenderData {
+    Sprite sprite = 1;
+}
+enum EntityMode {
+    ENTITY_MODE_DEFAULT = 0;
+    ENTITY_MODE_PLAYER_WIELDING_PRIMARY_GUN = 1;
+    ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_1 = 2;
+    ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_2 = 3;
+    ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_3 = 4;
+    ENTITY_MODE_PLAYER_RELOADING = 5;
+    ENTITY_MODE_BUSH_SHAKING = 6;
+}
+enum Gun {
+    GUN_UNSPECIFIED = 0;
+    GUN_AK47 = 1;
+    GUN_M4 = 2;
+}
+message PlayerState {
+    Gun player_gun = 1; 
+}
+
+message EntityState {
+    PlayerState player_state = 1;
 }
 
 message Entity {
   uint32 id = 1;
   EntityType type = 2;
-  Vec2 position = 3;
-  double rotation = 4;
-  Vec2 velocity = 5;
-  repeated EntityAttribute attributes = 6;
-  repeated EntityState states = 7;
+  Collider collider = 3;
+  RenderData render_data = 4;
+  EntityState state = 5;
 }
 
 enum ServerEventType {
