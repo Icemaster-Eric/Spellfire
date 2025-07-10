@@ -17,4 +17,5 @@ require (
 	github.com/tidwall/btree v1.6.0 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	golang.org/x/sys v0.9.0 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
 )

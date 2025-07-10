@@ -1,15 +1,15 @@
 package api
 
 import (
-	"github.com/Icemaster-Eric/Spellfire-Backend/internal/game"
-	"github.com/Icemaster-Eric/Spellfire-Backend/internal/server"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/game"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/server"
 	"log"
 	"net/http"
 )
 
 func NewRouter() *http.ServeMux {
-	world := game.World{}
-	srv := server.NewServer(&world)
+	world := game.NewWorld()
+	srv := server.NewServer(world)
 	upgrader := server.NewUpgrader(srv)
 
 	srv.Run()

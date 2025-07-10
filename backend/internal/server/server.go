@@ -1,11 +1,11 @@
 package server
 
 import (
-	//"encoding/json"
-	"github.com/Icemaster-Eric/Spellfire-Backend/internal/game"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/game"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/pb"
+	"google.golang.org/protobuf/proto"
 	"github.com/lxzan/gws"
 	"log"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -46,7 +46,7 @@ func (s *Server) Run() {
 		last = now
 		s.World.Tick(dt)
 
-		// send updates to clients
+		// send updates
 	}
 }
 
@@ -58,10 +58,6 @@ func (s *Server) OnOpen(socket *gws.Conn) {
 	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
 	s.sessions.Store(name, socket)
 	log.Printf("%s connected\n", name)
-
-	// spawn player in World
-	entityID := s.World.SpawnPlayer(name)
-	socket.WriteMessage(gws.OpcodeText, fmt.Appendf(nil, "%d", entityID))
 }
 
 func (s *Server) OnClose(socket *gws.Conn, err error) {
@@ -78,6 +74,8 @@ func (s *Server) OnClose(socket *gws.Conn, err error) {
 	}
 
 	log.Printf("onerror, name=%s, msg=%s\n", name, err.Error())
+
+	// despawn player
 }
 
 func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
@@ -89,13 +87,14 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 		return
 	}
 
-	// var input = &Input{}
-	// _ = json.Unmarshal(message.Bytes(), input)
-	// if conn, ok := s.sessions.Load(input.To); ok {
-	// 	_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
-	// }
+	name := MustLoad[string](socket.Session(), "name")
 
-	// send packet to World
+	packet := &pb.ClientPacket{}
+	if err := proto.Unmarshal(message.Bytes(), packet); err != nil {
+		log.Fatalln("Failed to parse address book:", err)
+	}
+
+	s.World.Players[name].Inputs<-packet
 }
 
 func NewUpgrader(handler gws.Event) *gws.Upgrader {

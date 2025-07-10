@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Icemaster-Eric/Spellfire-Backend/internal/api"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/api"
 	"net/http"
 )
 
