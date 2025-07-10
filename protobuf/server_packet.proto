@@ -3,7 +3,7 @@ package spellfire;
 
 import "types.proto";
 
-option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;proto";
+option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
 enum EntityType {
   ENTITY_TYPE_UNSPECIFIED = 0;
