@@ -65,10 +65,15 @@ message Entity {
 
 enum ServerEventType {
   SERVER_EVENT_TYPE_UNSPECIFIED = 0;
+  SERVER_EVENT_TYPE_ENTER_GAME = 1;
 }
 
-message ServerEvent { ServerEventType type = 1; }
-// message sent by server to
+message ServerEvent { 
+    ServerEventType type = 1;
+    uint32 enter_game_player_id = 2;
+}
+
+// message sent by server to client
 message ServerPacket {
   Timestamp timestamp = 1;
   repeated Entity entities = 2;
