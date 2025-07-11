@@ -69,8 +69,8 @@ enum ServerEventType {
 }
 
 message ServerEvent { 
-    ServerEventType type = 1;
-    uint32 enter_game_player_id = 2;
+  ServerEventType type = 1;
+  uint32 enter_game_player_id = 2;
 }
 
 // message sent by server to client
