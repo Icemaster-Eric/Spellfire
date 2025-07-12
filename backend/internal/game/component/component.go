@@ -10,22 +10,30 @@ const (
 	VX
 	VY
 	ROTATION
+	NAME
+	IS_PLAYER
 )
 
-var ComponentMap = map[int]func() (string, column.Column){
-	X: func() (string, column.Column) {
-		return "X", column.ForFloat64()
+var ComponentMap = map[int]func(col *column.Collection){
+	X: func(col *column.Collection) {
+		col.CreateColumn("X", column.ForFloat64())
 	},
-	Y: func() (string, column.Column) {
-		return "Y", column.ForFloat64()
+	Y: func(col *column.Collection) {
+		col.CreateColumn("Y", column.ForFloat64())
 	},
-	VX: func() (string, column.Column) {
-		return "VX", column.ForFloat64()
+	VX: func(col *column.Collection) {
+		col.CreateColumn("VX", column.ForFloat64())
 	},
-	VY: func() (string, column.Column) {
-		return "VY", column.ForFloat64()
+	VY: func(col *column.Collection) {
+		col.CreateColumn("VY", column.ForFloat64())
 	},
-	ROTATION: func() (string, column.Column) {
-		return "ROTATION", column.ForFloat64()
+	ROTATION: func(col *column.Collection) {
+		col.CreateColumn("ROTATION", column.ForFloat64())
+	},
+	NAME: func(col *column.Collection) {
+		col.CreateColumn("NAME", column.ForString())
+	},
+	IS_PLAYER: func(col *column.Collection) {
+		col.CreateColumn("IS_PLAYER", column.ForBool())
 	},
 }

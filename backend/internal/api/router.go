@@ -12,7 +12,7 @@ func NewRouter() *http.ServeMux {
 	srv := server.NewServer(world)
 	upgrader := server.NewUpgrader(srv)
 
-	srv.Run()
+	go srv.Run()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {

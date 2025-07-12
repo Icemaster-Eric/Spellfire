@@ -25,21 +25,18 @@ type ClientEventType int32
 
 const (
 	ClientEventType_CLIENT_EVENT_TYPE_UNSPECIFIED ClientEventType = 0
-	ClientEventType_ENTER_GAME                    ClientEventType = 1
-	ClientEventType_MOVE                          ClientEventType = 2
+	ClientEventType_MOVE                          ClientEventType = 1
 )
 
 // Enum value maps for ClientEventType.
 var (
 	ClientEventType_name = map[int32]string{
 		0: "CLIENT_EVENT_TYPE_UNSPECIFIED",
-		1: "ENTER_GAME",
-		2: "MOVE",
+		1: "MOVE",
 	}
 	ClientEventType_value = map[string]int32{
 		"CLIENT_EVENT_TYPE_UNSPECIFIED": 0,
-		"ENTER_GAME":                    1,
-		"MOVE":                          2,
+		"MOVE":                          1,
 	}
 )
 
@@ -184,12 +181,10 @@ const file_client_packet_proto_rawDesc = "" +
 	"\bmovement\x18\x02 \x01(\v2\x0f.spellfire.Vec2R\bmovement\"r\n" +
 	"\fClientPacket\x122\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12.\n" +
-	"\x06events\x18\x02 \x03(\v2\x16.spellfire.ClientEventR\x06events*N\n" +
+	"\x06events\x18\x02 \x03(\v2\x16.spellfire.ClientEventR\x06events*>\n" +
 	"\x0fClientEventType\x12!\n" +
-	"\x1dCLIENT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x0e\n" +
-	"\n" +
-	"ENTER_GAME\x10\x01\x12\b\n" +
-	"\x04MOVE\x10\x02B?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
+	"\x1dCLIENT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04MOVE\x10\x01B?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
 
 var (
 	file_client_packet_proto_rawDescOnce sync.Once

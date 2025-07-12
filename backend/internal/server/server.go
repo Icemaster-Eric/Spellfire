@@ -1,14 +1,15 @@
 package server
 
 import (
-	"github.com/Icemaster-Eric/Spellfire/backend/internal/game"
-	"github.com/Icemaster-Eric/Spellfire/backend/internal/pb"
-	"google.golang.org/protobuf/proto"
-	"github.com/lxzan/gws"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/game"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/pb"
+	"github.com/lxzan/gws"
+	"google.golang.org/protobuf/proto"
 )
 
 func generateRandomUsername() string {
@@ -46,7 +47,24 @@ func (s *Server) Run() {
 		last = now
 		s.World.Tick(dt)
 
-		// send updates
+		for name, p := range s.World.Players {
+			conn, ok := s.sessions.Load(name)
+			if !ok {
+				continue
+			}
+			msg, err := proto.Marshal(p.ReadUpdate())
+			if err != nil {
+				continue
+			}
+			conn.WriteMessage(gws.OpcodeBinary, msg)
+		}
+
+		// reset player packets
+		for _, player := range s.World.Players {
+			player.WriteUpdate(func(pkt *pb.ServerPacket) {
+				pkt.Reset()
+			})
+		}
 	}
 }
 
@@ -58,6 +76,8 @@ func (s *Server) OnOpen(socket *gws.Conn) {
 	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
 	s.sessions.Store(name, socket)
 	log.Printf("%s connected\n", name)
+
+	s.World.SpawnPlayer(name)
 }
 
 func (s *Server) OnClose(socket *gws.Conn, err error) {
@@ -75,7 +95,7 @@ func (s *Server) OnClose(socket *gws.Conn, err error) {
 
 	log.Printf("onerror, name=%s, msg=%s\n", name, err.Error())
 
-	// despawn player
+	s.World.DespawnPlayer(name)
 }
 
 func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
