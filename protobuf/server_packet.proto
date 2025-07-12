@@ -39,8 +39,8 @@ message RenderData { Sprite sprite = 1; }
 
 enum EntityType {
   ENTITY_TYPE_UNSPECIFIED = 0;
-  PLAYER_GUNNER = 1;
-  PLAYER_MAGE = 2;
+  ENTITY_TYPE_PLAYER_GUNNER = 1;
+  ENTITY_TYPE_PLAYER_MAGE = 2;
 }
 
 enum EntityState {
@@ -50,9 +50,13 @@ enum EntityState {
 
 enum EntityAttributeType {
   ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0;
+  ENTITY_ATTRIBUTE_TYPE_NAME = 1;
 }
 
-message EntityAttribute { EntityAttributeType type = 1; }
+message EntityAttribute {
+  EntityAttributeType type = 1;
+  string name = 2;
+}
 
 message Entity {
   uint32 id = 1;
