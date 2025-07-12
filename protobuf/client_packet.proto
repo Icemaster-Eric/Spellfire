@@ -7,8 +7,7 @@ option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;
 
 enum ClientEventType {
   CLIENT_EVENT_TYPE_UNSPECIFIED = 0;
-  ENTER_GAME = 1;
-  MOVE = 2;
+  MOVE = 1;
 }
 
 message ClientEvent {
