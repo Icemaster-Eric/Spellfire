@@ -5,12 +5,13 @@ import "types.proto";
 
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
-enum ClientEventType {
-  CLIENT_EVENT_TYPE_UNSPECIFIED = 0;
-  MOVE = 1;
-}
-
 message ClientEvent {
+  enum ClientEventType {
+    CLIENT_EVENT_TYPE_UNSPECIFIED = 0;
+    MOVE = 1;
+    START_FIRE = 2;
+    STOP_FIRE = 3;
+  }
   ClientEventType type = 1;
   Vec2 movement = 2;
 }

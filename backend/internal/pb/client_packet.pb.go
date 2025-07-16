@@ -21,56 +21,62 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ClientEventType int32
+type ClientEvent_ClientEventType int32
 
 const (
-	ClientEventType_CLIENT_EVENT_TYPE_UNSPECIFIED ClientEventType = 0
-	ClientEventType_MOVE                          ClientEventType = 1
+	ClientEvent_CLIENT_EVENT_TYPE_UNSPECIFIED ClientEvent_ClientEventType = 0
+	ClientEvent_MOVE                          ClientEvent_ClientEventType = 1
+	ClientEvent_START_FIRE                    ClientEvent_ClientEventType = 2
+	ClientEvent_STOP_FIRE                     ClientEvent_ClientEventType = 3
 )
 
-// Enum value maps for ClientEventType.
+// Enum value maps for ClientEvent_ClientEventType.
 var (
-	ClientEventType_name = map[int32]string{
+	ClientEvent_ClientEventType_name = map[int32]string{
 		0: "CLIENT_EVENT_TYPE_UNSPECIFIED",
 		1: "MOVE",
+		2: "START_FIRE",
+		3: "STOP_FIRE",
 	}
-	ClientEventType_value = map[string]int32{
+	ClientEvent_ClientEventType_value = map[string]int32{
 		"CLIENT_EVENT_TYPE_UNSPECIFIED": 0,
 		"MOVE":                          1,
+		"START_FIRE":                    2,
+		"STOP_FIRE":                     3,
 	}
 )
 
-func (x ClientEventType) Enum() *ClientEventType {
-	p := new(ClientEventType)
+func (x ClientEvent_ClientEventType) Enum() *ClientEvent_ClientEventType {
+	p := new(ClientEvent_ClientEventType)
 	*p = x
 	return p
 }
 
-func (x ClientEventType) String() string {
+func (x ClientEvent_ClientEventType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ClientEventType) Descriptor() protoreflect.EnumDescriptor {
+func (ClientEvent_ClientEventType) Descriptor() protoreflect.EnumDescriptor {
 	return file_client_packet_proto_enumTypes[0].Descriptor()
 }
 
-func (ClientEventType) Type() protoreflect.EnumType {
+func (ClientEvent_ClientEventType) Type() protoreflect.EnumType {
 	return &file_client_packet_proto_enumTypes[0]
 }
 
-func (x ClientEventType) Number() protoreflect.EnumNumber {
+func (x ClientEvent_ClientEventType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ClientEventType.Descriptor instead.
-func (ClientEventType) EnumDescriptor() ([]byte, []int) {
-	return file_client_packet_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use ClientEvent_ClientEventType.Descriptor instead.
+func (ClientEvent_ClientEventType) EnumDescriptor() ([]byte, []int) {
+	return file_client_packet_proto_rawDescGZIP(), []int{0, 0}
 }
 
 type ClientEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          ClientEventType        `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.ClientEventType" json:"type,omitempty"`
-	Movement      *Vec2                  `protobuf:"bytes,2,opt,name=movement,proto3" json:"movement,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Type          ClientEvent_ClientEventType `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.ClientEvent_ClientEventType" json:"type,omitempty"`
+	Movement      *Vec2                       `protobuf:"bytes,2,opt,name=movement,proto3" json:"movement,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -105,11 +111,11 @@ func (*ClientEvent) Descriptor() ([]byte, []int) {
 	return file_client_packet_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ClientEvent) GetType() ClientEventType {
+func (x *ClientEvent) GetType() ClientEvent_ClientEventType {
 	if x != nil {
 		return x.Type
 	}
-	return ClientEventType_CLIENT_EVENT_TYPE_UNSPECIFIED
+	return ClientEvent_CLIENT_EVENT_TYPE_UNSPECIFIED
 }
 
 func (x *ClientEvent) GetMovement() *Vec2 {
@@ -175,16 +181,19 @@ var File_client_packet_proto protoreflect.FileDescriptor
 
 const file_client_packet_proto_rawDesc = "" +
 	"\n" +
-	"\x13client_packet.proto\x12\tspellfire\x1a\vtypes.proto\"j\n" +
-	"\vClientEvent\x12.\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x1a.spellfire.ClientEventTypeR\x04type\x12+\n" +
-	"\bmovement\x18\x02 \x01(\v2\x0f.spellfire.Vec2R\bmovement\"r\n" +
-	"\fClientPacket\x122\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12.\n" +
-	"\x06events\x18\x02 \x03(\v2\x16.spellfire.ClientEventR\x06events*>\n" +
+	"\x13client_packet.proto\x12\tspellfire\x1a\vtypes.proto\"\xd5\x01\n" +
+	"\vClientEvent\x12:\n" +
+	"\x04type\x18\x01 \x01(\x0e2&.spellfire.ClientEvent.ClientEventTypeR\x04type\x12+\n" +
+	"\bmovement\x18\x02 \x01(\v2\x0f.spellfire.Vec2R\bmovement\"]\n" +
 	"\x0fClientEventType\x12!\n" +
 	"\x1dCLIENT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
-	"\x04MOVE\x10\x01B?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
+	"\x04MOVE\x10\x01\x12\x0e\n" +
+	"\n" +
+	"START_FIRE\x10\x02\x12\r\n" +
+	"\tSTOP_FIRE\x10\x03\"r\n" +
+	"\fClientPacket\x122\n" +
+	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12.\n" +
+	"\x06events\x18\x02 \x03(\v2\x16.spellfire.ClientEventR\x06eventsB?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
 
 var (
 	file_client_packet_proto_rawDescOnce sync.Once
@@ -201,14 +210,14 @@ func file_client_packet_proto_rawDescGZIP() []byte {
 var file_client_packet_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_client_packet_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_client_packet_proto_goTypes = []any{
-	(ClientEventType)(0), // 0: spellfire.ClientEventType
-	(*ClientEvent)(nil),  // 1: spellfire.ClientEvent
-	(*ClientPacket)(nil), // 2: spellfire.ClientPacket
-	(*Vec2)(nil),         // 3: spellfire.Vec2
-	(*Timestamp)(nil),    // 4: spellfire.Timestamp
+	(ClientEvent_ClientEventType)(0), // 0: spellfire.ClientEvent.ClientEventType
+	(*ClientEvent)(nil),              // 1: spellfire.ClientEvent
+	(*ClientPacket)(nil),             // 2: spellfire.ClientPacket
+	(*Vec2)(nil),                     // 3: spellfire.Vec2
+	(*Timestamp)(nil),                // 4: spellfire.Timestamp
 }
 var file_client_packet_proto_depIdxs = []int32{
-	0, // 0: spellfire.ClientEvent.type:type_name -> spellfire.ClientEventType
+	0, // 0: spellfire.ClientEvent.type:type_name -> spellfire.ClientEvent.ClientEventType
 	3, // 1: spellfire.ClientEvent.movement:type_name -> spellfire.Vec2
 	4, // 2: spellfire.ClientPacket.timestamp:type_name -> spellfire.Timestamp
 	1, // 3: spellfire.ClientPacket.events:type_name -> spellfire.ClientEvent

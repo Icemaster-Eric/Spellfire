@@ -5,13 +5,12 @@ import "types.proto";
 
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
-enum ColliderType {
-  COLLIDER_TYPE_UNSPECIFIED = 0;
-  COLLIDER_TYPE_CIRCLE = 1;
-  COLLIDER_TYPE_RECT = 2;
-}
-
 message Collider {
+  enum ColliderType {
+    COLLIDER_TYPE_UNSPECIFIED = 0;
+    CIRCLE = 1;
+    RECT = 2;
+  }
   ColliderType type = 1;
   double rotation = 2;
   double width = 3;
@@ -23,7 +22,7 @@ message Collider {
 }
 
 enum Sprite {
-  SPRITE_NONE = 0;
+  SPRITE_UNSPECIFIED = 0;
   SPRITE_PLAYER_GUNNER = 1;
   SPRITE_PLAYER_MAGE = 2;
   SPRITE_BUSH_1 = 3;
@@ -37,28 +36,25 @@ enum Sprite {
 
 message RenderData { Sprite sprite = 1; }
 
-enum EntityType {
-  ENTITY_TYPE_UNSPECIFIED = 0;
-  ENTITY_TYPE_PLAYER_GUNNER = 1;
-  ENTITY_TYPE_PLAYER_MAGE = 2;
-}
-
-enum EntityState {
-  ENTITY_STATE_UNSPECIFIED = 0;
-  ENTITY_STATE_RELOADING = 1;
-}
-
-enum EntityAttributeType {
-  ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0;
-  ENTITY_ATTRIBUTE_TYPE_NAME = 1;
-}
-
 message EntityAttribute {
+  enum EntityAttributeType {
+    ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0;
+    NAME = 1;
+  }
   EntityAttributeType type = 1;
   string name = 2;
 }
 
 message Entity {
+  enum EntityType {
+    ENTITY_TYPE_UNSPECIFIED = 0;
+    GUNNER = 1;
+    MAGE = 2;
+  }
+  enum EntityState {
+    ENTITY_STATE_UNSPECIFIED = 0;
+    RELOADING = 1;
+  }
   uint32 id = 1;
   EntityType type = 2;
   Collider collider = 3;
@@ -67,17 +63,15 @@ message Entity {
   repeated EntityAttribute attributes = 6;
 }
 
-enum ServerEventType {
-  SERVER_EVENT_TYPE_UNSPECIFIED = 0;
-  SERVER_EVENT_TYPE_ENTER_GAME = 1;
-}
-
-message ServerEvent { 
+message ServerEvent {
+  enum ServerEventType {
+    SERVER_EVENT_TYPE_UNSPECIFIED = 0;
+    ENTER_GAME = 1;
+  }
   ServerEventType type = 1;
   uint32 enter_game_player_id = 2;
 }
 
-// message sent by server to client
 message ServerPacket {
   Timestamp timestamp = 1;
   repeated Entity entities = 2;
