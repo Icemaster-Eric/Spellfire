@@ -1,10 +1,8 @@
 import { Graphics } from "pixi.js";
 import { Entity } from "../entity";
-import { Circle } from "../../math/shape";
 import { entitySpec } from "../entitySpec";
 
 export class Tree extends Entity {
-    shape = new Circle(entitySpec.DEFAULT_TREE_RADIUS);
     sprite = treeSprite();
     updateSprite(): void {
         super.updateSprite();

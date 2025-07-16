@@ -1,22 +1,39 @@
 import { Publisher } from "../communication/publisher";
 import { vec2, type Vec2 } from "../math/vec2";
-import type { Keybinds } from "../state/settings";
+
+export type ControlAction = "moveN" | "moveE" | "moveS" | "moveW";
 
 type ControlMessages = {
-    move: { direction: Vec2 };
+    start_action: { actionType: ControlAction };
+    stop_action: { actionType: ControlAction };
 };
 
 export class Controls extends Publisher<ControlMessages> {
-    constructor(keybinds: Keybinds) {
+    keybinds: Map<string, ControlAction> = new Map(Object.entries({
+        KeyW: "moveN", 
+        KeyA: "moveW",
+        KeyS: "moveS",
+        KeyD: "moveE"
+    }));
+    constructor() {
         super();
         document.body.addEventListener("keydown", (ev) => {
-            let action = keybinds.deref().get(ev.code);
+            if (ev.repeat) return;
+            let action = this.keybinds.get(ev.code);
             if (action) {
-                this.publish(action.type, action.payload);
+                this.publish("start_action", { actionType: action });
+            }
+        });
+        document.body.addEventListener("keyup", (ev) => {
+            let action = this.keybinds.get(ev.code);
+            if (action) {
+                this.publish("stop_action", { actionType: action });
             }
         });
     }
+
     _subscribers = {
-        move: [],
+        start_action: [],
+        stop_action: [],
     };
 }

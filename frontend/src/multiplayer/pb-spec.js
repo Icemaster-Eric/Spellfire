@@ -21,14 +21,12 @@ export const spellfire = $root.spellfire = (() => {
      * @name spellfire.ClientEventType
      * @enum {number}
      * @property {number} CLIENT_EVENT_TYPE_UNSPECIFIED=0 CLIENT_EVENT_TYPE_UNSPECIFIED value
-     * @property {number} ENTER_GAME=1 ENTER_GAME value
-     * @property {number} MOVE=2 MOVE value
+     * @property {number} MOVE=1 MOVE value
      */
     spellfire.ClientEventType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "CLIENT_EVENT_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "ENTER_GAME"] = 1;
-        values[valuesById[2] = "MOVE"] = 2;
+        values[valuesById[1] = "MOVE"] = 1;
         return values;
     })();
 
@@ -186,7 +184,6 @@ export const spellfire = $root.spellfire = (() => {
                     return "type: enum value expected";
                 case 0:
                 case 1:
-                case 2:
                     break;
                 }
             if (message.movement != null && message.hasOwnProperty("movement")) {
@@ -220,13 +217,9 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "ENTER_GAME":
+            case "MOVE":
             case 1:
                 message.type = 1;
-                break;
-            case "MOVE":
-            case 2:
-                message.type = 2;
                 break;
             }
             if (object.movement != null) {
@@ -994,20 +987,6 @@ export const spellfire = $root.spellfire = (() => {
     })();
 
     /**
-     * EntityType enum.
-     * @name spellfire.EntityType
-     * @enum {number}
-     * @property {number} ENTITY_TYPE_UNSPECIFIED=0 ENTITY_TYPE_UNSPECIFIED value
-     * @property {number} PLAYER=1 PLAYER value
-     */
-    spellfire.EntityType = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ENTITY_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "PLAYER"] = 1;
-        return values;
-    })();
-
-    /**
      * ColliderType enum.
      * @name spellfire.ColliderType
      * @enum {number}
@@ -1036,6 +1015,7 @@ export const spellfire = $root.spellfire = (() => {
          * @property {number|null} [radius] Collider radius
          * @property {spellfire.IVec2|null} [position] Collider position
          * @property {spellfire.IVec2|null} [velocity] Collider velocity
+         * @property {boolean|null} [isStatic] Collider isStatic
          */
 
         /**
@@ -1110,6 +1090,14 @@ export const spellfire = $root.spellfire = (() => {
         Collider.prototype.velocity = null;
 
         /**
+         * Collider isStatic.
+         * @member {boolean} isStatic
+         * @memberof spellfire.Collider
+         * @instance
+         */
+        Collider.prototype.isStatic = false;
+
+        /**
          * Creates a new Collider instance using the specified properties.
          * @function create
          * @memberof spellfire.Collider
@@ -1147,6 +1135,8 @@ export const spellfire = $root.spellfire = (() => {
                 $root.spellfire.Vec2.encode(message.position, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.velocity != null && Object.hasOwnProperty.call(message, "velocity"))
                 $root.spellfire.Vec2.encode(message.velocity, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+            if (message.isStatic != null && Object.hasOwnProperty.call(message, "isStatic"))
+                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.isStatic);
             return writer;
         };
 
@@ -1209,6 +1199,10 @@ export const spellfire = $root.spellfire = (() => {
                     }
                 case 7: {
                         message.velocity = $root.spellfire.Vec2.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 8: {
+                        message.isStatic = reader.bool();
                         break;
                     }
                 default:
@@ -1277,6 +1271,9 @@ export const spellfire = $root.spellfire = (() => {
                 if (error)
                     return "velocity." + error;
             }
+            if (message.isStatic != null && message.hasOwnProperty("isStatic"))
+                if (typeof message.isStatic !== "boolean")
+                    return "isStatic: boolean expected";
             return null;
         };
 
@@ -1330,6 +1327,8 @@ export const spellfire = $root.spellfire = (() => {
                     throw TypeError(".spellfire.Collider.velocity: object expected");
                 message.velocity = $root.spellfire.Vec2.fromObject(object.velocity);
             }
+            if (object.isStatic != null)
+                message.isStatic = Boolean(object.isStatic);
             return message;
         };
 
@@ -1354,6 +1353,7 @@ export const spellfire = $root.spellfire = (() => {
                 object.radius = 0;
                 object.position = null;
                 object.velocity = null;
+                object.isStatic = false;
             }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.spellfire.ColliderType[message.type] === undefined ? message.type : $root.spellfire.ColliderType[message.type] : message.type;
@@ -1369,6 +1369,8 @@ export const spellfire = $root.spellfire = (() => {
                 object.position = $root.spellfire.Vec2.toObject(message.position, options);
             if (message.velocity != null && message.hasOwnProperty("velocity"))
                 object.velocity = $root.spellfire.Vec2.toObject(message.velocity, options);
+            if (message.isStatic != null && message.hasOwnProperty("isStatic"))
+                object.isStatic = message.isStatic;
             return object;
         };
 
@@ -1406,18 +1408,28 @@ export const spellfire = $root.spellfire = (() => {
      * @name spellfire.Sprite
      * @enum {number}
      * @property {number} SPRITE_NONE=0 SPRITE_NONE value
-     * @property {number} SPRITE_PLAYER=1 SPRITE_PLAYER value
-     * @property {number} SPRITE_BUSH=2 SPRITE_BUSH value
-     * @property {number} SPRITE_TREE=3 SPRITE_TREE value
-     * @property {number} SPRITE_ROCK=4 SPRITE_ROCK value
+     * @property {number} SPRITE_PLAYER_GUNNER=1 SPRITE_PLAYER_GUNNER value
+     * @property {number} SPRITE_PLAYER_MAGE=2 SPRITE_PLAYER_MAGE value
+     * @property {number} SPRITE_BUSH_1=3 SPRITE_BUSH_1 value
+     * @property {number} SPRITE_TREE_1=4 SPRITE_TREE_1 value
+     * @property {number} SPRITE_TREE_2=5 SPRITE_TREE_2 value
+     * @property {number} SPRITE_ROCK_1=6 SPRITE_ROCK_1 value
+     * @property {number} SPRITE_ROCK_2=7 SPRITE_ROCK_2 value
+     * @property {number} SPRITE_ROCK_3=8 SPRITE_ROCK_3 value
+     * @property {number} SPRITE_ROCK_4=9 SPRITE_ROCK_4 value
      */
     spellfire.Sprite = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "SPRITE_NONE"] = 0;
-        values[valuesById[1] = "SPRITE_PLAYER"] = 1;
-        values[valuesById[2] = "SPRITE_BUSH"] = 2;
-        values[valuesById[3] = "SPRITE_TREE"] = 3;
-        values[valuesById[4] = "SPRITE_ROCK"] = 4;
+        values[valuesById[1] = "SPRITE_PLAYER_GUNNER"] = 1;
+        values[valuesById[2] = "SPRITE_PLAYER_MAGE"] = 2;
+        values[valuesById[3] = "SPRITE_BUSH_1"] = 3;
+        values[valuesById[4] = "SPRITE_TREE_1"] = 4;
+        values[valuesById[5] = "SPRITE_TREE_2"] = 5;
+        values[valuesById[6] = "SPRITE_ROCK_1"] = 6;
+        values[valuesById[7] = "SPRITE_ROCK_2"] = 7;
+        values[valuesById[8] = "SPRITE_ROCK_3"] = 8;
+        values[valuesById[9] = "SPRITE_ROCK_4"] = 9;
         return values;
     })();
 
@@ -1563,6 +1575,11 @@ export const spellfire = $root.spellfire = (() => {
                 case 2:
                 case 3:
                 case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
                     break;
                 }
             return null;
@@ -1591,21 +1608,41 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.sprite = 0;
                 break;
-            case "SPRITE_PLAYER":
+            case "SPRITE_PLAYER_GUNNER":
             case 1:
                 message.sprite = 1;
                 break;
-            case "SPRITE_BUSH":
+            case "SPRITE_PLAYER_MAGE":
             case 2:
                 message.sprite = 2;
                 break;
-            case "SPRITE_TREE":
+            case "SPRITE_BUSH_1":
             case 3:
                 message.sprite = 3;
                 break;
-            case "SPRITE_ROCK":
+            case "SPRITE_TREE_1":
             case 4:
                 message.sprite = 4;
+                break;
+            case "SPRITE_TREE_2":
+            case 5:
+                message.sprite = 5;
+                break;
+            case "SPRITE_ROCK_1":
+            case 6:
+                message.sprite = 6;
+                break;
+            case "SPRITE_ROCK_2":
+            case 7:
+                message.sprite = 7;
+                break;
+            case "SPRITE_ROCK_3":
+            case 8:
+                message.sprite = 8;
+                break;
+            case "SPRITE_ROCK_4":
+            case 9:
+                message.sprite = 9;
                 break;
             }
             return message;
@@ -1661,292 +1698,68 @@ export const spellfire = $root.spellfire = (() => {
     })();
 
     /**
-     * EntityMode enum.
-     * @name spellfire.EntityMode
+     * EntityType enum.
+     * @name spellfire.EntityType
      * @enum {number}
-     * @property {number} ENTITY_MODE_DEFAULT=0 ENTITY_MODE_DEFAULT value
-     * @property {number} ENTITY_MODE_PLAYER_WIELDING_PRIMARY_GUN=1 ENTITY_MODE_PLAYER_WIELDING_PRIMARY_GUN value
-     * @property {number} ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_1=2 ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_1 value
-     * @property {number} ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_2=3 ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_2 value
-     * @property {number} ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_3=4 ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_3 value
-     * @property {number} ENTITY_MODE_PLAYER_RELOADING=5 ENTITY_MODE_PLAYER_RELOADING value
-     * @property {number} ENTITY_MODE_BUSH_SHAKING=6 ENTITY_MODE_BUSH_SHAKING value
+     * @property {number} ENTITY_TYPE_UNSPECIFIED=0 ENTITY_TYPE_UNSPECIFIED value
+     * @property {number} ENTITY_TYPE_PLAYER_GUNNER=1 ENTITY_TYPE_PLAYER_GUNNER value
+     * @property {number} ENTITY_TYPE_PLAYER_MAGE=2 ENTITY_TYPE_PLAYER_MAGE value
      */
-    spellfire.EntityMode = (function() {
+    spellfire.EntityType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ENTITY_MODE_DEFAULT"] = 0;
-        values[valuesById[1] = "ENTITY_MODE_PLAYER_WIELDING_PRIMARY_GUN"] = 1;
-        values[valuesById[2] = "ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_1"] = 2;
-        values[valuesById[3] = "ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_2"] = 3;
-        values[valuesById[4] = "ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_3"] = 4;
-        values[valuesById[5] = "ENTITY_MODE_PLAYER_RELOADING"] = 5;
-        values[valuesById[6] = "ENTITY_MODE_BUSH_SHAKING"] = 6;
+        values[valuesById[0] = "ENTITY_TYPE_UNSPECIFIED"] = 0;
+        values[valuesById[1] = "ENTITY_TYPE_PLAYER_GUNNER"] = 1;
+        values[valuesById[2] = "ENTITY_TYPE_PLAYER_MAGE"] = 2;
         return values;
     })();
 
     /**
-     * Gun enum.
-     * @name spellfire.Gun
+     * EntityState enum.
+     * @name spellfire.EntityState
      * @enum {number}
-     * @property {number} GUN_UNSPECIFIED=0 GUN_UNSPECIFIED value
-     * @property {number} GUN_AK47=1 GUN_AK47 value
-     * @property {number} GUN_M4=2 GUN_M4 value
+     * @property {number} ENTITY_STATE_UNSPECIFIED=0 ENTITY_STATE_UNSPECIFIED value
+     * @property {number} ENTITY_STATE_RELOADING=1 ENTITY_STATE_RELOADING value
      */
-    spellfire.Gun = (function() {
+    spellfire.EntityState = (function() {
         const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "GUN_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "GUN_AK47"] = 1;
-        values[valuesById[2] = "GUN_M4"] = 2;
+        values[valuesById[0] = "ENTITY_STATE_UNSPECIFIED"] = 0;
+        values[valuesById[1] = "ENTITY_STATE_RELOADING"] = 1;
         return values;
     })();
 
-    spellfire.PlayerState = (function() {
-
-        /**
-         * Properties of a PlayerState.
-         * @memberof spellfire
-         * @interface IPlayerState
-         * @property {spellfire.Gun|null} [playerGun] PlayerState playerGun
-         */
-
-        /**
-         * Constructs a new PlayerState.
-         * @memberof spellfire
-         * @classdesc Represents a PlayerState.
-         * @implements IPlayerState
-         * @constructor
-         * @param {spellfire.IPlayerState=} [properties] Properties to set
-         */
-        function PlayerState(properties) {
-            if (properties)
-                for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
-                    if (properties[keys[i]] != null)
-                        this[keys[i]] = properties[keys[i]];
-        }
-
-        /**
-         * PlayerState playerGun.
-         * @member {spellfire.Gun} playerGun
-         * @memberof spellfire.PlayerState
-         * @instance
-         */
-        PlayerState.prototype.playerGun = 0;
-
-        /**
-         * Creates a new PlayerState instance using the specified properties.
-         * @function create
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {spellfire.IPlayerState=} [properties] Properties to set
-         * @returns {spellfire.PlayerState} PlayerState instance
-         */
-        PlayerState.create = function create(properties) {
-            return new PlayerState(properties);
-        };
-
-        /**
-         * Encodes the specified PlayerState message. Does not implicitly {@link spellfire.PlayerState.verify|verify} messages.
-         * @function encode
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {spellfire.IPlayerState} message PlayerState message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PlayerState.encode = function encode(message, writer) {
-            if (!writer)
-                writer = $Writer.create();
-            if (message.playerGun != null && Object.hasOwnProperty.call(message, "playerGun"))
-                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.playerGun);
-            return writer;
-        };
-
-        /**
-         * Encodes the specified PlayerState message, length delimited. Does not implicitly {@link spellfire.PlayerState.verify|verify} messages.
-         * @function encodeDelimited
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {spellfire.IPlayerState} message PlayerState message or plain object to encode
-         * @param {$protobuf.Writer} [writer] Writer to encode to
-         * @returns {$protobuf.Writer} Writer
-         */
-        PlayerState.encodeDelimited = function encodeDelimited(message, writer) {
-            return this.encode(message, writer).ldelim();
-        };
-
-        /**
-         * Decodes a PlayerState message from the specified reader or buffer.
-         * @function decode
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @param {number} [length] Message length if known beforehand
-         * @returns {spellfire.PlayerState} PlayerState
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PlayerState.decode = function decode(reader, length, error) {
-            if (!(reader instanceof $Reader))
-                reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.spellfire.PlayerState();
-            while (reader.pos < end) {
-                let tag = reader.uint32();
-                if (tag === error)
-                    break;
-                switch (tag >>> 3) {
-                case 1: {
-                        message.playerGun = reader.int32();
-                        break;
-                    }
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-                }
-            }
-            return message;
-        };
-
-        /**
-         * Decodes a PlayerState message from the specified reader or buffer, length delimited.
-         * @function decodeDelimited
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {spellfire.PlayerState} PlayerState
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        PlayerState.decodeDelimited = function decodeDelimited(reader) {
-            if (!(reader instanceof $Reader))
-                reader = new $Reader(reader);
-            return this.decode(reader, reader.uint32());
-        };
-
-        /**
-         * Verifies a PlayerState message.
-         * @function verify
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {Object.<string,*>} message Plain object to verify
-         * @returns {string|null} `null` if valid, otherwise the reason why it is not
-         */
-        PlayerState.verify = function verify(message) {
-            if (typeof message !== "object" || message === null)
-                return "object expected";
-            if (message.playerGun != null && message.hasOwnProperty("playerGun"))
-                switch (message.playerGun) {
-                default:
-                    return "playerGun: enum value expected";
-                case 0:
-                case 1:
-                case 2:
-                    break;
-                }
-            return null;
-        };
-
-        /**
-         * Creates a PlayerState message from a plain object. Also converts values to their respective internal types.
-         * @function fromObject
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {Object.<string,*>} object Plain object
-         * @returns {spellfire.PlayerState} PlayerState
-         */
-        PlayerState.fromObject = function fromObject(object) {
-            if (object instanceof $root.spellfire.PlayerState)
-                return object;
-            let message = new $root.spellfire.PlayerState();
-            switch (object.playerGun) {
-            default:
-                if (typeof object.playerGun === "number") {
-                    message.playerGun = object.playerGun;
-                    break;
-                }
-                break;
-            case "GUN_UNSPECIFIED":
-            case 0:
-                message.playerGun = 0;
-                break;
-            case "GUN_AK47":
-            case 1:
-                message.playerGun = 1;
-                break;
-            case "GUN_M4":
-            case 2:
-                message.playerGun = 2;
-                break;
-            }
-            return message;
-        };
-
-        /**
-         * Creates a plain object from a PlayerState message. Also converts values to other types if specified.
-         * @function toObject
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {spellfire.PlayerState} message PlayerState
-         * @param {$protobuf.IConversionOptions} [options] Conversion options
-         * @returns {Object.<string,*>} Plain object
-         */
-        PlayerState.toObject = function toObject(message, options) {
-            if (!options)
-                options = {};
-            let object = {};
-            if (options.defaults)
-                object.playerGun = options.enums === String ? "GUN_UNSPECIFIED" : 0;
-            if (message.playerGun != null && message.hasOwnProperty("playerGun"))
-                object.playerGun = options.enums === String ? $root.spellfire.Gun[message.playerGun] === undefined ? message.playerGun : $root.spellfire.Gun[message.playerGun] : message.playerGun;
-            return object;
-        };
-
-        /**
-         * Converts this PlayerState to JSON.
-         * @function toJSON
-         * @memberof spellfire.PlayerState
-         * @instance
-         * @returns {Object.<string,*>} JSON object
-         */
-        PlayerState.prototype.toJSON = function toJSON() {
-            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
-        };
-
-        /**
-         * Gets the default type url for PlayerState
-         * @function getTypeUrl
-         * @memberof spellfire.PlayerState
-         * @static
-         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns {string} The default type url
-         */
-        PlayerState.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
-            if (typeUrlPrefix === undefined) {
-                typeUrlPrefix = "type.googleapis.com";
-            }
-            return typeUrlPrefix + "/spellfire.PlayerState";
-        };
-
-        return PlayerState;
+    /**
+     * EntityAttributeType enum.
+     * @name spellfire.EntityAttributeType
+     * @enum {number}
+     * @property {number} ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED=0 ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED value
+     * @property {number} ENTITY_ATTRIBUTE_TYPE_NAME=1 ENTITY_ATTRIBUTE_TYPE_NAME value
+     */
+    spellfire.EntityAttributeType = (function() {
+        const valuesById = {}, values = Object.create(valuesById);
+        values[valuesById[0] = "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED"] = 0;
+        values[valuesById[1] = "ENTITY_ATTRIBUTE_TYPE_NAME"] = 1;
+        return values;
     })();
 
-    spellfire.EntityState = (function() {
+    spellfire.EntityAttribute = (function() {
 
         /**
-         * Properties of an EntityState.
+         * Properties of an EntityAttribute.
          * @memberof spellfire
-         * @interface IEntityState
-         * @property {spellfire.IPlayerState|null} [playerState] EntityState playerState
+         * @interface IEntityAttribute
+         * @property {spellfire.EntityAttributeType|null} [type] EntityAttribute type
+         * @property {string|null} [name] EntityAttribute name
          */
 
         /**
-         * Constructs a new EntityState.
+         * Constructs a new EntityAttribute.
          * @memberof spellfire
-         * @classdesc Represents an EntityState.
-         * @implements IEntityState
+         * @classdesc Represents an EntityAttribute.
+         * @implements IEntityAttribute
          * @constructor
-         * @param {spellfire.IEntityState=} [properties] Properties to set
+         * @param {spellfire.IEntityAttribute=} [properties] Properties to set
          */
-        function EntityState(properties) {
+        function EntityAttribute(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -1954,77 +1767,91 @@ export const spellfire = $root.spellfire = (() => {
         }
 
         /**
-         * EntityState playerState.
-         * @member {spellfire.IPlayerState|null|undefined} playerState
-         * @memberof spellfire.EntityState
+         * EntityAttribute type.
+         * @member {spellfire.EntityAttributeType} type
+         * @memberof spellfire.EntityAttribute
          * @instance
          */
-        EntityState.prototype.playerState = null;
+        EntityAttribute.prototype.type = 0;
 
         /**
-         * Creates a new EntityState instance using the specified properties.
-         * @function create
-         * @memberof spellfire.EntityState
-         * @static
-         * @param {spellfire.IEntityState=} [properties] Properties to set
-         * @returns {spellfire.EntityState} EntityState instance
+         * EntityAttribute name.
+         * @member {string} name
+         * @memberof spellfire.EntityAttribute
+         * @instance
          */
-        EntityState.create = function create(properties) {
-            return new EntityState(properties);
+        EntityAttribute.prototype.name = "";
+
+        /**
+         * Creates a new EntityAttribute instance using the specified properties.
+         * @function create
+         * @memberof spellfire.EntityAttribute
+         * @static
+         * @param {spellfire.IEntityAttribute=} [properties] Properties to set
+         * @returns {spellfire.EntityAttribute} EntityAttribute instance
+         */
+        EntityAttribute.create = function create(properties) {
+            return new EntityAttribute(properties);
         };
 
         /**
-         * Encodes the specified EntityState message. Does not implicitly {@link spellfire.EntityState.verify|verify} messages.
+         * Encodes the specified EntityAttribute message. Does not implicitly {@link spellfire.EntityAttribute.verify|verify} messages.
          * @function encode
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
-         * @param {spellfire.IEntityState} message EntityState message or plain object to encode
+         * @param {spellfire.IEntityAttribute} message EntityAttribute message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        EntityState.encode = function encode(message, writer) {
+        EntityAttribute.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.playerState != null && Object.hasOwnProperty.call(message, "playerState"))
-                $root.spellfire.PlayerState.encode(message.playerState, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.type != null && Object.hasOwnProperty.call(message, "type"))
+                writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.name != null && Object.hasOwnProperty.call(message, "name"))
+                writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
             return writer;
         };
 
         /**
-         * Encodes the specified EntityState message, length delimited. Does not implicitly {@link spellfire.EntityState.verify|verify} messages.
+         * Encodes the specified EntityAttribute message, length delimited. Does not implicitly {@link spellfire.EntityAttribute.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
-         * @param {spellfire.IEntityState} message EntityState message or plain object to encode
+         * @param {spellfire.IEntityAttribute} message EntityAttribute message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        EntityState.encodeDelimited = function encodeDelimited(message, writer) {
+        EntityAttribute.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes an EntityState message from the specified reader or buffer.
+         * Decodes an EntityAttribute message from the specified reader or buffer.
          * @function decode
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {spellfire.EntityState} EntityState
+         * @returns {spellfire.EntityAttribute} EntityAttribute
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        EntityState.decode = function decode(reader, length, error) {
+        EntityAttribute.decode = function decode(reader, length, error) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.spellfire.EntityState();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.spellfire.EntityAttribute();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 if (tag === error)
                     break;
                 switch (tag >>> 3) {
                 case 1: {
-                        message.playerState = $root.spellfire.PlayerState.decode(reader, reader.uint32());
+                        message.type = reader.int32();
+                        break;
+                    }
+                case 2: {
+                        message.name = reader.string();
                         break;
                     }
                 default:
@@ -2036,107 +1863,130 @@ export const spellfire = $root.spellfire = (() => {
         };
 
         /**
-         * Decodes an EntityState message from the specified reader or buffer, length delimited.
+         * Decodes an EntityAttribute message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {spellfire.EntityState} EntityState
+         * @returns {spellfire.EntityAttribute} EntityAttribute
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        EntityState.decodeDelimited = function decodeDelimited(reader) {
+        EntityAttribute.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies an EntityState message.
+         * Verifies an EntityAttribute message.
          * @function verify
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        EntityState.verify = function verify(message) {
+        EntityAttribute.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.playerState != null && message.hasOwnProperty("playerState")) {
-                let error = $root.spellfire.PlayerState.verify(message.playerState);
-                if (error)
-                    return "playerState." + error;
-            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                switch (message.type) {
+                default:
+                    return "type: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.name != null && message.hasOwnProperty("name"))
+                if (!$util.isString(message.name))
+                    return "name: string expected";
             return null;
         };
 
         /**
-         * Creates an EntityState message from a plain object. Also converts values to their respective internal types.
+         * Creates an EntityAttribute message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {spellfire.EntityState} EntityState
+         * @returns {spellfire.EntityAttribute} EntityAttribute
          */
-        EntityState.fromObject = function fromObject(object) {
-            if (object instanceof $root.spellfire.EntityState)
+        EntityAttribute.fromObject = function fromObject(object) {
+            if (object instanceof $root.spellfire.EntityAttribute)
                 return object;
-            let message = new $root.spellfire.EntityState();
-            if (object.playerState != null) {
-                if (typeof object.playerState !== "object")
-                    throw TypeError(".spellfire.EntityState.playerState: object expected");
-                message.playerState = $root.spellfire.PlayerState.fromObject(object.playerState);
+            let message = new $root.spellfire.EntityAttribute();
+            switch (object.type) {
+            default:
+                if (typeof object.type === "number") {
+                    message.type = object.type;
+                    break;
+                }
+                break;
+            case "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED":
+            case 0:
+                message.type = 0;
+                break;
+            case "ENTITY_ATTRIBUTE_TYPE_NAME":
+            case 1:
+                message.type = 1;
+                break;
             }
+            if (object.name != null)
+                message.name = String(object.name);
             return message;
         };
 
         /**
-         * Creates a plain object from an EntityState message. Also converts values to other types if specified.
+         * Creates a plain object from an EntityAttribute message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
-         * @param {spellfire.EntityState} message EntityState
+         * @param {spellfire.EntityAttribute} message EntityAttribute
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        EntityState.toObject = function toObject(message, options) {
+        EntityAttribute.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
-            if (options.defaults)
-                object.playerState = null;
-            if (message.playerState != null && message.hasOwnProperty("playerState"))
-                object.playerState = $root.spellfire.PlayerState.toObject(message.playerState, options);
+            if (options.defaults) {
+                object.type = options.enums === String ? "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED" : 0;
+                object.name = "";
+            }
+            if (message.type != null && message.hasOwnProperty("type"))
+                object.type = options.enums === String ? $root.spellfire.EntityAttributeType[message.type] === undefined ? message.type : $root.spellfire.EntityAttributeType[message.type] : message.type;
+            if (message.name != null && message.hasOwnProperty("name"))
+                object.name = message.name;
             return object;
         };
 
         /**
-         * Converts this EntityState to JSON.
+         * Converts this EntityAttribute to JSON.
          * @function toJSON
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        EntityState.prototype.toJSON = function toJSON() {
+        EntityAttribute.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for EntityState
+         * Gets the default type url for EntityAttribute
          * @function getTypeUrl
-         * @memberof spellfire.EntityState
+         * @memberof spellfire.EntityAttribute
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        EntityState.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        EntityAttribute.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/spellfire.EntityState";
+            return typeUrlPrefix + "/spellfire.EntityAttribute";
         };
 
-        return EntityState;
+        return EntityAttribute;
     })();
 
     spellfire.Entity = (function() {
@@ -2149,7 +1999,8 @@ export const spellfire = $root.spellfire = (() => {
          * @property {spellfire.EntityType|null} [type] Entity type
          * @property {spellfire.ICollider|null} [collider] Entity collider
          * @property {spellfire.IRenderData|null} [renderData] Entity renderData
-         * @property {spellfire.IEntityState|null} [state] Entity state
+         * @property {Array.<spellfire.EntityState>|null} [states] Entity states
+         * @property {Array.<spellfire.IEntityAttribute>|null} [attributes] Entity attributes
          */
 
         /**
@@ -2161,6 +2012,8 @@ export const spellfire = $root.spellfire = (() => {
          * @param {spellfire.IEntity=} [properties] Properties to set
          */
         function Entity(properties) {
+            this.states = [];
+            this.attributes = [];
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -2200,12 +2053,20 @@ export const spellfire = $root.spellfire = (() => {
         Entity.prototype.renderData = null;
 
         /**
-         * Entity state.
-         * @member {spellfire.IEntityState|null|undefined} state
+         * Entity states.
+         * @member {Array.<spellfire.EntityState>} states
          * @memberof spellfire.Entity
          * @instance
          */
-        Entity.prototype.state = null;
+        Entity.prototype.states = $util.emptyArray;
+
+        /**
+         * Entity attributes.
+         * @member {Array.<spellfire.IEntityAttribute>} attributes
+         * @memberof spellfire.Entity
+         * @instance
+         */
+        Entity.prototype.attributes = $util.emptyArray;
 
         /**
          * Creates a new Entity instance using the specified properties.
@@ -2239,8 +2100,15 @@ export const spellfire = $root.spellfire = (() => {
                 $root.spellfire.Collider.encode(message.collider, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.renderData != null && Object.hasOwnProperty.call(message, "renderData"))
                 $root.spellfire.RenderData.encode(message.renderData, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
-            if (message.state != null && Object.hasOwnProperty.call(message, "state"))
-                $root.spellfire.EntityState.encode(message.state, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.states != null && message.states.length) {
+                writer.uint32(/* id 5, wireType 2 =*/42).fork();
+                for (let i = 0; i < message.states.length; ++i)
+                    writer.int32(message.states[i]);
+                writer.ldelim();
+            }
+            if (message.attributes != null && message.attributes.length)
+                for (let i = 0; i < message.attributes.length; ++i)
+                    $root.spellfire.EntityAttribute.encode(message.attributes[i], writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             return writer;
         };
 
@@ -2294,7 +2162,20 @@ export const spellfire = $root.spellfire = (() => {
                         break;
                     }
                 case 5: {
-                        message.state = $root.spellfire.EntityState.decode(reader, reader.uint32());
+                        if (!(message.states && message.states.length))
+                            message.states = [];
+                        if ((tag & 7) === 2) {
+                            let end2 = reader.uint32() + reader.pos;
+                            while (reader.pos < end2)
+                                message.states.push(reader.int32());
+                        } else
+                            message.states.push(reader.int32());
+                        break;
+                    }
+                case 6: {
+                        if (!(message.attributes && message.attributes.length))
+                            message.attributes = [];
+                        message.attributes.push($root.spellfire.EntityAttribute.decode(reader, reader.uint32()));
                         break;
                     }
                 default:
@@ -2341,6 +2222,7 @@ export const spellfire = $root.spellfire = (() => {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
                     break;
                 }
             if (message.collider != null && message.hasOwnProperty("collider")) {
@@ -2353,10 +2235,26 @@ export const spellfire = $root.spellfire = (() => {
                 if (error)
                     return "renderData." + error;
             }
-            if (message.state != null && message.hasOwnProperty("state")) {
-                let error = $root.spellfire.EntityState.verify(message.state);
-                if (error)
-                    return "state." + error;
+            if (message.states != null && message.hasOwnProperty("states")) {
+                if (!Array.isArray(message.states))
+                    return "states: array expected";
+                for (let i = 0; i < message.states.length; ++i)
+                    switch (message.states[i]) {
+                    default:
+                        return "states: enum value[] expected";
+                    case 0:
+                    case 1:
+                        break;
+                    }
+            }
+            if (message.attributes != null && message.hasOwnProperty("attributes")) {
+                if (!Array.isArray(message.attributes))
+                    return "attributes: array expected";
+                for (let i = 0; i < message.attributes.length; ++i) {
+                    let error = $root.spellfire.EntityAttribute.verify(message.attributes[i]);
+                    if (error)
+                        return "attributes." + error;
+                }
             }
             return null;
         };
@@ -2386,9 +2284,13 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "PLAYER":
+            case "ENTITY_TYPE_PLAYER_GUNNER":
             case 1:
                 message.type = 1;
+                break;
+            case "ENTITY_TYPE_PLAYER_MAGE":
+            case 2:
+                message.type = 2;
                 break;
             }
             if (object.collider != null) {
@@ -2401,10 +2303,36 @@ export const spellfire = $root.spellfire = (() => {
                     throw TypeError(".spellfire.Entity.renderData: object expected");
                 message.renderData = $root.spellfire.RenderData.fromObject(object.renderData);
             }
-            if (object.state != null) {
-                if (typeof object.state !== "object")
-                    throw TypeError(".spellfire.Entity.state: object expected");
-                message.state = $root.spellfire.EntityState.fromObject(object.state);
+            if (object.states) {
+                if (!Array.isArray(object.states))
+                    throw TypeError(".spellfire.Entity.states: array expected");
+                message.states = [];
+                for (let i = 0; i < object.states.length; ++i)
+                    switch (object.states[i]) {
+                    default:
+                        if (typeof object.states[i] === "number") {
+                            message.states[i] = object.states[i];
+                            break;
+                        }
+                    case "ENTITY_STATE_UNSPECIFIED":
+                    case 0:
+                        message.states[i] = 0;
+                        break;
+                    case "ENTITY_STATE_RELOADING":
+                    case 1:
+                        message.states[i] = 1;
+                        break;
+                    }
+            }
+            if (object.attributes) {
+                if (!Array.isArray(object.attributes))
+                    throw TypeError(".spellfire.Entity.attributes: array expected");
+                message.attributes = [];
+                for (let i = 0; i < object.attributes.length; ++i) {
+                    if (typeof object.attributes[i] !== "object")
+                        throw TypeError(".spellfire.Entity.attributes: object expected");
+                    message.attributes[i] = $root.spellfire.EntityAttribute.fromObject(object.attributes[i]);
+                }
             }
             return message;
         };
@@ -2422,12 +2350,15 @@ export const spellfire = $root.spellfire = (() => {
             if (!options)
                 options = {};
             let object = {};
+            if (options.arrays || options.defaults) {
+                object.states = [];
+                object.attributes = [];
+            }
             if (options.defaults) {
                 object.id = 0;
                 object.type = options.enums === String ? "ENTITY_TYPE_UNSPECIFIED" : 0;
                 object.collider = null;
                 object.renderData = null;
-                object.state = null;
             }
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
@@ -2437,8 +2368,16 @@ export const spellfire = $root.spellfire = (() => {
                 object.collider = $root.spellfire.Collider.toObject(message.collider, options);
             if (message.renderData != null && message.hasOwnProperty("renderData"))
                 object.renderData = $root.spellfire.RenderData.toObject(message.renderData, options);
-            if (message.state != null && message.hasOwnProperty("state"))
-                object.state = $root.spellfire.EntityState.toObject(message.state, options);
+            if (message.states && message.states.length) {
+                object.states = [];
+                for (let j = 0; j < message.states.length; ++j)
+                    object.states[j] = options.enums === String ? $root.spellfire.EntityState[message.states[j]] === undefined ? message.states[j] : $root.spellfire.EntityState[message.states[j]] : message.states[j];
+            }
+            if (message.attributes && message.attributes.length) {
+                object.attributes = [];
+                for (let j = 0; j < message.attributes.length; ++j)
+                    object.attributes[j] = $root.spellfire.EntityAttribute.toObject(message.attributes[j], options);
+            }
             return object;
         };
 
@@ -2476,10 +2415,12 @@ export const spellfire = $root.spellfire = (() => {
      * @name spellfire.ServerEventType
      * @enum {number}
      * @property {number} SERVER_EVENT_TYPE_UNSPECIFIED=0 SERVER_EVENT_TYPE_UNSPECIFIED value
+     * @property {number} SERVER_EVENT_TYPE_ENTER_GAME=1 SERVER_EVENT_TYPE_ENTER_GAME value
      */
     spellfire.ServerEventType = (function() {
         const valuesById = {}, values = Object.create(valuesById);
         values[valuesById[0] = "SERVER_EVENT_TYPE_UNSPECIFIED"] = 0;
+        values[valuesById[1] = "SERVER_EVENT_TYPE_ENTER_GAME"] = 1;
         return values;
     })();
 
@@ -2490,6 +2431,7 @@ export const spellfire = $root.spellfire = (() => {
          * @memberof spellfire
          * @interface IServerEvent
          * @property {spellfire.ServerEventType|null} [type] ServerEvent type
+         * @property {number|null} [enterGamePlayerId] ServerEvent enterGamePlayerId
          */
 
         /**
@@ -2514,6 +2456,14 @@ export const spellfire = $root.spellfire = (() => {
          * @instance
          */
         ServerEvent.prototype.type = 0;
+
+        /**
+         * ServerEvent enterGamePlayerId.
+         * @member {number} enterGamePlayerId
+         * @memberof spellfire.ServerEvent
+         * @instance
+         */
+        ServerEvent.prototype.enterGamePlayerId = 0;
 
         /**
          * Creates a new ServerEvent instance using the specified properties.
@@ -2541,6 +2491,8 @@ export const spellfire = $root.spellfire = (() => {
                 writer = $Writer.create();
             if (message.type != null && Object.hasOwnProperty.call(message, "type"))
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
+            if (message.enterGamePlayerId != null && Object.hasOwnProperty.call(message, "enterGamePlayerId"))
+                writer.uint32(/* id 2, wireType 0 =*/16).uint32(message.enterGamePlayerId);
             return writer;
         };
 
@@ -2579,6 +2531,10 @@ export const spellfire = $root.spellfire = (() => {
                 switch (tag >>> 3) {
                 case 1: {
                         message.type = reader.int32();
+                        break;
+                    }
+                case 2: {
+                        message.enterGamePlayerId = reader.uint32();
                         break;
                     }
                 default:
@@ -2621,8 +2577,12 @@ export const spellfire = $root.spellfire = (() => {
                 default:
                     return "type: enum value expected";
                 case 0:
+                case 1:
                     break;
                 }
+            if (message.enterGamePlayerId != null && message.hasOwnProperty("enterGamePlayerId"))
+                if (!$util.isInteger(message.enterGamePlayerId))
+                    return "enterGamePlayerId: integer expected";
             return null;
         };
 
@@ -2649,7 +2609,13 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
+            case "SERVER_EVENT_TYPE_ENTER_GAME":
+            case 1:
+                message.type = 1;
+                break;
             }
+            if (object.enterGamePlayerId != null)
+                message.enterGamePlayerId = object.enterGamePlayerId >>> 0;
             return message;
         };
 
@@ -2666,10 +2632,14 @@ export const spellfire = $root.spellfire = (() => {
             if (!options)
                 options = {};
             let object = {};
-            if (options.defaults)
+            if (options.defaults) {
                 object.type = options.enums === String ? "SERVER_EVENT_TYPE_UNSPECIFIED" : 0;
+                object.enterGamePlayerId = 0;
+            }
             if (message.type != null && message.hasOwnProperty("type"))
                 object.type = options.enums === String ? $root.spellfire.ServerEventType[message.type] === undefined ? message.type : $root.spellfire.ServerEventType[message.type] : message.type;
+            if (message.enterGamePlayerId != null && message.hasOwnProperty("enterGamePlayerId"))
+                object.enterGamePlayerId = message.enterGamePlayerId;
             return object;
         };
 

@@ -15,7 +15,8 @@ type ConnectionCommands = {
 };
 type ConnectionMessages = {
     open: {};
-} & { [K in ServerEvent as `packet_${K["type"]}`]: Omit<ServerEvent, "type"> };
+    entity_update: { entities: PacketEntity[], timestamp: number }
+} & { [K in ServerEvent as `event_${K["type"]}`]: Omit<ServerEvent, "type"> };
 
 export class Connection
     extends Publisher<ConnectionMessages>
@@ -23,8 +24,8 @@ export class Connection
 {
     _subscribers = {
         open: [],
-        packet_initialize: [],
-        packet_update: [],
+        event_initialize: [],
+        entity_update: []
     };
     queuedOutboundPackets: Array<ClientEvent> = [];
     ws: WebSocket;
@@ -33,25 +34,24 @@ export class Connection
         this.ws = new WebSocket(wsURL);
         this.ws.binaryType = "arraybuffer";
         this.ws.onopen = (ev) => {
+            console.log("ws open");
             this.publish("open", {});
             setTimeout(() => {
                 this.sendOutboundPackets();
             }, 1000 / 30);
         };
         this.ws.onmessage = ({ data: encodedData }) => {
-            parseServerPacket(encodedData as ArrayBuffer);
-            switch (data) {
-                case "initialize":
-                    this.publish("packet_initialize", {
-                        playerId: data.client_id as number,
-                        entities: data.entities as PacketEntity[],
-                    });
-                    break;
-                case "update":
-                    this.publish("packet_update", {
-                        entities: data.entities as PacketEntity[],
-                    });
-                    break;
+            let packet = parseServerPacket(encodedData as ArrayBuffer);
+            if (packet.entities.length > 0) {
+                
+                this.publish("entity_update", { entities: packet.entities, timestamp: packet.timestamp })
+            }
+            for (const event of packet.events) {
+                switch (event.type) {
+                    case "initialize":
+                        this.publish("event_initialize", { playerID: event.playerID });
+                        break;
+                }
             }
         };
         this.ws.onclose = ({ reason }) => {};
@@ -63,9 +63,8 @@ export class Connection
         switch (command) {
             case "send":
                 switch (commandData.type) {
-                    case "enter_game":
-                        this.queuedOutboundPackets.push({ type: "enter_game" });
-                        break;
+                    case "move":
+                        this.queuedOutboundPackets.push({ type: "move", movement: commandData.movement });
                 }
                 break;
         }
