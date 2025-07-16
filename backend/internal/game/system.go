@@ -3,7 +3,9 @@ package game
 import (
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/archetype"
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/component"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/entity"
 	"github.com/kelindar/column"
+	"math/rand"
 )
 
 func (w *World) MoveEntities(dt float64) {
@@ -20,10 +22,17 @@ func (w *World) MoveEntities(dt float64) {
 			vyCol := txn.Float64("VY")
 			return txn.Range(func(idx uint32) {
 				vx, _ := vxCol.Get()
-				xCol.Merge(vx)
+				xCol.Merge(vx * dt)
 				vy, _ := vyCol.Get()
-				yCol.Merge(vy)
+				yCol.Merge(vy * dt)
 			})
 		})
 	}
+}
+
+func (w *World) SpawnBushes(dt float64) {
+	if rand.Intn(20) != 0 {
+		return
+	}
+	w.SpawnEntity(entity.Bush{})
 }

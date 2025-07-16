@@ -1,8 +1,10 @@
 package archetype
 
 import (
+	"log"
 	"math/big"
 	"strconv"
+
 	"github.com/kelindar/column"
 )
 
@@ -13,8 +15,14 @@ type Archetype struct {
 }
 
 func (a *Archetype) AddEntity(entityID uint32, insertValues func(r column.Row) error) {
+	log.Println("adding entity:", entityID)
 	a.Entities = append(a.Entities, entityID)
-	a.Columns.InsertKey(strconv.FormatUint(uint64(entityID), 16), insertValues)
+	log.Println("start row count:", a.Columns.Count())
+	err := a.Columns.InsertKey(strconv.FormatUint(uint64(entityID), 16), insertValues)
+	if err != nil {
+		log.Println("add entity err:", err)
+	}
+	log.Println("end row count:", a.Columns.Count())
 }
 
 func (a *Archetype) RemoveEntity(entityID uint32) {

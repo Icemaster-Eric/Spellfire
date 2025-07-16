@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"fmt"
 	"time"
 
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/game"
@@ -16,7 +17,13 @@ func generateRandomUsername() string {
 	adjectives := []string{"Stinky", "Nerdy", "Sneaky", "PigHeaded", "Jealous", "Lazy", "Grumpy", "Silly"}
 	nouns := []string{"Nerd", "Apple", "Banana", "Sock", "Programmer", "Weirdo", "Player"}
 	names := []string{"Joe", "Bob", "Jack", "Josh", "James", "David", "John", "Robert", "Michael"}
-	return adjectives[rand.Intn(len(adjectives))] + nouns[rand.Intn(len(nouns))] + names[rand.Intn(len(names))]
+
+	username := adjectives[rand.Intn(len(adjectives))] +
+		nouns[rand.Intn(len(nouns))] +
+		names[rand.Intn(len(names))]
+
+	number := rand.Intn(10000)
+	return fmt.Sprintf("%s%04d", username, number)
 }
 
 const (
@@ -57,11 +64,9 @@ func (s *Server) Run() {
 				continue
 			}
 			conn.WriteMessage(gws.OpcodeBinary, msg)
-		}
 
-		// reset player packets
-		for _, player := range s.World.Players {
-			player.WriteUpdate(func(pkt *pb.ServerPacket) {
+			// immediately reset after having sent the updated information to that player
+			p.WriteUpdate(func(pkt *pb.ServerPacket) {
 				pkt.Reset()
 			})
 		}
@@ -109,9 +114,19 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 	name := MustLoad[string](socket.Session(), "name")
 
+	if len(s.World.Players[name].Inputs) == 3 {
+		// drop packet if more than 3 client packets queued
+		log.Println("Dropped Packet:", name)
+		return
+	}
+
 	packet := &pb.ClientPacket{}
 	if err := proto.Unmarshal(message.Bytes(), packet); err != nil {
-		log.Fatalln("Failed to parse address book:", err)
+		log.Fatalln("Failed to parse:", err)
+	}
+
+	if rand.Intn(60) == 1 {
+		log.Println(packet)
 	}
 
 	s.World.Players[name].Inputs<-packet

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"log"
 	"math"
 	"math/big"
 	"strconv"
@@ -29,7 +30,7 @@ type Player struct {
 func NewPlayer(id uint32) *Player {
 	return &Player{
 		ID:     id,
-		Inputs: make(chan *pb.ClientPacket, 1),
+		Inputs: make(chan *pb.ClientPacket, 3),
 		packet: &pb.ServerPacket{},
 	}
 }
@@ -49,22 +50,22 @@ func (p *Player) ReadUpdate() *pb.ServerPacket {
 
 type World struct {
 	NextEntityID uint32
-	Archetypes   map[*big.Int]*archetype.Archetype
+	Archetypes   map[string]*archetype.Archetype
 	Players      map[string]*Player
 }
 
 func NewWorld() *World {
-	archetypes := make(map[*big.Int]*archetype.Archetype)
+	archetypes := make(map[string]*archetype.Archetype)
 	players := make(map[string]*Player)
 
 	return &World{
 		Archetypes: archetypes,
-		Players: players,
+		Players:    players,
 	}
 }
 
 func (w *World) GetArchetype(signature *big.Int) *archetype.Archetype {
-	if a, ok := w.Archetypes[signature]; ok {
+	if a, ok := w.Archetypes[signature.Text(16)]; ok {
 		return a
 	}
 	collection := column.NewCollection()
@@ -79,7 +80,7 @@ func (w *World) GetArchetype(signature *big.Int) *archetype.Archetype {
 		Entities:  make([]uint32, 0),
 		Columns:   collection,
 	}
-	w.Archetypes[newSignature] = a
+	w.Archetypes[newSignature.Text(16)] = a
 	return a
 }
 
@@ -87,7 +88,8 @@ func (w *World) QueryArchetypes(withSig *big.Int, withoutSig *big.Int) (archs []
 	checker := archetype.NewSignatureChecker(withSig, withoutSig)
 
 	for signature, arch := range w.Archetypes {
-		if checker.MatchesWithWithout(signature) {
+		intSig, _ := new(big.Int).SetString(signature, 16)
+		if checker.MatchesWithWithout(intSig) {
 			archs = append(archs, arch)
 		}
 	}
@@ -107,13 +109,14 @@ func (w *World) SpawnEntity(e entity.Entity) uint32 {
 	w.NextEntityID += 1
 
 	a := w.GetArchetype(e.GetSignature())
+	log.Println("spawn a:", a)
 	a.AddEntity(entityID, e.Insert)
 
 	return entityID
 }
 
 func (w *World) DespawnEntity(entityID uint32, signature *big.Int) {
-	a, ok := w.Archetypes[signature]
+	a, ok := w.Archetypes[signature.Text(16)]
 	if ok {
 		a.RemoveEntity(entityID)
 	}
@@ -121,17 +124,18 @@ func (w *World) DespawnEntity(entityID uint32, signature *big.Int) {
 
 func (w *World) SpawnPlayer(name string) {
 	e := entity.Player{
-		NAME: name,
+		NAME:   name,
+		RADIUS: 0.5,
 	}
 	entityID := w.SpawnEntity(e)
 	p := NewPlayer(entityID)
-	w.Players[name] = p
 	p.WriteUpdate(func(pkt *pb.ServerPacket) {
 		pkt.Events = append(pkt.Events, &pb.ServerEvent{
-			Type:              pb.ServerEventType_SERVER_EVENT_TYPE_ENTER_GAME,
+			Type:              pb.ServerEvent_ENTER_GAME,
 			EnterGamePlayerId: entityID,
 		})
 	})
+	w.Players[name] = p
 }
 
 func (w *World) DespawnPlayer(name string) {
@@ -145,6 +149,7 @@ func (w *World) DespawnPlayer(name string) {
 func (w *World) MovePlayer(name string, movement *pb.Vec2) {
 	l := math.Hypot(movement.X, movement.Y)
 	nx, ny := movement.X/l, movement.Y/l
+	log.Println("movement:", nx, ny)
 	p, ok := w.Players[name]
 	if ok {
 		a := w.GetArchetype(entity.PlayerSignature())
@@ -158,30 +163,37 @@ func (w *World) MovePlayer(name string, movement *pb.Vec2) {
 
 func (w *World) UpdatePlayers() {
 	a := w.GetArchetype(entity.PlayerSignature())
-	a.Columns.Query(func(txn *column.Txn) error {
+	err := a.Columns.Query(func(txn *column.Txn) error {
+		entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")
 		xCol := txn.Float64("X")
 		yCol := txn.Float64("Y")
 		vxCol := txn.Float64("VX")
 		vyCol := txn.Float64("VY")
 		rotationCol := txn.Float64("ROTATION")
+		radiusCol := txn.Float64("RADIUS")
 
 		return txn.Range(func(idx uint32) {
+			key, _ := entityIDCol.Get()
+			entityID64, _ := strconv.ParseUint(key, 16, 32)
+			entityID := uint32(entityID64)
 			name, _ := nameCol.Get()
 			x, _ := xCol.Get()
 			y, _ := yCol.Get()
 			vx, _ := vxCol.Get()
 			vy, _ := vyCol.Get()
 			rotation, _ := rotationCol.Get()
-			var radius float64 = 0.5 // temporary
+			radius, _ := radiusCol.Get()
+
+			log.Println("x:", x, "y:", y)
 
 			for _, player := range w.Players {
 				player.WriteUpdate(func(pkt *pb.ServerPacket) {
 					pkt.Entities = append(pkt.Entities, &pb.Entity{
-						Id:   player.ID,
-						Type: pb.EntityType_ENTITY_TYPE_PLAYER_GUNNER,
+						Id:   entityID,
+						Type: pb.Entity_GUNNER,
 						Collider: &pb.Collider{
-							Type:     pb.ColliderType_COLLIDER_TYPE_CIRCLE,
+							Type:     pb.Collider_CIRCLE,
 							Rotation: rotation,
 							Radius:   radius,
 							Position: &pb.Vec2{X: x, Y: y},
@@ -192,7 +204,7 @@ func (w *World) UpdatePlayers() {
 						},
 						Attributes: []*pb.EntityAttribute{
 							{
-								Type: pb.EntityAttributeType_ENTITY_ATTRIBUTE_TYPE_NAME,
+								Type: pb.EntityAttribute_NAME,
 								Name: name,
 							},
 						},
@@ -201,10 +213,13 @@ func (w *World) UpdatePlayers() {
 			}
 		})
 	})
+	if err != nil {
+		log.Println("err:", err)
+	}
 	// add timestamps to each packet
 	for _, player := range w.Players {
 		player.WriteUpdate(func(pkt *pb.ServerPacket) {
-			pkt.Timestamp = &pb.Timestamp{Ms:uint64(time.Millisecond)}
+			pkt.Timestamp = &pb.Timestamp{Ms: uint64(time.Now().UnixMilli())}
 		})
 	}
 }
@@ -216,7 +231,7 @@ func (w *World) Tick(dt float64) {
 			packet := <-player.Inputs
 			for _, event := range packet.Events {
 				switch event.Type {
-				case pb.ClientEventType_MOVE:
+				case pb.ClientEvent_MOVE:
 					w.MovePlayer(name, event.Movement)
 				}
 			}

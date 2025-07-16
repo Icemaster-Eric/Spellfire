@@ -7,7 +7,7 @@ import (
 )
 
 type Player struct {
-    X, Y, VX, VY, ROTATION float64
+    X, Y, VX, VY, ROTATION, RADIUS float64
     NAME string
 }
 
@@ -15,11 +15,13 @@ var playerSignature *big.Int
 
 func init() {
     comps := []int{
+        component.ENTITY_ID,
         component.X,
         component.Y,
         component.VX,
         component.VY,
         component.ROTATION,
+        component.RADIUS,
         component.NAME,
         component.IS_PLAYER,
     }
@@ -45,6 +47,7 @@ func (e Player) Insert(r column.Row) error {
     r.SetFloat64("VX", e.VX)
     r.SetFloat64("VY", e.VY)
     r.SetFloat64("ROTATION", e.ROTATION)
+    r.SetFloat64("RADIUS", e.RADIUS)
     r.SetString("NAME", e.NAME)
     r.SetBool("IS_PLAYER", true)
     return nil
