@@ -6,8 +6,7 @@ export namespace spellfire {
     /** ClientEventType enum. */
     enum ClientEventType {
         CLIENT_EVENT_TYPE_UNSPECIFIED = 0,
-        ENTER_GAME = 1,
-        MOVE = 2
+        MOVE = 1
     }
 
     /** Properties of a ClientEvent. */
@@ -416,12 +415,6 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** EntityType enum. */
-    enum EntityType {
-        ENTITY_TYPE_UNSPECIFIED = 0,
-        PLAYER = 1
-    }
-
     /** ColliderType enum. */
     enum ColliderType {
         COLLIDER_TYPE_UNSPECIFIED = 0,
@@ -452,6 +445,9 @@ export namespace spellfire {
 
         /** Collider velocity */
         velocity?: (spellfire.IVec2|null);
+
+        /** Collider isStatic */
+        isStatic?: (boolean|null);
     }
 
     /** Represents a Collider. */
@@ -483,6 +479,9 @@ export namespace spellfire {
 
         /** Collider velocity. */
         public velocity?: (spellfire.IVec2|null);
+
+        /** Collider isStatic. */
+        public isStatic: boolean;
 
         /**
          * Creates a new Collider instance using the specified properties.
@@ -565,10 +564,15 @@ export namespace spellfire {
     /** Sprite enum. */
     enum Sprite {
         SPRITE_NONE = 0,
-        SPRITE_PLAYER = 1,
-        SPRITE_BUSH = 2,
-        SPRITE_TREE = 3,
-        SPRITE_ROCK = 4
+        SPRITE_PLAYER_GUNNER = 1,
+        SPRITE_PLAYER_MAGE = 2,
+        SPRITE_BUSH_1 = 3,
+        SPRITE_TREE_1 = 4,
+        SPRITE_TREE_2 = 5,
+        SPRITE_ROCK_1 = 6,
+        SPRITE_ROCK_2 = 7,
+        SPRITE_ROCK_3 = 8,
+        SPRITE_ROCK_4 = 9
     }
 
     /** Properties of a RenderData. */
@@ -668,212 +672,122 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** EntityMode enum. */
-    enum EntityMode {
-        ENTITY_MODE_DEFAULT = 0,
-        ENTITY_MODE_PLAYER_WIELDING_PRIMARY_GUN = 1,
-        ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_1 = 2,
-        ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_2 = 3,
-        ENTITY_MODE_PLAYER_WIELDING_TACTICAL_ITEM_3 = 4,
-        ENTITY_MODE_PLAYER_RELOADING = 5,
-        ENTITY_MODE_BUSH_SHAKING = 6
+    /** EntityType enum. */
+    enum EntityType {
+        ENTITY_TYPE_UNSPECIFIED = 0,
+        ENTITY_TYPE_PLAYER_GUNNER = 1,
+        ENTITY_TYPE_PLAYER_MAGE = 2
     }
 
-    /** Gun enum. */
-    enum Gun {
-        GUN_UNSPECIFIED = 0,
-        GUN_AK47 = 1,
-        GUN_M4 = 2
+    /** EntityState enum. */
+    enum EntityState {
+        ENTITY_STATE_UNSPECIFIED = 0,
+        ENTITY_STATE_RELOADING = 1
     }
 
-    /** Properties of a PlayerState. */
-    interface IPlayerState {
-
-        /** PlayerState playerGun */
-        playerGun?: (spellfire.Gun|null);
+    /** EntityAttributeType enum. */
+    enum EntityAttributeType {
+        ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0,
+        ENTITY_ATTRIBUTE_TYPE_NAME = 1
     }
 
-    /** Represents a PlayerState. */
-    class PlayerState implements IPlayerState {
+    /** Properties of an EntityAttribute. */
+    interface IEntityAttribute {
+
+        /** EntityAttribute type */
+        type?: (spellfire.EntityAttributeType|null);
+
+        /** EntityAttribute name */
+        name?: (string|null);
+    }
+
+    /** Represents an EntityAttribute. */
+    class EntityAttribute implements IEntityAttribute {
 
         /**
-         * Constructs a new PlayerState.
+         * Constructs a new EntityAttribute.
          * @param [properties] Properties to set
          */
-        constructor(properties?: spellfire.IPlayerState);
+        constructor(properties?: spellfire.IEntityAttribute);
 
-        /** PlayerState playerGun. */
-        public playerGun: spellfire.Gun;
+        /** EntityAttribute type. */
+        public type: spellfire.EntityAttributeType;
+
+        /** EntityAttribute name. */
+        public name: string;
 
         /**
-         * Creates a new PlayerState instance using the specified properties.
+         * Creates a new EntityAttribute instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns PlayerState instance
+         * @returns EntityAttribute instance
          */
-        public static create(properties?: spellfire.IPlayerState): spellfire.PlayerState;
+        public static create(properties?: spellfire.IEntityAttribute): spellfire.EntityAttribute;
 
         /**
-         * Encodes the specified PlayerState message. Does not implicitly {@link spellfire.PlayerState.verify|verify} messages.
-         * @param message PlayerState message or plain object to encode
+         * Encodes the specified EntityAttribute message. Does not implicitly {@link spellfire.EntityAttribute.verify|verify} messages.
+         * @param message EntityAttribute message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: spellfire.IPlayerState, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: spellfire.IEntityAttribute, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified PlayerState message, length delimited. Does not implicitly {@link spellfire.PlayerState.verify|verify} messages.
-         * @param message PlayerState message or plain object to encode
+         * Encodes the specified EntityAttribute message, length delimited. Does not implicitly {@link spellfire.EntityAttribute.verify|verify} messages.
+         * @param message EntityAttribute message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: spellfire.IPlayerState, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: spellfire.IEntityAttribute, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a PlayerState message from the specified reader or buffer.
+         * Decodes an EntityAttribute message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns PlayerState
+         * @returns EntityAttribute
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): spellfire.PlayerState;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): spellfire.EntityAttribute;
 
         /**
-         * Decodes a PlayerState message from the specified reader or buffer, length delimited.
+         * Decodes an EntityAttribute message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns PlayerState
+         * @returns EntityAttribute
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): spellfire.PlayerState;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): spellfire.EntityAttribute;
 
         /**
-         * Verifies a PlayerState message.
+         * Verifies an EntityAttribute message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a PlayerState message from a plain object. Also converts values to their respective internal types.
+         * Creates an EntityAttribute message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns PlayerState
+         * @returns EntityAttribute
          */
-        public static fromObject(object: { [k: string]: any }): spellfire.PlayerState;
+        public static fromObject(object: { [k: string]: any }): spellfire.EntityAttribute;
 
         /**
-         * Creates a plain object from a PlayerState message. Also converts values to other types if specified.
-         * @param message PlayerState
+         * Creates a plain object from an EntityAttribute message. Also converts values to other types if specified.
+         * @param message EntityAttribute
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: spellfire.PlayerState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: spellfire.EntityAttribute, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this PlayerState to JSON.
+         * Converts this EntityAttribute to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for PlayerState
-         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-         * @returns The default type url
-         */
-        public static getTypeUrl(typeUrlPrefix?: string): string;
-    }
-
-    /** Properties of an EntityState. */
-    interface IEntityState {
-
-        /** EntityState playerState */
-        playerState?: (spellfire.IPlayerState|null);
-    }
-
-    /** Represents an EntityState. */
-    class EntityState implements IEntityState {
-
-        /**
-         * Constructs a new EntityState.
-         * @param [properties] Properties to set
-         */
-        constructor(properties?: spellfire.IEntityState);
-
-        /** EntityState playerState. */
-        public playerState?: (spellfire.IPlayerState|null);
-
-        /**
-         * Creates a new EntityState instance using the specified properties.
-         * @param [properties] Properties to set
-         * @returns EntityState instance
-         */
-        public static create(properties?: spellfire.IEntityState): spellfire.EntityState;
-
-        /**
-         * Encodes the specified EntityState message. Does not implicitly {@link spellfire.EntityState.verify|verify} messages.
-         * @param message EntityState message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encode(message: spellfire.IEntityState, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Encodes the specified EntityState message, length delimited. Does not implicitly {@link spellfire.EntityState.verify|verify} messages.
-         * @param message EntityState message or plain object to encode
-         * @param [writer] Writer to encode to
-         * @returns Writer
-         */
-        public static encodeDelimited(message: spellfire.IEntityState, writer?: $protobuf.Writer): $protobuf.Writer;
-
-        /**
-         * Decodes an EntityState message from the specified reader or buffer.
-         * @param reader Reader or buffer to decode from
-         * @param [length] Message length if known beforehand
-         * @returns EntityState
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): spellfire.EntityState;
-
-        /**
-         * Decodes an EntityState message from the specified reader or buffer, length delimited.
-         * @param reader Reader or buffer to decode from
-         * @returns EntityState
-         * @throws {Error} If the payload is not a reader or valid buffer
-         * @throws {$protobuf.util.ProtocolError} If required fields are missing
-         */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): spellfire.EntityState;
-
-        /**
-         * Verifies an EntityState message.
-         * @param message Plain object to verify
-         * @returns `null` if valid, otherwise the reason why it is not
-         */
-        public static verify(message: { [k: string]: any }): (string|null);
-
-        /**
-         * Creates an EntityState message from a plain object. Also converts values to their respective internal types.
-         * @param object Plain object
-         * @returns EntityState
-         */
-        public static fromObject(object: { [k: string]: any }): spellfire.EntityState;
-
-        /**
-         * Creates a plain object from an EntityState message. Also converts values to other types if specified.
-         * @param message EntityState
-         * @param [options] Conversion options
-         * @returns Plain object
-         */
-        public static toObject(message: spellfire.EntityState, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-        /**
-         * Converts this EntityState to JSON.
-         * @returns JSON object
-         */
-        public toJSON(): { [k: string]: any };
-
-        /**
-         * Gets the default type url for EntityState
+         * Gets the default type url for EntityAttribute
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
@@ -895,8 +809,11 @@ export namespace spellfire {
         /** Entity renderData */
         renderData?: (spellfire.IRenderData|null);
 
-        /** Entity state */
-        state?: (spellfire.IEntityState|null);
+        /** Entity states */
+        states?: (spellfire.EntityState[]|null);
+
+        /** Entity attributes */
+        attributes?: (spellfire.IEntityAttribute[]|null);
     }
 
     /** Represents an Entity. */
@@ -920,8 +837,11 @@ export namespace spellfire {
         /** Entity renderData. */
         public renderData?: (spellfire.IRenderData|null);
 
-        /** Entity state. */
-        public state?: (spellfire.IEntityState|null);
+        /** Entity states. */
+        public states: spellfire.EntityState[];
+
+        /** Entity attributes. */
+        public attributes: spellfire.IEntityAttribute[];
 
         /**
          * Creates a new Entity instance using the specified properties.
@@ -1003,7 +923,8 @@ export namespace spellfire {
 
     /** ServerEventType enum. */
     enum ServerEventType {
-        SERVER_EVENT_TYPE_UNSPECIFIED = 0
+        SERVER_EVENT_TYPE_UNSPECIFIED = 0,
+        SERVER_EVENT_TYPE_ENTER_GAME = 1
     }
 
     /** Properties of a ServerEvent. */
@@ -1011,6 +932,9 @@ export namespace spellfire {
 
         /** ServerEvent type */
         type?: (spellfire.ServerEventType|null);
+
+        /** ServerEvent enterGamePlayerId */
+        enterGamePlayerId?: (number|null);
     }
 
     /** Represents a ServerEvent. */
@@ -1024,6 +948,9 @@ export namespace spellfire {
 
         /** ServerEvent type. */
         public type: spellfire.ServerEventType;
+
+        /** ServerEvent enterGamePlayerId. */
+        public enterGamePlayerId: number;
 
         /**
          * Creates a new ServerEvent instance using the specified properties.

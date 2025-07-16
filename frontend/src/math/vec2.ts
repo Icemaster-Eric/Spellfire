@@ -1,25 +1,20 @@
-export type Vec2 = [number, number];
+export type Vec2 = Float64Array;
 
-const vec2Funcs = {
+const vec2Funcs = Object.freeze({
     __proto__: null,
     add,
     fromAngle,
     toPoint,
     subtract,
-    invert,
-    hadamard,
     scale,
-    angle,
     normalize,
     distance,
     dot,
     magnitude,
-    rotate,
-    reflect,
-    perpendicular,
-    project,
     lerp,
-};
+    eq,
+    ZERO: new Float64Array([0, 0]) as Vec2
+});
 
 type Vec2FnType = ((point: { x: number; y: number }) => Vec2) &
     ((x: number, y?: number) => Vec2) &
@@ -30,14 +25,14 @@ const vec2: Vec2FnType = ((
 ): Vec2 => {
     if (typeof xOrPoint === "object") {
         let { x, y } = xOrPoint;
-        return [x, y];
+        return new Float64Array([x, y]);
     }
-    return [xOrPoint, y ?? xOrPoint];
+    return new Float64Array([xOrPoint, y ?? xOrPoint]);
 }) as Vec2FnType;
 Object.assign(vec2, vec2Funcs);
 
 function fromAngle(angle: number, length = 1): Vec2 {
-    return [Math.cos(angle) * length, Math.sin(angle) * length];
+    return vec2(Math.cos(angle) * length, Math.sin(angle) * length);
 }
 function toPoint([x, y]: Vec2): { x: number; y: number } {
     return {
@@ -45,69 +40,87 @@ function toPoint([x, y]: Vec2): { x: number; y: number } {
         y,
     };
 }
-function add(a: Vec2, b: Vec2): Vec2 {
-    return [a[0] + b[0], a[1] + b[1]];
+function eq(a: Vec2, b: Vec2): boolean {
+    return (
+        Math.abs(a[0] - b[0]) < Number.EPSILON &&
+        Math.abs(a[1] - b[1]) < Number.EPSILON
+    );
+}
+function add(a: Vec2, b: Vec2, out: Vec2 = vec2(0)): Vec2 {
+    out[0] = a[0] + b[0];
+    out[1] = a[1] + b[1];
+    return out;
 }
 
-function subtract(a: Vec2, b: Vec2): Vec2 {
-    return [a[0] - b[0], a[1] - b[1]];
+function subtract(a: Vec2, b: Vec2, out: Vec2 = vec2(0)): Vec2 {
+    out[0] = a[0] - b[0];
+    out[1] = a[1] - b[1];
+    return out;
 }
 
-function hadamard(a: Vec2, b: Vec2): Vec2 {
-    return [a[0] * b[0], a[1] * b[1]];
+function scale(a: Vec2, scalar: number, out: Vec2 = vec2(0)): Vec2 {
+    out[0] = a[0] * scalar;
+    out[1] = a[1] * scalar;
+    return out;
 }
 
-function invert(a: Vec2): Vec2 {
-    return [1/ a[0], 1/a[1]];
+function magnitude(a: Vec2): number {
+    return Math.hypot(a[0], a[1]);
 }
 
-function scale(a: Vec2, scalar: number): Vec2 {
-    return [a[0] * scalar, a[1] * scalar];
+function normalize(a: Vec2, out: Vec2 = vec2(0)): Vec2 {
+    const mag = magnitude(a);
+    if (mag === 0) {
+        out[0] = 0;
+        out[1] = 0;
+    } else {
+        out[0] = a[0] / mag;
+        out[1] = a[1] / mag;
+    }
+    return out;
 }
 
-function angle(v: Vec2): number {
-    return Math.atan2(v[1], v[0]);
-}
-
-function normalize(v: Vec2): Vec2 {
-    const length = Math.hypot(v[0], v[1]);
-    return length === 0 ? [0, 0] : [v[0] / length, v[1] / length];
-}
-
-function distance(a: Vec2, b: Vec2): number {
-    return Math.hypot(b[0] - a[0], b[1] - a[1]);
-}
 function dot(a: Vec2, b: Vec2): number {
     return a[0] * b[0] + a[1] * b[1];
 }
 
-function magnitude(v: Vec2): number {
-    return Math.hypot(v[0], v[1]);
+function distance(a: Vec2, b: Vec2): number {
+    const dx = a[0] - b[0];
+    const dy = a[1] - b[1];
+    return Math.hypot(dx, dy);
 }
 
-function rotate(v: Vec2, radians: number): Vec2 {
-    const cos = Math.cos(radians);
-    const sin = Math.sin(radians);
-    return [v[0] * cos - v[1] * sin, v[0] * sin + v[1] * cos];
+function lerp(a: Vec2, b: Vec2, t: number, out: Vec2 = vec2(0)): Vec2 {
+    out[0] = a[0] + (b[0] - a[0]) * t;
+    out[1] = a[1] + (b[1] - a[1]) * t;
+    return out;
 }
 
-function reflect(v: Vec2, normal: Vec2): Vec2 {
-    const d = dot(v, normal);
-    return subtract(v, scale(normal, 2 * d));
+export function rotate(a: Vec2, angleRad: number, out: Vec2 = vec2(0)): Vec2 {
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    const x = a[0],
+        y = a[1];
+    out[0] = x * cos - y * sin;
+    out[1] = x * sin + y * cos;
+    return out;
 }
 
-function perpendicular(v: Vec2): Vec2 {
-    return [-v[1], v[0]];
+export function angle(a: Vec2): number {
+    return Math.atan2(a[1], a[0]);
 }
 
-function project(v: Vec2, onto: Vec2): Vec2 {
-    const ontoNorm = normalize(onto);
-    const dotProd = dot(v, ontoNorm);
-    return scale(ontoNorm, dotProd);
+export function angleBetween(a: Vec2, b: Vec2): number {
+    const dotProd = dot(a, b);
+    const magA = magnitude(a);
+    const magB = magnitude(b);
+    return Math.acos(Math.min(Math.max(dotProd / (magA * magB), -1), 1));
 }
 
-function lerp(a: Vec2, b: Vec2, t: number): Vec2 {
-    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+export function invert(a: Vec2, out: Vec2 = vec2(0)): Vec2 {
+    out[0] = -a[0];
+    out[1] = -a[1];
+    return out;
 }
 
 export { vec2 };
