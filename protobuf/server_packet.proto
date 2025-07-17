@@ -8,30 +8,31 @@ option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;
 message Collider {
   enum ColliderType {
     COLLIDER_TYPE_UNSPECIFIED = 0;
-    CIRCLE = 1;
-    RECT = 2;
+    POINT = 1;
+    CIRCLE = 2;
+    RECT = 3;
   }
   ColliderType type = 1;
   double rotation = 2;
-  double width = 3;
-  double height = 4;
-  double radius = 5;
-  Vec2 position = 6;
-  Vec2 velocity = 7;
-  bool is_static = 8;
+  Vec2 size = 3;
+  double radius = 4;
+  Vec2 position = 5;
+  Vec2 velocity = 6;
+  bool is_static = 7;
 }
 
 enum Sprite {
   SPRITE_UNSPECIFIED = 0;
   SPRITE_PLAYER_GUNNER = 1;
   SPRITE_PLAYER_MAGE = 2;
-  SPRITE_BUSH_1 = 3;
-  SPRITE_TREE_1 = 4;
-  SPRITE_TREE_2 = 5;
-  SPRITE_ROCK_1 = 6;
-  SPRITE_ROCK_2 = 7;
-  SPRITE_ROCK_3 = 8;
-  SPRITE_ROCK_4 = 9;
+  SPRITE_BULLET_1 = 3;
+  SPRITE_BUSH_1 = 4;
+  SPRITE_TREE_1 = 5;
+  SPRITE_TREE_2 = 6;
+  SPRITE_ROCK_1 = 7;
+  SPRITE_ROCK_2 = 8;
+  SPRITE_ROCK_3 = 9;
+  SPRITE_ROCK_4 = 10;
 }
 
 message RenderData { Sprite sprite = 1; }
@@ -59,6 +60,10 @@ message Entity {
     ENTITY_TYPE_UNSPECIFIED = 0;
     GUNNER = 1;
     MAGE = 2;
+    BULLET = 3;
+    BUSH = 4;
+    TREE = 5;
+    ROCK = 6;
   }
   enum EntityState {
     ENTITY_STATE_UNSPECIFIED = 0;

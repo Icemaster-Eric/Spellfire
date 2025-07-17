@@ -128,7 +128,8 @@ func (x *ClientEvent) GetMovement() *Vec2 {
 type ClientPacket struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Timestamp     *Timestamp             `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	Events        []*ClientEvent         `protobuf:"bytes,2,rep,name=events,proto3" json:"events,omitempty"`
+	Cursor        *Vec2                  `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Events        []*ClientEvent         `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -170,6 +171,13 @@ func (x *ClientPacket) GetTimestamp() *Timestamp {
 	return nil
 }
 
+func (x *ClientPacket) GetCursor() *Vec2 {
+	if x != nil {
+		return x.Cursor
+	}
+	return nil
+}
+
 func (x *ClientPacket) GetEvents() []*ClientEvent {
 	if x != nil {
 		return x.Events
@@ -190,10 +198,11 @@ const file_client_packet_proto_rawDesc = "" +
 	"\x04MOVE\x10\x01\x12\x0e\n" +
 	"\n" +
 	"START_FIRE\x10\x02\x12\r\n" +
-	"\tSTOP_FIRE\x10\x03\"r\n" +
+	"\tSTOP_FIRE\x10\x03\"\x9b\x01\n" +
 	"\fClientPacket\x122\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12.\n" +
-	"\x06events\x18\x02 \x03(\v2\x16.spellfire.ClientEventR\x06eventsB?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
+	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12'\n" +
+	"\x06cursor\x18\x02 \x01(\v2\x0f.spellfire.Vec2R\x06cursor\x12.\n" +
+	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ClientEventR\x06eventsB?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
 
 var (
 	file_client_packet_proto_rawDescOnce sync.Once
@@ -220,12 +229,13 @@ var file_client_packet_proto_depIdxs = []int32{
 	0, // 0: spellfire.ClientEvent.type:type_name -> spellfire.ClientEvent.ClientEventType
 	3, // 1: spellfire.ClientEvent.movement:type_name -> spellfire.Vec2
 	4, // 2: spellfire.ClientPacket.timestamp:type_name -> spellfire.Timestamp
-	1, // 3: spellfire.ClientPacket.events:type_name -> spellfire.ClientEvent
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 3: spellfire.ClientPacket.cursor:type_name -> spellfire.Vec2
+	1, // 4: spellfire.ClientPacket.events:type_name -> spellfire.ClientEvent
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_client_packet_proto_init() }

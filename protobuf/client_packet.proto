@@ -18,5 +18,6 @@ message ClientEvent {
 
 message ClientPacket {
   Timestamp timestamp = 1;
-  repeated ClientEvent events = 2;
+  Vec2 cursor = 2;
+  repeated ClientEvent events = 3;
 }
