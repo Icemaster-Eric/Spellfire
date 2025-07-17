@@ -537,7 +537,7 @@ type EntityAttribute struct {
 	state         protoimpl.MessageState              `protogen:"open.v1"`
 	Type          EntityAttribute_EntityAttributeType `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.EntityAttribute_EntityAttributeType" json:"type,omitempty"`
 	Name          string                              `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Health        uint32                              `protobuf:"varint,3,opt,name=health,proto3" json:"health,omitempty"`
+	Health        float32                             `protobuf:"fixed32,3,opt,name=health,proto3" json:"health,omitempty"`
 	Gun           Gun                                 `protobuf:"varint,4,opt,name=gun,proto3,enum=spellfire.Gun" json:"gun,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -587,7 +587,7 @@ func (x *EntityAttribute) GetName() string {
 	return ""
 }
 
-func (x *EntityAttribute) GetHealth() uint32 {
+func (x *EntityAttribute) GetHealth() float32 {
 	if x != nil {
 		return x.Health
 	}
@@ -822,7 +822,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x0fEntityAttribute\x12B\n" +
 	"\x04type\x18\x01 \x01(\x0e2..spellfire.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06health\x18\x03 \x01(\rR\x06health\x12 \n" +
+	"\x06health\x18\x03 \x01(\x02R\x06health\x12 \n" +
 	"\x03gun\x18\x04 \x01(\x0e2\x0e.spellfire.GunR\x03gun\"[\n" +
 	"\x13EntityAttributeType\x12%\n" +
 	"!ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +

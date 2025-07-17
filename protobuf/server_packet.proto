@@ -51,7 +51,7 @@ message EntityAttribute {
   }
   EntityAttributeType type = 1;
   string name = 2;
-  uint32 health = 3;
+  float health = 3;
   Gun gun = 4;
 }
 
