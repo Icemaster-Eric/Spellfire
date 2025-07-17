@@ -36,13 +36,22 @@ enum Sprite {
 
 message RenderData { Sprite sprite = 1; }
 
+enum Gun {
+  GUN_UNSPECIFIED = 0;
+  GUN_AUTOMATIC_RIFLE = 1;
+}
+
 message EntityAttribute {
   enum EntityAttributeType {
     ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0;
     NAME = 1;
+    HEALTH = 2;
+    GUN = 3;
   }
   EntityAttributeType type = 1;
   string name = 2;
+  uint32 health = 3;
+  Gun gun = 4;
 }
 
 message Entity {
