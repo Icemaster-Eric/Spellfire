@@ -199,6 +199,7 @@ const (
 	EntityAttribute_NAME                              EntityAttribute_EntityAttributeType = 1
 	EntityAttribute_HEALTH                            EntityAttribute_EntityAttributeType = 2
 	EntityAttribute_GUN                               EntityAttribute_EntityAttributeType = 3
+	EntityAttribute_BULLET                            EntityAttribute_EntityAttributeType = 4
 )
 
 // Enum value maps for EntityAttribute_EntityAttributeType.
@@ -208,12 +209,14 @@ var (
 		1: "NAME",
 		2: "HEALTH",
 		3: "GUN",
+		4: "BULLET",
 	}
 	EntityAttribute_EntityAttributeType_value = map[string]int32{
 		"ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED": 0,
 		"NAME":                              1,
 		"HEALTH":                            2,
 		"GUN":                               3,
+		"BULLET":                            4,
 	}
 )
 
@@ -537,8 +540,9 @@ type EntityAttribute struct {
 	state         protoimpl.MessageState              `protogen:"open.v1"`
 	Type          EntityAttribute_EntityAttributeType `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.EntityAttribute_EntityAttributeType" json:"type,omitempty"`
 	Name          string                              `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Health        float32                             `protobuf:"fixed32,3,opt,name=health,proto3" json:"health,omitempty"`
+	Health        float64                             `protobuf:"fixed64,3,opt,name=health,proto3" json:"health,omitempty"`
 	Gun           Gun                                 `protobuf:"varint,4,opt,name=gun,proto3,enum=spellfire.Gun" json:"gun,omitempty"`
+	Damage        float64                             `protobuf:"fixed64,5,opt,name=damage,proto3" json:"damage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -587,7 +591,7 @@ func (x *EntityAttribute) GetName() string {
 	return ""
 }
 
-func (x *EntityAttribute) GetHealth() float32 {
+func (x *EntityAttribute) GetHealth() float64 {
 	if x != nil {
 		return x.Health
 	}
@@ -599,6 +603,13 @@ func (x *EntityAttribute) GetGun() Gun {
 		return x.Gun
 	}
 	return Gun_GUN_UNSPECIFIED
+}
+
+func (x *EntityAttribute) GetDamage() float64 {
+	if x != nil {
+		return x.Damage
+	}
+	return 0
 }
 
 type Entity struct {
@@ -818,18 +829,21 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x04RECT\x10\x03\"7\n" +
 	"\n" +
 	"RenderData\x12)\n" +
-	"\x06sprite\x18\x01 \x01(\x0e2\x11.spellfire.SpriteR\x06sprite\"\x80\x02\n" +
+	"\x06sprite\x18\x01 \x01(\x0e2\x11.spellfire.SpriteR\x06sprite\"\xa4\x02\n" +
 	"\x0fEntityAttribute\x12B\n" +
 	"\x04type\x18\x01 \x01(\x0e2..spellfire.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06health\x18\x03 \x01(\x02R\x06health\x12 \n" +
-	"\x03gun\x18\x04 \x01(\x0e2\x0e.spellfire.GunR\x03gun\"[\n" +
+	"\x06health\x18\x03 \x01(\x01R\x06health\x12 \n" +
+	"\x03gun\x18\x04 \x01(\x0e2\x0e.spellfire.GunR\x03gun\x12\x16\n" +
+	"\x06damage\x18\x05 \x01(\x01R\x06damage\"g\n" +
 	"\x13EntityAttributeType\x12%\n" +
 	"!ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NAME\x10\x01\x12\n" +
 	"\n" +
 	"\x06HEALTH\x10\x02\x12\a\n" +
-	"\x03GUN\x10\x03\"\xcd\x03\n" +
+	"\x03GUN\x10\x03\x12\n" +
+	"\n" +
+	"\x06BULLET\x10\x04\"\xcd\x03\n" +
 	"\x06Entity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x120\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1c.spellfire.Entity.EntityTypeR\x04type\x12/\n" +

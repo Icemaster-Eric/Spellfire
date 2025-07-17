@@ -48,11 +48,13 @@ message EntityAttribute {
     NAME = 1;
     HEALTH = 2;
     GUN = 3;
+    BULLET = 4;
   }
   EntityAttributeType type = 1;
   string name = 2;
-  float health = 3;
+  double health = 3;
   Gun gun = 4;
+  double damage = 5;
 }
 
 message Entity {
