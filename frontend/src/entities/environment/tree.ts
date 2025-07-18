@@ -1,18 +1,11 @@
-import { Graphics } from "pixi.js";
-import { Entity } from "../entity";
+import { Graphics, Sprite } from "pixi.js";
+import { Collider, Entity, RenderData } from "../entity";
 import { entitySpec } from "../entitySpec";
+import { getTexture } from "../../assets";
 
 export class Tree extends Entity {
-    sprite = treeSprite();
-    updateSprite(): void {
-        super.updateSprite();
+    constructor(id: number, initialCollider: Collider, renderData: RenderData) {
+        super(id, initialCollider, renderData);
+        this.initSprite(new Sprite(getTexture(renderData.sprite)));
     }
-}
-function treeSprite(): Graphics {
-    const g = new Graphics();
-
-    g.setStrokeStyle({ width: 0 });
-    g.circle(0, 0, 50).fill("green");
-
-    return g;
 }

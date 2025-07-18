@@ -3,6 +3,7 @@ import { vec2, type Vec2 } from "../math/vec2";
 import { aabb, type AABB } from "../math/aabb";
 import { StaticVelocity, type Velocity } from "../physics/velocity";
 import type { PacketEntity } from "../multiplayer/packets";
+import type { PlayerState } from "../player/playerState";
 
 type Attributes = {
     doCSP: boolean;
@@ -35,23 +36,34 @@ export abstract class Entity {
     /**
      * Width should be 100
      */
-    sprite: Container;
+    sprite: Container = null!;
     /**
      * Client size collider, succeptible to interpolation and prediction and may be outdated
      */
-    localCollider: Collider;
-
+    currentLocalCollider: Collider;
+    
+    /**
+     * The collider that is 1 frame behind, which is being rendered
+     */
+    pastLocalCollider: Collider;
     /**
      * The most up-to-date collider from the server, localCollider is trying to interpolate to match this
      */
     trueCollider: Collider;
     renderData: RenderData;
-    updateSprite(): void {
-        this.sprite.position.set(...this.localCollider.position);
-        const spriteSize = this.localCollider.aabb().size;
-        this.sprite.setSize(spriteSize[0] * 100, spriteSize[1] * 100);
+
+    updateSprite(scaleFactor: number): void {
+        this.sprite.position.set(
+            this.currentLocalCollider.position[0] * scaleFactor,
+            -this.currentLocalCollider.position[1] * scaleFactor,
+        );
+        const spriteSize = vec2.scale(
+            this.currentLocalCollider.aabb().size,
+            scaleFactor,
+        );
+        this.sprite.setSize(spriteSize[0], spriteSize[1]);
         this.sprite.origin.set(...vec2.scale(spriteSize, 0.5));
-        this.sprite.rotation = this.localCollider.rotation;
+        this.sprite.rotation = this.currentLocalCollider.rotation;
     }
     updateWithPacketEntity(packetEntity: PacketEntity) {
         this.trueCollider.position = packetEntity.collider.position;
@@ -61,15 +73,14 @@ export abstract class Entity {
         );
         this.trueCollider.velocity = packetEntity.collider.velocity;
     }
-    constructor(
-        id: number,
-        initialCollider: Collider,
-        renderData: RenderData,
-        sprite: Container,
-    ) {
+    constructor(id: number, initialCollider: Collider, renderData: RenderData) {
         this.id = id;
-        this.localCollider = this.trueCollider = initialCollider;
+        this.pastLocalCollider = new Collider(initialCollider.position, initialCollider.velocity, initialCollider.shape, initialCollider.rotation);
+        this.currentLocalCollider = new Collider(initialCollider.position, initialCollider.velocity, initialCollider.shape, initialCollider.rotation);
+        this.trueCollider = initialCollider;
         this.renderData = renderData;
+    }
+    initSprite(sprite: Container) {
         this.sprite = sprite;
         finalizationRegistry.register(this, sprite);
     }
@@ -77,13 +88,11 @@ export abstract class Entity {
 
 export type Meters = number & { readonly __is_meters: unique symbol };
 export class RenderData {
-    sprite: Container;
-    width: Meters;
-    height: Meters;
-    constructor(sprite: Container, width: Meters, height: Meters) {
+    sprite: string;
+    width = 0;
+    height = 0;
+    constructor(sprite: string) {
         this.sprite = sprite;
-        this.width = width;
-        this.height = height;
     }
 }
 

@@ -1,5 +1,5 @@
 const DEBUG_LOG = {
-    on: true,
+    on: false,
     filtered: ["GameLoop"],
 };
 export abstract class Publisher<Messages> {

@@ -12,7 +12,7 @@ export class World {
     }
     constructor() {}
     getClientPlayer = () => {
-        if (this.clientPlayerID) {
+        if (this.clientPlayerID !== null) {
             if (!this.entities.get(this.clientPlayerID))
                 throw new Error(
                     "Client player ID exists but doesnt refer to anything",

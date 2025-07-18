@@ -1,4 +1,4 @@
-export abstract class Tool {
+export abstract class Item {
     doPrimaryAction() {
 
     }
