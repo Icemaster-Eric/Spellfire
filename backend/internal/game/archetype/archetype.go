@@ -1,7 +1,6 @@
 package archetype
 
 import (
-	"log"
 	"math/big"
 	"strconv"
 
@@ -10,23 +9,18 @@ import (
 
 type Archetype struct {
 	Signature *big.Int
-	Entities []uint32
+	// Entities map[uint32]struct{} // DON'T USE THIS FOR NOW, TRY COLUMN-ONLY APPROACH
 	Columns *column.Collection
 }
 
 func (a *Archetype) AddEntity(entityID uint32, insertValues func(r column.Row) error) {
-	log.Println("adding entity:", entityID)
-	a.Entities = append(a.Entities, entityID)
-	log.Println("start row count:", a.Columns.Count())
-	err := a.Columns.InsertKey(strconv.FormatUint(uint64(entityID), 16), insertValues)
-	if err != nil {
-		log.Println("add entity err:", err)
-	}
-	log.Println("end row count:", a.Columns.Count())
+	// a.Entities[entityID] = struct{}{}
+	a.Columns.InsertKey(strconv.FormatUint(uint64(entityID), 16), insertValues)
 }
 
 func (a *Archetype) RemoveEntity(entityID uint32) {
 	a.Columns.DeleteKey(strconv.FormatUint(uint64(entityID), 16))
+	// delete(a.Entities, entityID)
 }
 
 func GetSignature(components []int) *big.Int {
@@ -51,7 +45,7 @@ func (sc *SignatureChecker) MatchesWith(signature *big.Int) bool {
 
 func (sc *SignatureChecker) MatchesWithout(signature *big.Int) bool {
 	sc.tmp2.And(signature, sc.withoutSig)
-	return sc.tmp2.Sign() != 0
+	return sc.tmp2.Sign() == 0
 }
 
 func (sc *SignatureChecker) MatchesWithWithout(signature *big.Int) bool {
@@ -60,7 +54,7 @@ func (sc *SignatureChecker) MatchesWithWithout(signature *big.Int) bool {
 		return false
 	}
 	sc.tmp2.And(signature, sc.withoutSig)
-	return sc.tmp2.Sign() != 0
+	return sc.tmp2.Sign() == 0
 }
 
 

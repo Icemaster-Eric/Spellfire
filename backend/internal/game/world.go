@@ -1,7 +1,6 @@
 package game
 
 import (
-	"log"
 	"math"
 	"math/big"
 	"strconv"
@@ -77,8 +76,8 @@ func (w *World) GetArchetype(signature *big.Int) *archetype.Archetype {
 	newSignature := new(big.Int).Set(signature)
 	a := &archetype.Archetype{
 		Signature: newSignature,
-		Entities:  make([]uint32, 0),
-		Columns:   collection,
+		// Entities:  make(map[uint32]struct{}, 64),
+		Columns: collection,
 	}
 	w.Archetypes[newSignature.Text(16)] = a
 	return a
@@ -109,7 +108,6 @@ func (w *World) SpawnEntity(e entity.Entity) uint32 {
 	w.NextEntityID += 1
 
 	a := w.GetArchetype(e.GetSignature())
-	log.Println("spawn a:", a)
 	a.AddEntity(entityID, e.Insert)
 
 	return entityID
@@ -126,6 +124,7 @@ func (w *World) SpawnPlayer(name string) {
 	e := entity.Player{
 		NAME:   name,
 		RADIUS: 0.5,
+		HEALTH: 100,
 	}
 	entityID := w.SpawnEntity(e)
 	p := NewPlayer(entityID)
@@ -146,24 +145,9 @@ func (w *World) DespawnPlayer(name string) {
 	delete(w.Players, name)
 }
 
-func (w *World) MovePlayer(name string, movement *pb.Vec2) {
-	l := math.Hypot(movement.X, movement.Y)
-	nx, ny := movement.X/l, movement.Y/l
-	log.Println("movement:", nx, ny)
-	p, ok := w.Players[name]
-	if ok {
-		a := w.GetArchetype(entity.PlayerSignature())
-		a.Columns.QueryKey(strconv.FormatUint(uint64(p.ID), 16), func(r column.Row) error {
-			r.SetFloat64("VX", nx)
-			r.SetFloat64("VY", ny)
-			return nil
-		})
-	}
-}
-
 func (w *World) UpdatePlayers() {
-	a := w.GetArchetype(entity.PlayerSignature())
-	err := a.Columns.Query(func(txn *column.Txn) error {
+	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")
 		xCol := txn.Float64("X")
@@ -172,6 +156,7 @@ func (w *World) UpdatePlayers() {
 		vyCol := txn.Float64("VY")
 		rotationCol := txn.Float64("ROTATION")
 		radiusCol := txn.Float64("RADIUS")
+		healthCol := txn.Float64("HEALTH")
 
 		return txn.Range(func(idx uint32) {
 			key, _ := entityIDCol.Get()
@@ -184,38 +169,163 @@ func (w *World) UpdatePlayers() {
 			vy, _ := vyCol.Get()
 			rotation, _ := rotationCol.Get()
 			radius, _ := radiusCol.Get()
+			health, _ := healthCol.Get()
 
-			log.Println("x:", x, "y:", y)
+			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
+				playerXCol := playerTxn.Float64("X")
+				playerYCol := playerTxn.Float64("Y")
+				playerNameCol := playerTxn.String("NAME")
 
-			for _, player := range w.Players {
-				player.WriteUpdate(func(pkt *pb.ServerPacket) {
-					pkt.Entities = append(pkt.Entities, &pb.Entity{
-						Id:   entityID,
-						Type: pb.Entity_GUNNER,
-						Collider: &pb.Collider{
-							Type:     pb.Collider_CIRCLE,
-							Rotation: rotation,
-							Radius:   radius,
-							Position: &pb.Vec2{X: x, Y: y},
-							Velocity: &pb.Vec2{X: vx, Y: vy},
-						},
-						RenderData: &pb.RenderData{
-							Sprite: pb.Sprite_SPRITE_PLAYER_GUNNER,
-						},
-						Attributes: []*pb.EntityAttribute{
-							{
-								Type: pb.EntityAttribute_NAME,
-								Name: name,
-							},
-						},
-					})
+				return playerTxn.Range(func(playerIdx uint32) {
+					playerX, _ := playerXCol.Get()
+					playerY, _ := playerYCol.Get()
+
+					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
+					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
+						playerName, _ := playerNameCol.Get()
+						p, ok := w.Players[playerName]
+						if ok {
+							p.WriteUpdate(func(pkt *pb.ServerPacket) {
+								pkt.Entities = append(pkt.Entities, &pb.Entity{
+									Id:   entityID,
+									Type: pb.Entity_GUNNER,
+									Collider: &pb.Collider{
+										Type:     pb.Collider_CIRCLE,
+										Rotation: rotation,
+										Radius:   radius,
+										Position: &pb.Vec2{X: x, Y: y},
+										Velocity: &pb.Vec2{X: vx, Y: vy},
+									},
+									RenderData: &pb.RenderData{
+										Sprite: pb.Sprite_SPRITE_PLAYER_GUNNER,
+									},
+									Attributes: []*pb.EntityAttribute{
+										{
+											Type: pb.EntityAttribute_NAME,
+											Name: name,
+										},
+										{
+											Type:   pb.EntityAttribute_HEALTH,
+											Health: health,
+										},
+									},
+								})
+							})
+						}
+					}
 				})
-			}
+			})
 		})
 	})
-	if err != nil {
-		log.Println("err:", err)
-	}
+	bushArch := w.GetArchetype(entity.BushSignature())
+	bushArch.Columns.Query(func(txn *column.Txn) error {
+		entityIDCol := txn.Key()
+		xCol := txn.Float64("X")
+		yCol := txn.Float64("Y")
+		rotationCol := txn.Float64("ROTATION")
+		radiusCol := txn.Float64("RADIUS")
+
+		return txn.Range(func(idx uint32) {
+			key, _ := entityIDCol.Get()
+			entityID64, _ := strconv.ParseUint(key, 16, 32)
+			entityID := uint32(entityID64)
+			x, _ := xCol.Get()
+			y, _ := yCol.Get()
+			rotation, _ := rotationCol.Get()
+			radius, _ := radiusCol.Get()
+
+			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
+				playerXCol := playerTxn.Float64("X")
+				playerYCol := playerTxn.Float64("Y")
+				playerNameCol := playerTxn.String("NAME")
+
+				return playerTxn.Range(func(playerIdx uint32) {
+					playerX, _ := playerXCol.Get()
+					playerY, _ := playerYCol.Get()
+
+					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
+					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
+						playerName, _ := playerNameCol.Get()
+						p, ok := w.Players[playerName]
+						if ok {
+							p.WriteUpdate(func(pkt *pb.ServerPacket) {
+								pkt.Entities = append(pkt.Entities, &pb.Entity{
+									Id:   entityID,
+									Type: pb.Entity_BUSH,
+									Collider: &pb.Collider{
+										Type:     pb.Collider_CIRCLE,
+										Rotation: rotation,
+										Radius:   radius,
+										Position: &pb.Vec2{X: x, Y: y},
+										IsStatic: true,
+										// ADD BUSH TRANSPARENCY
+									},
+									RenderData: &pb.RenderData{
+										Sprite: pb.Sprite_SPRITE_BUSH_1,
+									},
+								})
+							})
+						}
+					}
+				})
+			})
+		})
+	})
+	bulletArch := w.GetArchetype(entity.BulletSignature())
+	bulletArch.Columns.Query(func(txn *column.Txn) error {
+		entityIDCol := txn.Key()
+		xCol := txn.Float64("X")
+		yCol := txn.Float64("Y")
+		vxCol := txn.Float64("VX")
+		vyCol := txn.Float64("VY")
+		rotationCol := txn.Float64("ROTATION")
+
+		return txn.Range(func(idx uint32) {
+			key, _ := entityIDCol.Get()
+			entityID64, _ := strconv.ParseUint(key, 16, 32)
+			entityID := uint32(entityID64)
+			x, _ := xCol.Get()
+			y, _ := yCol.Get()
+			vx, _ := vxCol.Get()
+			vy, _ := vyCol.Get()
+			rotation, _ := rotationCol.Get()
+
+			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
+				playerXCol := playerTxn.Float64("X")
+				playerYCol := playerTxn.Float64("Y")
+				playerNameCol := playerTxn.String("NAME")
+
+				return playerTxn.Range(func(playerIdx uint32) {
+					playerX, _ := playerXCol.Get()
+					playerY, _ := playerYCol.Get()
+
+					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
+					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
+						playerName, _ := playerNameCol.Get()
+						p, ok := w.Players[playerName]
+						if ok {
+							p.WriteUpdate(func(pkt *pb.ServerPacket) {
+								pkt.Entities = append(pkt.Entities, &pb.Entity{
+									Id:   entityID,
+									Type: pb.Entity_BULLET,
+									Collider: &pb.Collider{
+										Type:     pb.Collider_CIRCLE, // REVERT TO POINT LATER
+										Rotation: rotation, // THIS IS NEGATIVE BCS YES
+										Radius: 0.05,
+										Position: &pb.Vec2{X: x, Y: y},
+										Velocity: &pb.Vec2{X: vx, Y: vy},
+									},
+									RenderData: &pb.RenderData{
+										Sprite: pb.Sprite_SPRITE_BULLET_1,
+									},
+								})
+							})
+						}
+					}
+				})
+			})
+		})
+	})
 	// add timestamps to each packet
 	for _, player := range w.Players {
 		player.WriteUpdate(func(pkt *pb.ServerPacket) {
@@ -226,19 +336,71 @@ func (w *World) UpdatePlayers() {
 
 func (w *World) Tick(dt float64) {
 	// Consume player inputs
-	for name, player := range w.Players {
-		for range len(player.Inputs) {
-			packet := <-player.Inputs
-			for _, event := range packet.Events {
-				switch event.Type {
-				case pb.ClientEvent_MOVE:
-					w.MovePlayer(name, event.Movement)
+	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch.Columns.Query(func(txn *column.Txn) error {
+		// entityIDCol := txn.Key()
+		nameCol := txn.String("NAME")
+		xCol := txn.Float64("X")
+		yCol := txn.Float64("Y")
+		vxCol := txn.Float64("VX")
+		vyCol := txn.Float64("VY")
+		rotationCol := txn.Float64("ROTATION")
+		isFiringCol := txn.Bool("IS_FIRING")
+		// radiusCol := txn.Float64("RADIUS")
+		// healthCol := txn.Float32("HEALTH")
+
+		return txn.Range(func(idx uint32) {
+			// key, _ := entityIDCol.Get()
+			// entityID64, _ := strconv.ParseUint(key, 16, 32)
+			// entityID := uint32(entityID64)
+			name, _ := nameCol.Get()
+			x, _ := xCol.Get()
+			y, _ := yCol.Get()
+			// isFiring := isFiringCol.Get()
+			// lastFiredCol, _ := lastFiredCol.Get()
+			// vx, _ := vxCol.Get()
+			// vy, _ := vyCol.Get()
+			// rotation, _ := rotationCol.Get()
+			// radius, _ := radiusCol.Get()
+			// health, _ := healthCol.Get()
+
+			player, ok := w.Players[name]
+			if ok {
+				for range len(player.Inputs) {
+					packet := <-player.Inputs
+					for _, event := range packet.Events {
+						switch event.Type {
+						case pb.ClientEvent_MOVE:
+							l := math.Hypot(event.Movement.X, event.Movement.Y)
+							if l == 0 {
+								return
+							}
+							newVx, newVy := event.Movement.X/l, event.Movement.Y/l
+							vxCol.Set(newVx * 2) // TEMPORARY, TO MAKE PLAYER GO ZOOM
+							vyCol.Set(newVy * 2) // TEMPORARY, TO MAKE PLAYER GO ZOOM
+						case pb.ClientEvent_START_FIRE:
+							isFiringCol.Set(true)
+						case pb.ClientEvent_STOP_FIRE:
+							isFiringCol.Set(false)
+						}
+					}
+					cursorDx := packet.Cursor.X - x
+					cursorDy := packet.Cursor.Y - y
+					cursorDirection := math.Atan2(cursorDy, cursorDx)
+					if !math.IsNaN(cursorDirection) {
+						rotationCol.Set(cursorDirection)
+					}
 				}
 			}
-		}
-	}
+		})
+	})
+
 	// Systems
 	w.MoveEntities(dt)
+	w.DecreasePlayerVelocity(dt)
+	w.ProcessBullets(dt)
+	w.KillPlayers(dt) // dt is unneeded
+	w.SpawnBushes(dt)
 	// Send updates
 	w.UpdatePlayers()
 }

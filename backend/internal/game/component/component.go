@@ -14,9 +14,15 @@ const (
 	ROTATION
 	RADIUS
 	NAME
+	HEALTH
+	DAMAGE
+	LAST_FIRED
+	IS_STATIC
 	IS_TRANSPARENT
 	IS_PLAYER
 	IS_BUSH
+	IS_BULLET
+	IS_FIRING
 )
 
 var ComponentMap = map[int]func(col *column.Collection){
@@ -47,6 +53,18 @@ var ComponentMap = map[int]func(col *column.Collection){
 	NAME: func(col *column.Collection) {
 		col.CreateColumn("NAME", column.ForString())
 	},
+	HEALTH: func(col *column.Collection) {
+		col.CreateColumn("HEALTH", column.ForFloat64())
+	},
+	DAMAGE: func(col *column.Collection) {
+		col.CreateColumn("DAMAGE", column.ForFloat64())
+	},
+	LAST_FIRED: func(col *column.Collection) {
+		col.CreateColumn("LAST_FIRED", column.ForUint64())
+	},
+	IS_STATIC: func(col *column.Collection) {
+		col.CreateColumn("IS_STATIC", column.ForBool())
+	},
 	IS_TRANSPARENT: func(col *column.Collection) {
 		col.CreateColumn("IS_TRANSPARENT", column.ForBool())
 	},
@@ -55,5 +73,11 @@ var ComponentMap = map[int]func(col *column.Collection){
 	},
 	IS_BUSH: func(col *column.Collection) {
 		col.CreateColumn("IS_BUSH", column.ForBool())
+	},
+	IS_BULLET: func(col *column.Collection) {
+		col.CreateColumn("IS_BULLET", column.ForBool())
+	},
+	IS_FIRING: func(col *column.Collection) {
+		col.CreateColumn("IS_FIRING", column.ForBool())
 	},
 }

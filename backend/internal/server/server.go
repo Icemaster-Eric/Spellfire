@@ -34,6 +34,7 @@ const (
 type Server struct {
 	sessions *gws.ConcurrentMap[string, *gws.Conn]
 	World    *game.World
+	msgs int
 }
 
 func NewServer(w *game.World) *Server {
@@ -64,8 +65,10 @@ func (s *Server) Run() {
 				continue
 			}
 			conn.WriteMessage(gws.OpcodeBinary, msg)
+		}
 
-			// immediately reset after having sent the updated information to that player
+		// reset packets after sending information to all players
+		for _, p := range s.World.Players {
 			p.WriteUpdate(func(pkt *pb.ServerPacket) {
 				pkt.Reset()
 			})
@@ -114,8 +117,16 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 
 	name := MustLoad[string](socket.Session(), "name")
 
-	if len(s.World.Players[name].Inputs) == 3 {
-		// drop packet if more than 3 client packets queued
+	p, ok := s.World.Players[name]
+	if !ok {
+		if conn, ok := s.sessions.Load(name); ok {
+			conn.WriteClose(1000, []byte("You are dead."))
+			return
+		}
+	}
+
+	if len(p.Inputs) == 4 {
+		// drop packet if more than 4 client packets queued
 		log.Println("Dropped Packet:", name)
 		return
 	}
@@ -125,17 +136,20 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 		log.Fatalln("Failed to parse:", err)
 	}
 
-	if rand.Intn(60) == 1 {
-		log.Println(packet)
+	if s.msgs >= 120 {
+		log.Println("name:", name, packet)
+		s.msgs = 0
+	} else {
+		s.msgs++
 	}
 
-	s.World.Players[name].Inputs<-packet
+	p.Inputs<-packet
 }
 
 func NewUpgrader(handler gws.Event) *gws.Upgrader {
 	return gws.NewUpgrader(handler, &gws.ServerOption{
 		PermessageDeflate: gws.PermessageDeflate{
-			Enabled:               true,
+			Enabled:               false,
 			ServerContextTakeover: true,
 			ClientContextTakeover: true,
 		},

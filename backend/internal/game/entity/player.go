@@ -1,13 +1,15 @@
 package entity
 
 import (
-	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/component"
 	"math/big"
+	"time"
+
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/component"
 	"github.com/kelindar/column"
 )
 
 type Player struct {
-    X, Y, VX, VY, ROTATION, RADIUS float64
+    X, Y, VX, VY, ROTATION, RADIUS, HEALTH float64
     NAME string
 }
 
@@ -22,7 +24,10 @@ func init() {
         component.VY,
         component.ROTATION,
         component.RADIUS,
+        component.HEALTH,
         component.NAME,
+        component.IS_FIRING,
+        component.LAST_FIRED,
         component.IS_PLAYER,
     }
 
@@ -48,7 +53,10 @@ func (e Player) Insert(r column.Row) error {
     r.SetFloat64("VY", e.VY)
     r.SetFloat64("ROTATION", e.ROTATION)
     r.SetFloat64("RADIUS", e.RADIUS)
+    r.SetFloat64("HEALTH", e.HEALTH)
     r.SetString("NAME", e.NAME)
+    r.SetBool("IS_FIRING", false)
+    r.SetUint64("LAST_FIRED", uint64(time.Now().UnixMilli()))
     r.SetBool("IS_PLAYER", true)
     return nil
 }

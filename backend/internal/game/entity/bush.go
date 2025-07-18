@@ -7,8 +7,7 @@ import (
 )
 
 type Bush struct {
-    X, Y, ROTATION float64
-    NAME string
+    X, Y, ROTATION, RADIUS float64
 }
 
 var bushSignature *big.Int
@@ -20,6 +19,8 @@ func init() {
         component.X,
         component.Y,
 		component.RADIUS,
+        component.ROTATION,
+        component.IS_STATIC,
 		component.IS_TRANSPARENT,
         component.IS_BUSH,
     }
@@ -43,7 +44,9 @@ func (e Bush) Insert(r column.Row) error {
     r.SetFloat64("X", e.X)
     r.SetFloat64("Y", e.Y)
     r.SetFloat64("ROTATION", e.ROTATION)
-    r.SetString("NAME", e.NAME)
-    r.SetBool("IS_PLAYER", true)
+    r.SetFloat64("RADIUS", e.RADIUS)
+    r.SetBool("IS_STATIC", true)
+    r.SetBool("IS_TRANSPARENT", true)
+    r.SetBool("IS_BUSH", true)
     return nil
 }
