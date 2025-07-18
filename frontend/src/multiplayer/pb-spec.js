@@ -16,27 +16,13 @@ export const spellfire = $root.spellfire = (() => {
      */
     const spellfire = {};
 
-    /**
-     * ClientEventType enum.
-     * @name spellfire.ClientEventType
-     * @enum {number}
-     * @property {number} CLIENT_EVENT_TYPE_UNSPECIFIED=0 CLIENT_EVENT_TYPE_UNSPECIFIED value
-     * @property {number} MOVE=1 MOVE value
-     */
-    spellfire.ClientEventType = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "CLIENT_EVENT_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "MOVE"] = 1;
-        return values;
-    })();
-
     spellfire.ClientEvent = (function() {
 
         /**
          * Properties of a ClientEvent.
          * @memberof spellfire
          * @interface IClientEvent
-         * @property {spellfire.ClientEventType|null} [type] ClientEvent type
+         * @property {spellfire.ClientEvent.ClientEventType|null} [type] ClientEvent type
          * @property {spellfire.IVec2|null} [movement] ClientEvent movement
          */
 
@@ -57,7 +43,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * ClientEvent type.
-         * @member {spellfire.ClientEventType} type
+         * @member {spellfire.ClientEvent.ClientEventType} type
          * @memberof spellfire.ClientEvent
          * @instance
          */
@@ -184,6 +170,8 @@ export const spellfire = $root.spellfire = (() => {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
+                case 3:
                     break;
                 }
             if (message.movement != null && message.hasOwnProperty("movement")) {
@@ -221,6 +209,14 @@ export const spellfire = $root.spellfire = (() => {
             case 1:
                 message.type = 1;
                 break;
+            case "START_FIRE":
+            case 2:
+                message.type = 2;
+                break;
+            case "STOP_FIRE":
+            case 3:
+                message.type = 3;
+                break;
             }
             if (object.movement != null) {
                 if (typeof object.movement !== "object")
@@ -248,7 +244,7 @@ export const spellfire = $root.spellfire = (() => {
                 object.movement = null;
             }
             if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.spellfire.ClientEventType[message.type] === undefined ? message.type : $root.spellfire.ClientEventType[message.type] : message.type;
+                object.type = options.enums === String ? $root.spellfire.ClientEvent.ClientEventType[message.type] === undefined ? message.type : $root.spellfire.ClientEvent.ClientEventType[message.type] : message.type;
             if (message.movement != null && message.hasOwnProperty("movement"))
                 object.movement = $root.spellfire.Vec2.toObject(message.movement, options);
             return object;
@@ -280,6 +276,24 @@ export const spellfire = $root.spellfire = (() => {
             return typeUrlPrefix + "/spellfire.ClientEvent";
         };
 
+        /**
+         * ClientEventType enum.
+         * @name spellfire.ClientEvent.ClientEventType
+         * @enum {number}
+         * @property {number} CLIENT_EVENT_TYPE_UNSPECIFIED=0 CLIENT_EVENT_TYPE_UNSPECIFIED value
+         * @property {number} MOVE=1 MOVE value
+         * @property {number} START_FIRE=2 START_FIRE value
+         * @property {number} STOP_FIRE=3 STOP_FIRE value
+         */
+        ClientEvent.ClientEventType = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "CLIENT_EVENT_TYPE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "MOVE"] = 1;
+            values[valuesById[2] = "START_FIRE"] = 2;
+            values[valuesById[3] = "STOP_FIRE"] = 3;
+            return values;
+        })();
+
         return ClientEvent;
     })();
 
@@ -290,6 +304,7 @@ export const spellfire = $root.spellfire = (() => {
          * @memberof spellfire
          * @interface IClientPacket
          * @property {spellfire.ITimestamp|null} [timestamp] ClientPacket timestamp
+         * @property {spellfire.IVec2|null} [cursor] ClientPacket cursor
          * @property {Array.<spellfire.IClientEvent>|null} [events] ClientPacket events
          */
 
@@ -316,6 +331,14 @@ export const spellfire = $root.spellfire = (() => {
          * @instance
          */
         ClientPacket.prototype.timestamp = null;
+
+        /**
+         * ClientPacket cursor.
+         * @member {spellfire.IVec2|null|undefined} cursor
+         * @memberof spellfire.ClientPacket
+         * @instance
+         */
+        ClientPacket.prototype.cursor = null;
 
         /**
          * ClientPacket events.
@@ -351,9 +374,11 @@ export const spellfire = $root.spellfire = (() => {
                 writer = $Writer.create();
             if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
                 $root.spellfire.Timestamp.encode(message.timestamp, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                $root.spellfire.Vec2.encode(message.cursor, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message.events != null && message.events.length)
                 for (let i = 0; i < message.events.length; ++i)
-                    $root.spellfire.ClientEvent.encode(message.events[i], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+                    $root.spellfire.ClientEvent.encode(message.events[i], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             return writer;
         };
 
@@ -395,6 +420,10 @@ export const spellfire = $root.spellfire = (() => {
                         break;
                     }
                 case 2: {
+                        message.cursor = $root.spellfire.Vec2.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 3: {
                         if (!(message.events && message.events.length))
                             message.events = [];
                         message.events.push($root.spellfire.ClientEvent.decode(reader, reader.uint32()));
@@ -440,6 +469,11 @@ export const spellfire = $root.spellfire = (() => {
                 if (error)
                     return "timestamp." + error;
             }
+            if (message.cursor != null && message.hasOwnProperty("cursor")) {
+                let error = $root.spellfire.Vec2.verify(message.cursor);
+                if (error)
+                    return "cursor." + error;
+            }
             if (message.events != null && message.hasOwnProperty("events")) {
                 if (!Array.isArray(message.events))
                     return "events: array expected";
@@ -469,6 +503,11 @@ export const spellfire = $root.spellfire = (() => {
                     throw TypeError(".spellfire.ClientPacket.timestamp: object expected");
                 message.timestamp = $root.spellfire.Timestamp.fromObject(object.timestamp);
             }
+            if (object.cursor != null) {
+                if (typeof object.cursor !== "object")
+                    throw TypeError(".spellfire.ClientPacket.cursor: object expected");
+                message.cursor = $root.spellfire.Vec2.fromObject(object.cursor);
+            }
             if (object.events) {
                 if (!Array.isArray(object.events))
                     throw TypeError(".spellfire.ClientPacket.events: array expected");
@@ -497,10 +536,14 @@ export const spellfire = $root.spellfire = (() => {
             let object = {};
             if (options.arrays || options.defaults)
                 object.events = [];
-            if (options.defaults)
+            if (options.defaults) {
                 object.timestamp = null;
+                object.cursor = null;
+            }
             if (message.timestamp != null && message.hasOwnProperty("timestamp"))
                 object.timestamp = $root.spellfire.Timestamp.toObject(message.timestamp, options);
+            if (message.cursor != null && message.hasOwnProperty("cursor"))
+                object.cursor = $root.spellfire.Vec2.toObject(message.cursor, options);
             if (message.events && message.events.length) {
                 object.events = [];
                 for (let j = 0; j < message.events.length; ++j)
@@ -986,32 +1029,15 @@ export const spellfire = $root.spellfire = (() => {
         return Timestamp;
     })();
 
-    /**
-     * ColliderType enum.
-     * @name spellfire.ColliderType
-     * @enum {number}
-     * @property {number} COLLIDER_TYPE_UNSPECIFIED=0 COLLIDER_TYPE_UNSPECIFIED value
-     * @property {number} COLLIDER_TYPE_CIRCLE=1 COLLIDER_TYPE_CIRCLE value
-     * @property {number} COLLIDER_TYPE_RECT=2 COLLIDER_TYPE_RECT value
-     */
-    spellfire.ColliderType = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "COLLIDER_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "COLLIDER_TYPE_CIRCLE"] = 1;
-        values[valuesById[2] = "COLLIDER_TYPE_RECT"] = 2;
-        return values;
-    })();
-
     spellfire.Collider = (function() {
 
         /**
          * Properties of a Collider.
          * @memberof spellfire
          * @interface ICollider
-         * @property {spellfire.ColliderType|null} [type] Collider type
+         * @property {spellfire.Collider.ColliderType|null} [type] Collider type
          * @property {number|null} [rotation] Collider rotation
-         * @property {number|null} [width] Collider width
-         * @property {number|null} [height] Collider height
+         * @property {spellfire.IVec2|null} [size] Collider size
          * @property {number|null} [radius] Collider radius
          * @property {spellfire.IVec2|null} [position] Collider position
          * @property {spellfire.IVec2|null} [velocity] Collider velocity
@@ -1035,7 +1061,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * Collider type.
-         * @member {spellfire.ColliderType} type
+         * @member {spellfire.Collider.ColliderType} type
          * @memberof spellfire.Collider
          * @instance
          */
@@ -1050,20 +1076,12 @@ export const spellfire = $root.spellfire = (() => {
         Collider.prototype.rotation = 0;
 
         /**
-         * Collider width.
-         * @member {number} width
+         * Collider size.
+         * @member {spellfire.IVec2|null|undefined} size
          * @memberof spellfire.Collider
          * @instance
          */
-        Collider.prototype.width = 0;
-
-        /**
-         * Collider height.
-         * @member {number} height
-         * @memberof spellfire.Collider
-         * @instance
-         */
-        Collider.prototype.height = 0;
+        Collider.prototype.size = null;
 
         /**
          * Collider radius.
@@ -1125,18 +1143,16 @@ export const spellfire = $root.spellfire = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
             if (message.rotation != null && Object.hasOwnProperty.call(message, "rotation"))
                 writer.uint32(/* id 2, wireType 1 =*/17).double(message.rotation);
-            if (message.width != null && Object.hasOwnProperty.call(message, "width"))
-                writer.uint32(/* id 3, wireType 1 =*/25).double(message.width);
-            if (message.height != null && Object.hasOwnProperty.call(message, "height"))
-                writer.uint32(/* id 4, wireType 1 =*/33).double(message.height);
+            if (message.size != null && Object.hasOwnProperty.call(message, "size"))
+                $root.spellfire.Vec2.encode(message.size, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
             if (message.radius != null && Object.hasOwnProperty.call(message, "radius"))
-                writer.uint32(/* id 5, wireType 1 =*/41).double(message.radius);
+                writer.uint32(/* id 4, wireType 1 =*/33).double(message.radius);
             if (message.position != null && Object.hasOwnProperty.call(message, "position"))
-                $root.spellfire.Vec2.encode(message.position, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                $root.spellfire.Vec2.encode(message.position, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
             if (message.velocity != null && Object.hasOwnProperty.call(message, "velocity"))
-                $root.spellfire.Vec2.encode(message.velocity, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                $root.spellfire.Vec2.encode(message.velocity, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             if (message.isStatic != null && Object.hasOwnProperty.call(message, "isStatic"))
-                writer.uint32(/* id 8, wireType 0 =*/64).bool(message.isStatic);
+                writer.uint32(/* id 7, wireType 0 =*/56).bool(message.isStatic);
             return writer;
         };
 
@@ -1182,26 +1198,22 @@ export const spellfire = $root.spellfire = (() => {
                         break;
                     }
                 case 3: {
-                        message.width = reader.double();
+                        message.size = $root.spellfire.Vec2.decode(reader, reader.uint32());
                         break;
                     }
                 case 4: {
-                        message.height = reader.double();
-                        break;
-                    }
-                case 5: {
                         message.radius = reader.double();
                         break;
                     }
-                case 6: {
+                case 5: {
                         message.position = $root.spellfire.Vec2.decode(reader, reader.uint32());
                         break;
                     }
-                case 7: {
+                case 6: {
                         message.velocity = $root.spellfire.Vec2.decode(reader, reader.uint32());
                         break;
                     }
-                case 8: {
+                case 7: {
                         message.isStatic = reader.bool();
                         break;
                     }
@@ -1247,17 +1259,17 @@ export const spellfire = $root.spellfire = (() => {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
                     break;
                 }
             if (message.rotation != null && message.hasOwnProperty("rotation"))
                 if (typeof message.rotation !== "number")
                     return "rotation: number expected";
-            if (message.width != null && message.hasOwnProperty("width"))
-                if (typeof message.width !== "number")
-                    return "width: number expected";
-            if (message.height != null && message.hasOwnProperty("height"))
-                if (typeof message.height !== "number")
-                    return "height: number expected";
+            if (message.size != null && message.hasOwnProperty("size")) {
+                let error = $root.spellfire.Vec2.verify(message.size);
+                if (error)
+                    return "size." + error;
+            }
             if (message.radius != null && message.hasOwnProperty("radius"))
                 if (typeof message.radius !== "number")
                     return "radius: number expected";
@@ -1300,21 +1312,26 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "COLLIDER_TYPE_CIRCLE":
+            case "POINT":
             case 1:
                 message.type = 1;
                 break;
-            case "COLLIDER_TYPE_RECT":
+            case "CIRCLE":
             case 2:
                 message.type = 2;
+                break;
+            case "RECT":
+            case 3:
+                message.type = 3;
                 break;
             }
             if (object.rotation != null)
                 message.rotation = Number(object.rotation);
-            if (object.width != null)
-                message.width = Number(object.width);
-            if (object.height != null)
-                message.height = Number(object.height);
+            if (object.size != null) {
+                if (typeof object.size !== "object")
+                    throw TypeError(".spellfire.Collider.size: object expected");
+                message.size = $root.spellfire.Vec2.fromObject(object.size);
+            }
             if (object.radius != null)
                 message.radius = Number(object.radius);
             if (object.position != null) {
@@ -1348,21 +1365,18 @@ export const spellfire = $root.spellfire = (() => {
             if (options.defaults) {
                 object.type = options.enums === String ? "COLLIDER_TYPE_UNSPECIFIED" : 0;
                 object.rotation = 0;
-                object.width = 0;
-                object.height = 0;
+                object.size = null;
                 object.radius = 0;
                 object.position = null;
                 object.velocity = null;
                 object.isStatic = false;
             }
             if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.spellfire.ColliderType[message.type] === undefined ? message.type : $root.spellfire.ColliderType[message.type] : message.type;
+                object.type = options.enums === String ? $root.spellfire.Collider.ColliderType[message.type] === undefined ? message.type : $root.spellfire.Collider.ColliderType[message.type] : message.type;
             if (message.rotation != null && message.hasOwnProperty("rotation"))
                 object.rotation = options.json && !isFinite(message.rotation) ? String(message.rotation) : message.rotation;
-            if (message.width != null && message.hasOwnProperty("width"))
-                object.width = options.json && !isFinite(message.width) ? String(message.width) : message.width;
-            if (message.height != null && message.hasOwnProperty("height"))
-                object.height = options.json && !isFinite(message.height) ? String(message.height) : message.height;
+            if (message.size != null && message.hasOwnProperty("size"))
+                object.size = $root.spellfire.Vec2.toObject(message.size, options);
             if (message.radius != null && message.hasOwnProperty("radius"))
                 object.radius = options.json && !isFinite(message.radius) ? String(message.radius) : message.radius;
             if (message.position != null && message.hasOwnProperty("position"))
@@ -1400,6 +1414,24 @@ export const spellfire = $root.spellfire = (() => {
             return typeUrlPrefix + "/spellfire.Collider";
         };
 
+        /**
+         * ColliderType enum.
+         * @name spellfire.Collider.ColliderType
+         * @enum {number}
+         * @property {number} COLLIDER_TYPE_UNSPECIFIED=0 COLLIDER_TYPE_UNSPECIFIED value
+         * @property {number} POINT=1 POINT value
+         * @property {number} CIRCLE=2 CIRCLE value
+         * @property {number} RECT=3 RECT value
+         */
+        Collider.ColliderType = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "COLLIDER_TYPE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "POINT"] = 1;
+            values[valuesById[2] = "CIRCLE"] = 2;
+            values[valuesById[3] = "RECT"] = 3;
+            return values;
+        })();
+
         return Collider;
     })();
 
@@ -1407,29 +1439,31 @@ export const spellfire = $root.spellfire = (() => {
      * Sprite enum.
      * @name spellfire.Sprite
      * @enum {number}
-     * @property {number} SPRITE_NONE=0 SPRITE_NONE value
+     * @property {number} SPRITE_UNSPECIFIED=0 SPRITE_UNSPECIFIED value
      * @property {number} SPRITE_PLAYER_GUNNER=1 SPRITE_PLAYER_GUNNER value
      * @property {number} SPRITE_PLAYER_MAGE=2 SPRITE_PLAYER_MAGE value
-     * @property {number} SPRITE_BUSH_1=3 SPRITE_BUSH_1 value
-     * @property {number} SPRITE_TREE_1=4 SPRITE_TREE_1 value
-     * @property {number} SPRITE_TREE_2=5 SPRITE_TREE_2 value
-     * @property {number} SPRITE_ROCK_1=6 SPRITE_ROCK_1 value
-     * @property {number} SPRITE_ROCK_2=7 SPRITE_ROCK_2 value
-     * @property {number} SPRITE_ROCK_3=8 SPRITE_ROCK_3 value
-     * @property {number} SPRITE_ROCK_4=9 SPRITE_ROCK_4 value
+     * @property {number} SPRITE_BULLET_1=3 SPRITE_BULLET_1 value
+     * @property {number} SPRITE_BUSH_1=4 SPRITE_BUSH_1 value
+     * @property {number} SPRITE_TREE_1=5 SPRITE_TREE_1 value
+     * @property {number} SPRITE_TREE_2=6 SPRITE_TREE_2 value
+     * @property {number} SPRITE_ROCK_1=7 SPRITE_ROCK_1 value
+     * @property {number} SPRITE_ROCK_2=8 SPRITE_ROCK_2 value
+     * @property {number} SPRITE_ROCK_3=9 SPRITE_ROCK_3 value
+     * @property {number} SPRITE_ROCK_4=10 SPRITE_ROCK_4 value
      */
     spellfire.Sprite = (function() {
         const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "SPRITE_NONE"] = 0;
+        values[valuesById[0] = "SPRITE_UNSPECIFIED"] = 0;
         values[valuesById[1] = "SPRITE_PLAYER_GUNNER"] = 1;
         values[valuesById[2] = "SPRITE_PLAYER_MAGE"] = 2;
-        values[valuesById[3] = "SPRITE_BUSH_1"] = 3;
-        values[valuesById[4] = "SPRITE_TREE_1"] = 4;
-        values[valuesById[5] = "SPRITE_TREE_2"] = 5;
-        values[valuesById[6] = "SPRITE_ROCK_1"] = 6;
-        values[valuesById[7] = "SPRITE_ROCK_2"] = 7;
-        values[valuesById[8] = "SPRITE_ROCK_3"] = 8;
-        values[valuesById[9] = "SPRITE_ROCK_4"] = 9;
+        values[valuesById[3] = "SPRITE_BULLET_1"] = 3;
+        values[valuesById[4] = "SPRITE_BUSH_1"] = 4;
+        values[valuesById[5] = "SPRITE_TREE_1"] = 5;
+        values[valuesById[6] = "SPRITE_TREE_2"] = 6;
+        values[valuesById[7] = "SPRITE_ROCK_1"] = 7;
+        values[valuesById[8] = "SPRITE_ROCK_2"] = 8;
+        values[valuesById[9] = "SPRITE_ROCK_3"] = 9;
+        values[valuesById[10] = "SPRITE_ROCK_4"] = 10;
         return values;
     })();
 
@@ -1580,6 +1614,7 @@ export const spellfire = $root.spellfire = (() => {
                 case 7:
                 case 8:
                 case 9:
+                case 10:
                     break;
                 }
             return null;
@@ -1604,7 +1639,7 @@ export const spellfire = $root.spellfire = (() => {
                     break;
                 }
                 break;
-            case "SPRITE_NONE":
+            case "SPRITE_UNSPECIFIED":
             case 0:
                 message.sprite = 0;
                 break;
@@ -1616,33 +1651,37 @@ export const spellfire = $root.spellfire = (() => {
             case 2:
                 message.sprite = 2;
                 break;
-            case "SPRITE_BUSH_1":
+            case "SPRITE_BULLET_1":
             case 3:
                 message.sprite = 3;
                 break;
-            case "SPRITE_TREE_1":
+            case "SPRITE_BUSH_1":
             case 4:
                 message.sprite = 4;
                 break;
-            case "SPRITE_TREE_2":
+            case "SPRITE_TREE_1":
             case 5:
                 message.sprite = 5;
                 break;
-            case "SPRITE_ROCK_1":
+            case "SPRITE_TREE_2":
             case 6:
                 message.sprite = 6;
                 break;
-            case "SPRITE_ROCK_2":
+            case "SPRITE_ROCK_1":
             case 7:
                 message.sprite = 7;
                 break;
-            case "SPRITE_ROCK_3":
+            case "SPRITE_ROCK_2":
             case 8:
                 message.sprite = 8;
                 break;
-            case "SPRITE_ROCK_4":
+            case "SPRITE_ROCK_3":
             case 9:
                 message.sprite = 9;
+                break;
+            case "SPRITE_ROCK_4":
+            case 10:
+                message.sprite = 10;
                 break;
             }
             return message;
@@ -1662,7 +1701,7 @@ export const spellfire = $root.spellfire = (() => {
                 options = {};
             let object = {};
             if (options.defaults)
-                object.sprite = options.enums === String ? "SPRITE_NONE" : 0;
+                object.sprite = options.enums === String ? "SPRITE_UNSPECIFIED" : 0;
             if (message.sprite != null && message.hasOwnProperty("sprite"))
                 object.sprite = options.enums === String ? $root.spellfire.Sprite[message.sprite] === undefined ? message.sprite : $root.spellfire.Sprite[message.sprite] : message.sprite;
             return object;
@@ -1698,46 +1737,16 @@ export const spellfire = $root.spellfire = (() => {
     })();
 
     /**
-     * EntityType enum.
-     * @name spellfire.EntityType
+     * Gun enum.
+     * @name spellfire.Gun
      * @enum {number}
-     * @property {number} ENTITY_TYPE_UNSPECIFIED=0 ENTITY_TYPE_UNSPECIFIED value
-     * @property {number} ENTITY_TYPE_PLAYER_GUNNER=1 ENTITY_TYPE_PLAYER_GUNNER value
-     * @property {number} ENTITY_TYPE_PLAYER_MAGE=2 ENTITY_TYPE_PLAYER_MAGE value
+     * @property {number} GUN_UNSPECIFIED=0 GUN_UNSPECIFIED value
+     * @property {number} GUN_AUTOMATIC_RIFLE=1 GUN_AUTOMATIC_RIFLE value
      */
-    spellfire.EntityType = (function() {
+    spellfire.Gun = (function() {
         const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ENTITY_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "ENTITY_TYPE_PLAYER_GUNNER"] = 1;
-        values[valuesById[2] = "ENTITY_TYPE_PLAYER_MAGE"] = 2;
-        return values;
-    })();
-
-    /**
-     * EntityState enum.
-     * @name spellfire.EntityState
-     * @enum {number}
-     * @property {number} ENTITY_STATE_UNSPECIFIED=0 ENTITY_STATE_UNSPECIFIED value
-     * @property {number} ENTITY_STATE_RELOADING=1 ENTITY_STATE_RELOADING value
-     */
-    spellfire.EntityState = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ENTITY_STATE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "ENTITY_STATE_RELOADING"] = 1;
-        return values;
-    })();
-
-    /**
-     * EntityAttributeType enum.
-     * @name spellfire.EntityAttributeType
-     * @enum {number}
-     * @property {number} ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED=0 ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED value
-     * @property {number} ENTITY_ATTRIBUTE_TYPE_NAME=1 ENTITY_ATTRIBUTE_TYPE_NAME value
-     */
-    spellfire.EntityAttributeType = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "ENTITY_ATTRIBUTE_TYPE_NAME"] = 1;
+        values[valuesById[0] = "GUN_UNSPECIFIED"] = 0;
+        values[valuesById[1] = "GUN_AUTOMATIC_RIFLE"] = 1;
         return values;
     })();
 
@@ -1747,8 +1756,11 @@ export const spellfire = $root.spellfire = (() => {
          * Properties of an EntityAttribute.
          * @memberof spellfire
          * @interface IEntityAttribute
-         * @property {spellfire.EntityAttributeType|null} [type] EntityAttribute type
+         * @property {spellfire.EntityAttribute.EntityAttributeType|null} [type] EntityAttribute type
          * @property {string|null} [name] EntityAttribute name
+         * @property {number|null} [health] EntityAttribute health
+         * @property {spellfire.Gun|null} [gun] EntityAttribute gun
+         * @property {number|null} [damage] EntityAttribute damage
          */
 
         /**
@@ -1768,7 +1780,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * EntityAttribute type.
-         * @member {spellfire.EntityAttributeType} type
+         * @member {spellfire.EntityAttribute.EntityAttributeType} type
          * @memberof spellfire.EntityAttribute
          * @instance
          */
@@ -1781,6 +1793,30 @@ export const spellfire = $root.spellfire = (() => {
          * @instance
          */
         EntityAttribute.prototype.name = "";
+
+        /**
+         * EntityAttribute health.
+         * @member {number} health
+         * @memberof spellfire.EntityAttribute
+         * @instance
+         */
+        EntityAttribute.prototype.health = 0;
+
+        /**
+         * EntityAttribute gun.
+         * @member {spellfire.Gun} gun
+         * @memberof spellfire.EntityAttribute
+         * @instance
+         */
+        EntityAttribute.prototype.gun = 0;
+
+        /**
+         * EntityAttribute damage.
+         * @member {number} damage
+         * @memberof spellfire.EntityAttribute
+         * @instance
+         */
+        EntityAttribute.prototype.damage = 0;
 
         /**
          * Creates a new EntityAttribute instance using the specified properties.
@@ -1810,6 +1846,12 @@ export const spellfire = $root.spellfire = (() => {
                 writer.uint32(/* id 1, wireType 0 =*/8).int32(message.type);
             if (message.name != null && Object.hasOwnProperty.call(message, "name"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.name);
+            if (message.health != null && Object.hasOwnProperty.call(message, "health"))
+                writer.uint32(/* id 3, wireType 1 =*/25).double(message.health);
+            if (message.gun != null && Object.hasOwnProperty.call(message, "gun"))
+                writer.uint32(/* id 4, wireType 0 =*/32).int32(message.gun);
+            if (message.damage != null && Object.hasOwnProperty.call(message, "damage"))
+                writer.uint32(/* id 5, wireType 1 =*/41).double(message.damage);
             return writer;
         };
 
@@ -1854,6 +1896,18 @@ export const spellfire = $root.spellfire = (() => {
                         message.name = reader.string();
                         break;
                     }
+                case 3: {
+                        message.health = reader.double();
+                        break;
+                    }
+                case 4: {
+                        message.gun = reader.int32();
+                        break;
+                    }
+                case 5: {
+                        message.damage = reader.double();
+                        break;
+                    }
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -1895,11 +1949,28 @@ export const spellfire = $root.spellfire = (() => {
                     return "type: enum value expected";
                 case 0:
                 case 1:
+                case 2:
+                case 3:
+                case 4:
                     break;
                 }
             if (message.name != null && message.hasOwnProperty("name"))
                 if (!$util.isString(message.name))
                     return "name: string expected";
+            if (message.health != null && message.hasOwnProperty("health"))
+                if (typeof message.health !== "number")
+                    return "health: number expected";
+            if (message.gun != null && message.hasOwnProperty("gun"))
+                switch (message.gun) {
+                default:
+                    return "gun: enum value expected";
+                case 0:
+                case 1:
+                    break;
+                }
+            if (message.damage != null && message.hasOwnProperty("damage"))
+                if (typeof message.damage !== "number")
+                    return "damage: number expected";
             return null;
         };
 
@@ -1926,13 +1997,45 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "ENTITY_ATTRIBUTE_TYPE_NAME":
+            case "NAME":
             case 1:
                 message.type = 1;
+                break;
+            case "HEALTH":
+            case 2:
+                message.type = 2;
+                break;
+            case "GUN":
+            case 3:
+                message.type = 3;
+                break;
+            case "BULLET":
+            case 4:
+                message.type = 4;
                 break;
             }
             if (object.name != null)
                 message.name = String(object.name);
+            if (object.health != null)
+                message.health = Number(object.health);
+            switch (object.gun) {
+            default:
+                if (typeof object.gun === "number") {
+                    message.gun = object.gun;
+                    break;
+                }
+                break;
+            case "GUN_UNSPECIFIED":
+            case 0:
+                message.gun = 0;
+                break;
+            case "GUN_AUTOMATIC_RIFLE":
+            case 1:
+                message.gun = 1;
+                break;
+            }
+            if (object.damage != null)
+                message.damage = Number(object.damage);
             return message;
         };
 
@@ -1952,11 +2055,20 @@ export const spellfire = $root.spellfire = (() => {
             if (options.defaults) {
                 object.type = options.enums === String ? "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED" : 0;
                 object.name = "";
+                object.health = 0;
+                object.gun = options.enums === String ? "GUN_UNSPECIFIED" : 0;
+                object.damage = 0;
             }
             if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.spellfire.EntityAttributeType[message.type] === undefined ? message.type : $root.spellfire.EntityAttributeType[message.type] : message.type;
+                object.type = options.enums === String ? $root.spellfire.EntityAttribute.EntityAttributeType[message.type] === undefined ? message.type : $root.spellfire.EntityAttribute.EntityAttributeType[message.type] : message.type;
             if (message.name != null && message.hasOwnProperty("name"))
                 object.name = message.name;
+            if (message.health != null && message.hasOwnProperty("health"))
+                object.health = options.json && !isFinite(message.health) ? String(message.health) : message.health;
+            if (message.gun != null && message.hasOwnProperty("gun"))
+                object.gun = options.enums === String ? $root.spellfire.Gun[message.gun] === undefined ? message.gun : $root.spellfire.Gun[message.gun] : message.gun;
+            if (message.damage != null && message.hasOwnProperty("damage"))
+                object.damage = options.json && !isFinite(message.damage) ? String(message.damage) : message.damage;
             return object;
         };
 
@@ -1986,6 +2098,26 @@ export const spellfire = $root.spellfire = (() => {
             return typeUrlPrefix + "/spellfire.EntityAttribute";
         };
 
+        /**
+         * EntityAttributeType enum.
+         * @name spellfire.EntityAttribute.EntityAttributeType
+         * @enum {number}
+         * @property {number} ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED=0 ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED value
+         * @property {number} NAME=1 NAME value
+         * @property {number} HEALTH=2 HEALTH value
+         * @property {number} GUN=3 GUN value
+         * @property {number} BULLET=4 BULLET value
+         */
+        EntityAttribute.EntityAttributeType = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "NAME"] = 1;
+            values[valuesById[2] = "HEALTH"] = 2;
+            values[valuesById[3] = "GUN"] = 3;
+            values[valuesById[4] = "BULLET"] = 4;
+            return values;
+        })();
+
         return EntityAttribute;
     })();
 
@@ -1996,10 +2128,10 @@ export const spellfire = $root.spellfire = (() => {
          * @memberof spellfire
          * @interface IEntity
          * @property {number|null} [id] Entity id
-         * @property {spellfire.EntityType|null} [type] Entity type
+         * @property {spellfire.Entity.EntityType|null} [type] Entity type
          * @property {spellfire.ICollider|null} [collider] Entity collider
          * @property {spellfire.IRenderData|null} [renderData] Entity renderData
-         * @property {Array.<spellfire.EntityState>|null} [states] Entity states
+         * @property {Array.<spellfire.Entity.EntityState>|null} [states] Entity states
          * @property {Array.<spellfire.IEntityAttribute>|null} [attributes] Entity attributes
          */
 
@@ -2030,7 +2162,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * Entity type.
-         * @member {spellfire.EntityType} type
+         * @member {spellfire.Entity.EntityType} type
          * @memberof spellfire.Entity
          * @instance
          */
@@ -2054,7 +2186,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * Entity states.
-         * @member {Array.<spellfire.EntityState>} states
+         * @member {Array.<spellfire.Entity.EntityState>} states
          * @memberof spellfire.Entity
          * @instance
          */
@@ -2223,6 +2355,10 @@ export const spellfire = $root.spellfire = (() => {
                 case 0:
                 case 1:
                 case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
                     break;
                 }
             if (message.collider != null && message.hasOwnProperty("collider")) {
@@ -2284,13 +2420,29 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "ENTITY_TYPE_PLAYER_GUNNER":
+            case "GUNNER":
             case 1:
                 message.type = 1;
                 break;
-            case "ENTITY_TYPE_PLAYER_MAGE":
+            case "MAGE":
             case 2:
                 message.type = 2;
+                break;
+            case "BULLET":
+            case 3:
+                message.type = 3;
+                break;
+            case "BUSH":
+            case 4:
+                message.type = 4;
+                break;
+            case "TREE":
+            case 5:
+                message.type = 5;
+                break;
+            case "ROCK":
+            case 6:
+                message.type = 6;
                 break;
             }
             if (object.collider != null) {
@@ -2318,7 +2470,7 @@ export const spellfire = $root.spellfire = (() => {
                     case 0:
                         message.states[i] = 0;
                         break;
-                    case "ENTITY_STATE_RELOADING":
+                    case "RELOADING":
                     case 1:
                         message.states[i] = 1;
                         break;
@@ -2363,7 +2515,7 @@ export const spellfire = $root.spellfire = (() => {
             if (message.id != null && message.hasOwnProperty("id"))
                 object.id = message.id;
             if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.spellfire.EntityType[message.type] === undefined ? message.type : $root.spellfire.EntityType[message.type] : message.type;
+                object.type = options.enums === String ? $root.spellfire.Entity.EntityType[message.type] === undefined ? message.type : $root.spellfire.Entity.EntityType[message.type] : message.type;
             if (message.collider != null && message.hasOwnProperty("collider"))
                 object.collider = $root.spellfire.Collider.toObject(message.collider, options);
             if (message.renderData != null && message.hasOwnProperty("renderData"))
@@ -2371,7 +2523,7 @@ export const spellfire = $root.spellfire = (() => {
             if (message.states && message.states.length) {
                 object.states = [];
                 for (let j = 0; j < message.states.length; ++j)
-                    object.states[j] = options.enums === String ? $root.spellfire.EntityState[message.states[j]] === undefined ? message.states[j] : $root.spellfire.EntityState[message.states[j]] : message.states[j];
+                    object.states[j] = options.enums === String ? $root.spellfire.Entity.EntityState[message.states[j]] === undefined ? message.states[j] : $root.spellfire.Entity.EntityState[message.states[j]] : message.states[j];
             }
             if (message.attributes && message.attributes.length) {
                 object.attributes = [];
@@ -2407,21 +2559,45 @@ export const spellfire = $root.spellfire = (() => {
             return typeUrlPrefix + "/spellfire.Entity";
         };
 
-        return Entity;
-    })();
+        /**
+         * EntityType enum.
+         * @name spellfire.Entity.EntityType
+         * @enum {number}
+         * @property {number} ENTITY_TYPE_UNSPECIFIED=0 ENTITY_TYPE_UNSPECIFIED value
+         * @property {number} GUNNER=1 GUNNER value
+         * @property {number} MAGE=2 MAGE value
+         * @property {number} BULLET=3 BULLET value
+         * @property {number} BUSH=4 BUSH value
+         * @property {number} TREE=5 TREE value
+         * @property {number} ROCK=6 ROCK value
+         */
+        Entity.EntityType = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ENTITY_TYPE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "GUNNER"] = 1;
+            values[valuesById[2] = "MAGE"] = 2;
+            values[valuesById[3] = "BULLET"] = 3;
+            values[valuesById[4] = "BUSH"] = 4;
+            values[valuesById[5] = "TREE"] = 5;
+            values[valuesById[6] = "ROCK"] = 6;
+            return values;
+        })();
 
-    /**
-     * ServerEventType enum.
-     * @name spellfire.ServerEventType
-     * @enum {number}
-     * @property {number} SERVER_EVENT_TYPE_UNSPECIFIED=0 SERVER_EVENT_TYPE_UNSPECIFIED value
-     * @property {number} SERVER_EVENT_TYPE_ENTER_GAME=1 SERVER_EVENT_TYPE_ENTER_GAME value
-     */
-    spellfire.ServerEventType = (function() {
-        const valuesById = {}, values = Object.create(valuesById);
-        values[valuesById[0] = "SERVER_EVENT_TYPE_UNSPECIFIED"] = 0;
-        values[valuesById[1] = "SERVER_EVENT_TYPE_ENTER_GAME"] = 1;
-        return values;
+        /**
+         * EntityState enum.
+         * @name spellfire.Entity.EntityState
+         * @enum {number}
+         * @property {number} ENTITY_STATE_UNSPECIFIED=0 ENTITY_STATE_UNSPECIFIED value
+         * @property {number} RELOADING=1 RELOADING value
+         */
+        Entity.EntityState = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ENTITY_STATE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "RELOADING"] = 1;
+            return values;
+        })();
+
+        return Entity;
     })();
 
     spellfire.ServerEvent = (function() {
@@ -2430,7 +2606,7 @@ export const spellfire = $root.spellfire = (() => {
          * Properties of a ServerEvent.
          * @memberof spellfire
          * @interface IServerEvent
-         * @property {spellfire.ServerEventType|null} [type] ServerEvent type
+         * @property {spellfire.ServerEvent.ServerEventType|null} [type] ServerEvent type
          * @property {number|null} [enterGamePlayerId] ServerEvent enterGamePlayerId
          */
 
@@ -2451,7 +2627,7 @@ export const spellfire = $root.spellfire = (() => {
 
         /**
          * ServerEvent type.
-         * @member {spellfire.ServerEventType} type
+         * @member {spellfire.ServerEvent.ServerEventType} type
          * @memberof spellfire.ServerEvent
          * @instance
          */
@@ -2609,7 +2785,7 @@ export const spellfire = $root.spellfire = (() => {
             case 0:
                 message.type = 0;
                 break;
-            case "SERVER_EVENT_TYPE_ENTER_GAME":
+            case "ENTER_GAME":
             case 1:
                 message.type = 1;
                 break;
@@ -2637,7 +2813,7 @@ export const spellfire = $root.spellfire = (() => {
                 object.enterGamePlayerId = 0;
             }
             if (message.type != null && message.hasOwnProperty("type"))
-                object.type = options.enums === String ? $root.spellfire.ServerEventType[message.type] === undefined ? message.type : $root.spellfire.ServerEventType[message.type] : message.type;
+                object.type = options.enums === String ? $root.spellfire.ServerEvent.ServerEventType[message.type] === undefined ? message.type : $root.spellfire.ServerEvent.ServerEventType[message.type] : message.type;
             if (message.enterGamePlayerId != null && message.hasOwnProperty("enterGamePlayerId"))
                 object.enterGamePlayerId = message.enterGamePlayerId;
             return object;
@@ -2668,6 +2844,20 @@ export const spellfire = $root.spellfire = (() => {
             }
             return typeUrlPrefix + "/spellfire.ServerEvent";
         };
+
+        /**
+         * ServerEventType enum.
+         * @name spellfire.ServerEvent.ServerEventType
+         * @enum {number}
+         * @property {number} SERVER_EVENT_TYPE_UNSPECIFIED=0 SERVER_EVENT_TYPE_UNSPECIFIED value
+         * @property {number} ENTER_GAME=1 ENTER_GAME value
+         */
+        ServerEvent.ServerEventType = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "SERVER_EVENT_TYPE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "ENTER_GAME"] = 1;
+            return values;
+        })();
 
         return ServerEvent;
     })();

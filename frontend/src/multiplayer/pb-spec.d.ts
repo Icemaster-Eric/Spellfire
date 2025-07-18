@@ -3,17 +3,11 @@ import Long = require("long");
 /** Namespace spellfire. */
 export namespace spellfire {
 
-    /** ClientEventType enum. */
-    enum ClientEventType {
-        CLIENT_EVENT_TYPE_UNSPECIFIED = 0,
-        MOVE = 1
-    }
-
     /** Properties of a ClientEvent. */
     interface IClientEvent {
 
         /** ClientEvent type */
-        type?: (spellfire.ClientEventType|null);
+        type?: (spellfire.ClientEvent.ClientEventType|null);
 
         /** ClientEvent movement */
         movement?: (spellfire.IVec2|null);
@@ -29,7 +23,7 @@ export namespace spellfire {
         constructor(properties?: spellfire.IClientEvent);
 
         /** ClientEvent type. */
-        public type: spellfire.ClientEventType;
+        public type: spellfire.ClientEvent.ClientEventType;
 
         /** ClientEvent movement. */
         public movement?: (spellfire.IVec2|null);
@@ -112,11 +106,25 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    namespace ClientEvent {
+
+        /** ClientEventType enum. */
+        enum ClientEventType {
+            CLIENT_EVENT_TYPE_UNSPECIFIED = 0,
+            MOVE = 1,
+            START_FIRE = 2,
+            STOP_FIRE = 3
+        }
+    }
+
     /** Properties of a ClientPacket. */
     interface IClientPacket {
 
         /** ClientPacket timestamp */
         timestamp?: (spellfire.ITimestamp|null);
+
+        /** ClientPacket cursor */
+        cursor?: (spellfire.IVec2|null);
 
         /** ClientPacket events */
         events?: (spellfire.IClientEvent[]|null);
@@ -133,6 +141,9 @@ export namespace spellfire {
 
         /** ClientPacket timestamp. */
         public timestamp?: (spellfire.ITimestamp|null);
+
+        /** ClientPacket cursor. */
+        public cursor?: (spellfire.IVec2|null);
 
         /** ClientPacket events. */
         public events: spellfire.IClientEvent[];
@@ -415,27 +426,17 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** ColliderType enum. */
-    enum ColliderType {
-        COLLIDER_TYPE_UNSPECIFIED = 0,
-        COLLIDER_TYPE_CIRCLE = 1,
-        COLLIDER_TYPE_RECT = 2
-    }
-
     /** Properties of a Collider. */
     interface ICollider {
 
         /** Collider type */
-        type?: (spellfire.ColliderType|null);
+        type?: (spellfire.Collider.ColliderType|null);
 
         /** Collider rotation */
         rotation?: (number|null);
 
-        /** Collider width */
-        width?: (number|null);
-
-        /** Collider height */
-        height?: (number|null);
+        /** Collider size */
+        size?: (spellfire.IVec2|null);
 
         /** Collider radius */
         radius?: (number|null);
@@ -460,16 +461,13 @@ export namespace spellfire {
         constructor(properties?: spellfire.ICollider);
 
         /** Collider type. */
-        public type: spellfire.ColliderType;
+        public type: spellfire.Collider.ColliderType;
 
         /** Collider rotation. */
         public rotation: number;
 
-        /** Collider width. */
-        public width: number;
-
-        /** Collider height. */
-        public height: number;
+        /** Collider size. */
+        public size?: (spellfire.IVec2|null);
 
         /** Collider radius. */
         public radius: number;
@@ -561,18 +559,30 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    namespace Collider {
+
+        /** ColliderType enum. */
+        enum ColliderType {
+            COLLIDER_TYPE_UNSPECIFIED = 0,
+            POINT = 1,
+            CIRCLE = 2,
+            RECT = 3
+        }
+    }
+
     /** Sprite enum. */
     enum Sprite {
-        SPRITE_NONE = 0,
+        SPRITE_UNSPECIFIED = 0,
         SPRITE_PLAYER_GUNNER = 1,
         SPRITE_PLAYER_MAGE = 2,
-        SPRITE_BUSH_1 = 3,
-        SPRITE_TREE_1 = 4,
-        SPRITE_TREE_2 = 5,
-        SPRITE_ROCK_1 = 6,
-        SPRITE_ROCK_2 = 7,
-        SPRITE_ROCK_3 = 8,
-        SPRITE_ROCK_4 = 9
+        SPRITE_BULLET_1 = 3,
+        SPRITE_BUSH_1 = 4,
+        SPRITE_TREE_1 = 5,
+        SPRITE_TREE_2 = 6,
+        SPRITE_ROCK_1 = 7,
+        SPRITE_ROCK_2 = 8,
+        SPRITE_ROCK_3 = 9,
+        SPRITE_ROCK_4 = 10
     }
 
     /** Properties of a RenderData. */
@@ -672,33 +682,29 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** EntityType enum. */
-    enum EntityType {
-        ENTITY_TYPE_UNSPECIFIED = 0,
-        ENTITY_TYPE_PLAYER_GUNNER = 1,
-        ENTITY_TYPE_PLAYER_MAGE = 2
-    }
-
-    /** EntityState enum. */
-    enum EntityState {
-        ENTITY_STATE_UNSPECIFIED = 0,
-        ENTITY_STATE_RELOADING = 1
-    }
-
-    /** EntityAttributeType enum. */
-    enum EntityAttributeType {
-        ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0,
-        ENTITY_ATTRIBUTE_TYPE_NAME = 1
+    /** Gun enum. */
+    enum Gun {
+        GUN_UNSPECIFIED = 0,
+        GUN_AUTOMATIC_RIFLE = 1
     }
 
     /** Properties of an EntityAttribute. */
     interface IEntityAttribute {
 
         /** EntityAttribute type */
-        type?: (spellfire.EntityAttributeType|null);
+        type?: (spellfire.EntityAttribute.EntityAttributeType|null);
 
         /** EntityAttribute name */
         name?: (string|null);
+
+        /** EntityAttribute health */
+        health?: (number|null);
+
+        /** EntityAttribute gun */
+        gun?: (spellfire.Gun|null);
+
+        /** EntityAttribute damage */
+        damage?: (number|null);
     }
 
     /** Represents an EntityAttribute. */
@@ -711,10 +717,19 @@ export namespace spellfire {
         constructor(properties?: spellfire.IEntityAttribute);
 
         /** EntityAttribute type. */
-        public type: spellfire.EntityAttributeType;
+        public type: spellfire.EntityAttribute.EntityAttributeType;
 
         /** EntityAttribute name. */
         public name: string;
+
+        /** EntityAttribute health. */
+        public health: number;
+
+        /** EntityAttribute gun. */
+        public gun: spellfire.Gun;
+
+        /** EntityAttribute damage. */
+        public damage: number;
 
         /**
          * Creates a new EntityAttribute instance using the specified properties.
@@ -794,6 +809,18 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
+    namespace EntityAttribute {
+
+        /** EntityAttributeType enum. */
+        enum EntityAttributeType {
+            ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED = 0,
+            NAME = 1,
+            HEALTH = 2,
+            GUN = 3,
+            BULLET = 4
+        }
+    }
+
     /** Properties of an Entity. */
     interface IEntity {
 
@@ -801,7 +828,7 @@ export namespace spellfire {
         id?: (number|null);
 
         /** Entity type */
-        type?: (spellfire.EntityType|null);
+        type?: (spellfire.Entity.EntityType|null);
 
         /** Entity collider */
         collider?: (spellfire.ICollider|null);
@@ -810,7 +837,7 @@ export namespace spellfire {
         renderData?: (spellfire.IRenderData|null);
 
         /** Entity states */
-        states?: (spellfire.EntityState[]|null);
+        states?: (spellfire.Entity.EntityState[]|null);
 
         /** Entity attributes */
         attributes?: (spellfire.IEntityAttribute[]|null);
@@ -829,7 +856,7 @@ export namespace spellfire {
         public id: number;
 
         /** Entity type. */
-        public type: spellfire.EntityType;
+        public type: spellfire.Entity.EntityType;
 
         /** Entity collider. */
         public collider?: (spellfire.ICollider|null);
@@ -838,7 +865,7 @@ export namespace spellfire {
         public renderData?: (spellfire.IRenderData|null);
 
         /** Entity states. */
-        public states: spellfire.EntityState[];
+        public states: spellfire.Entity.EntityState[];
 
         /** Entity attributes. */
         public attributes: spellfire.IEntityAttribute[];
@@ -921,17 +948,31 @@ export namespace spellfire {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** ServerEventType enum. */
-    enum ServerEventType {
-        SERVER_EVENT_TYPE_UNSPECIFIED = 0,
-        SERVER_EVENT_TYPE_ENTER_GAME = 1
+    namespace Entity {
+
+        /** EntityType enum. */
+        enum EntityType {
+            ENTITY_TYPE_UNSPECIFIED = 0,
+            GUNNER = 1,
+            MAGE = 2,
+            BULLET = 3,
+            BUSH = 4,
+            TREE = 5,
+            ROCK = 6
+        }
+
+        /** EntityState enum. */
+        enum EntityState {
+            ENTITY_STATE_UNSPECIFIED = 0,
+            RELOADING = 1
+        }
     }
 
     /** Properties of a ServerEvent. */
     interface IServerEvent {
 
         /** ServerEvent type */
-        type?: (spellfire.ServerEventType|null);
+        type?: (spellfire.ServerEvent.ServerEventType|null);
 
         /** ServerEvent enterGamePlayerId */
         enterGamePlayerId?: (number|null);
@@ -947,7 +988,7 @@ export namespace spellfire {
         constructor(properties?: spellfire.IServerEvent);
 
         /** ServerEvent type. */
-        public type: spellfire.ServerEventType;
+        public type: spellfire.ServerEvent.ServerEventType;
 
         /** ServerEvent enterGamePlayerId. */
         public enterGamePlayerId: number;
@@ -1028,6 +1069,15 @@ export namespace spellfire {
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    namespace ServerEvent {
+
+        /** ServerEventType enum. */
+        enum ServerEventType {
+            SERVER_EVENT_TYPE_UNSPECIFIED = 0,
+            ENTER_GAME = 1
+        }
     }
 
     /** Properties of a ServerPacket. */

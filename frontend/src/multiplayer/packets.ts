@@ -1,7 +1,7 @@
 import { vec2, type Vec2 } from "../math/vec2";
 import { spellfire } from "./pb-spec";
 
-export type PacketEntityType = "gunner" | "mage" | "rock" | "tree";
+export type PacketEntityType = "gunner" | "mage" | "bush" | "rock" | "tree" | "bullet";
 
 export type PacketEntity<T extends PacketEntityType = PacketEntityType> = {
     id: number;
@@ -25,16 +25,20 @@ export type PacketRenderData = {
 export type PacketEntityAttributes = {
     gunner: {
         name: string;
-    },
+        health: number;
+        gun: string;
+    };
     mage: {
         name: string;
-    },
-    rock: {},
-    tree: {}
+        health: number;
+    };
+    bush: {};
+    rock: {};
+    tree: {};
+    bullet: {};
 };
-type A = PacketEntityAttributes["gunner"]
 
-export type ServerEvent = { type: "initialize", playerID: number };
+export type ServerEvent = { type: "initialize"; playerID: number };
 
 export type ServerPacket = {
     timestamp: number;
@@ -43,7 +47,9 @@ export type ServerPacket = {
 };
 
 export type ClientEvent =
-    | { type: "move"; movement: Vec2 };
+    | { type: "move"; movement: Vec2 }
+    | { type: "start_fire" }
+    | { type: "stop_fire" };
 
 export function clientEventToProtobufEvent(
     packet: ClientEvent,
@@ -51,8 +57,16 @@ export function clientEventToProtobufEvent(
     switch (packet.type) {
         case "move":
             return spellfire.ClientEvent.create({
-                type: spellfire.ClientEventType.MOVE,
+                type: spellfire.ClientEvent.ClientEventType.MOVE,
                 movement: spellfire.Vec2.create(vec2.toPoint(packet.movement)),
+            });
+        case "start_fire":
+            return spellfire.ClientEvent.create({
+                type: spellfire.ClientEvent.ClientEventType.START_FIRE,
+            });
+        case "stop_fire":
+            return spellfire.ClientEvent.create({
+                type: spellfire.ClientEvent.ClientEventType.STOP_FIRE,
             });
     }
 }
@@ -62,40 +76,126 @@ export function parseServerPacket(packetData: ArrayBuffer): ServerPacket {
         new Uint8Array(packetData),
     );
     const timestamp = serverProtobufPacket.timestamp!.ms! as number;
-    const events: ServerEvent[] = serverProtobufPacket.events.map((serverProtobufEvent) => {
-        switch (serverProtobufEvent.type!) {
-            case spellfire.ServerEventType.SERVER_EVENT_TYPE_ENTER_GAME:
-                return { type: "initialize", playerID: serverProtobufEvent.enterGamePlayerId! }
-        }
-        console.error("server event not matched");
-        return null!;
-    });
+    const events: ServerEvent[] = serverProtobufPacket.events.map(
+        (serverProtobufEvent) => {
+            switch (serverProtobufEvent.type!) {
+                case spellfire.ServerEvent.ServerEventType.ENTER_GAME:
+                    return {
+                        type: "initialize",
+                        playerID: serverProtobufEvent.enterGamePlayerId!,
+                    };
+            }
+            console.error("server event not matched");
+            return null!;
+        },
+    );
     const entities: PacketEntity[] = serverProtobufPacket.entities.map(
         (serverProtobufEntity) => {
-            let specificEntityData: { [T in PacketEntityType]: { type: T, attributes: PacketEntityAttributes[T] } }[PacketEntityType]
+            let specificEntityData: {
+                [T in PacketEntityType]: {
+                    type: T;
+                    attributes: PacketEntityAttributes[T];
+                };
+            }[PacketEntityType];
             switch (serverProtobufEntity.type) {
-                case spellfire.EntityType.ENTITY_TYPE_PLAYER_GUNNER:
-                    specificEntityData = { type: "gunner", attributes: { name: "__no_name__" }}
+                case spellfire.Entity.EntityType.GUNNER:
+                    specificEntityData = {
+                        type: "gunner",
+                        attributes: { name: "__no_name__", gun: "", health: 0 },
+                    };
                     for (const protobufEntityAttribute of serverProtobufEntity.attributes!) {
                         switch (protobufEntityAttribute.type) {
-                            case spellfire.EntityAttributeType.ENTITY_ATTRIBUTE_TYPE_NAME:
-                                specificEntityData.attributes.name = protobufEntityAttribute.name!;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .NAME:
+                                specificEntityData.attributes.name =
+                                    protobufEntityAttribute.name!;
+                                break;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .GUN:
+                                switch (protobufEntityAttribute.gun!) {
+                                    case spellfire.Gun.GUN_AUTOMATIC_RIFLE:
+                                        specificEntityData.attributes.gun =
+                                            "automatic_rifle";
+                                }
+
+                                break;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .HEALTH:
+                                specificEntityData.attributes.health =
+                                    protobufEntityAttribute.health!;
+                                break;
                         }
                     }
-                    
+
                     break;
-                case spellfire.EntityType.ENTITY_TYPE_PLAYER_MAGE:
-                    specificEntityData = { type: "mage", attributes: { name: "__no_name__" }}
+                case spellfire.Entity.EntityType.MAGE:
+                    specificEntityData = {
+                        type: "mage",
+                        attributes: { name: "__no_name__", health: 0 },
+                    };
                     for (const protobufEntityAttribute of serverProtobufEntity.attributes!) {
                         switch (protobufEntityAttribute.type) {
-                            case spellfire.EntityAttributeType.ENTITY_ATTRIBUTE_TYPE_NAME:
-                                specificEntityData.attributes.name = protobufEntityAttribute.name!;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .NAME:
+                                specificEntityData.attributes.name =
+                                    protobufEntityAttribute.name!;
+                                break;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .GUN:
+                                break;
+                            case spellfire.EntityAttribute.EntityAttributeType
+                                .HEALTH:
+                                specificEntityData.attributes.health =
+                                    protobufEntityAttribute.health!;
+                                break;
                         }
                     }
                     break;
-                
+
+                case spellfire.Entity.EntityType.BUSH:
+                    specificEntityData = { type: "bush", attributes: {} };
+                    break;
+                case spellfire.Entity.EntityType.ROCK:
+                    specificEntityData = { type: "rock", attributes: {} };
+                    break;
+                case spellfire.Entity.EntityType.TREE:
+                    specificEntityData = { type: "tree", attributes: {} };
+                    break;
+                case spellfire.Entity.EntityType.BULLET:
+                    specificEntityData = { type: "bullet", attributes: {} };
+                    break;
             }
             specificEntityData = specificEntityData!;
+            let sprite: string = "";
+            switch (serverProtobufEntity.renderData!.sprite) {
+                case spellfire.Sprite.SPRITE_BULLET_1:
+                    sprite = "bullet1.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_ROCK_1:
+                    sprite = "rock1.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_ROCK_2:
+                    sprite = "rock2.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_ROCK_3:
+                    sprite = "rock3.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_ROCK_4:
+                    sprite = "rock4.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_TREE_1:
+                    sprite = "tree1.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_TREE_2:
+                    sprite = "tree2.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_BUSH_1:
+                    sprite = "bush1.svg"
+                    break;
+                case spellfire.Sprite.SPRITE_PLAYER_GUNNER:
+                    break;
+            }
+            
             return {
                 id: serverProtobufEntity.id!,
                 type: specificEntityData.type,
@@ -107,37 +207,41 @@ export function parseServerPacket(packetData: ArrayBuffer): ServerPacket {
                         },
                     ),
                     velocity: vec2(
-                        serverProtobufEntity.collider!.position as {
+                        (serverProtobufEntity.collider!.velocity ?? {
+                            x: 0,
+                            y: 0,
+                        }) as {
                             x: number;
                             y: number;
                         },
                     ),
                     rotation: serverProtobufEntity.collider!.rotation!,
                     shape: match<
-                        spellfire.ColliderType,
+                        spellfire.Collider.ColliderType,
                         PacketCollider["shape"]
                     >(serverProtobufEntity.collider!.type!, [
                         [
-                            spellfire.ColliderType.COLLIDER_TYPE_CIRCLE,
-                            {
+                            spellfire.Collider.ColliderType.CIRCLE,
+                            () => ({
                                 type: "circle",
                                 radius: serverProtobufEntity.collider!.radius!,
-                            },
+                            }),
                         ],
                         [
-                            spellfire.ColliderType.COLLIDER_TYPE_RECT,
-                            {
+                            spellfire.Collider.ColliderType.RECT,
+                            () => ({
                                 type: "rect",
-                                width: serverProtobufEntity.collider!.width!,
-                                height: serverProtobufEntity.collider!.height!,
-                            },
+                                width: serverProtobufEntity.collider!.size!.x!,
+                                height: serverProtobufEntity.collider!.size!.y!,
+                            }),
                         ],
                     ])!,
                 },
                 renderData: {
-                    sprite: ""
+                    sprite,
                 },
-                attributes: specificEntityData.attributes
+                attributes: specificEntityData.attributes,
+                gun: serverProtobufEntity.attributes,
             };
         },
     );
@@ -149,11 +253,11 @@ export function parseServerPacket(packetData: ArrayBuffer): ServerPacket {
 }
 function match<T, Output>(
     scruitinee: T,
-    cases: Array<[T, Output]>,
+    cases: Array<[T, () => Output]>,
 ): Output | undefined {
-    for (const [caseMatchValue, caseOutput] of cases) {
+    for (const [caseMatchValue, caseOutputFn] of cases) {
         if (scruitinee === caseMatchValue) {
-            return caseOutput;
+            return caseOutputFn();
         }
     }
     return undefined;

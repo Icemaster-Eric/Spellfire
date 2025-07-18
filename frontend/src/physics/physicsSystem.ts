@@ -10,15 +10,23 @@ export class PhysicsSystem extends System {
         this.world = world;
     }
     update(deltaMs: number) {
+        if (!this.world.clientPlayerExists()) return;
         for (const entity of this.world.entities.values()) {
-            // TODO: add csp and whatever
-            entity.localCollider = entity.trueCollider;
-
-            vec2.add(
-                entity.localCollider.position,
-                entity.localCollider.velocity,
-                entity.localCollider.position
+            let delta = vec2.scale(
+                entity.currentLocalCollider.velocity,
+                deltaMs / 1000,
             );
+            vec2.add(
+                entity.currentLocalCollider.position,
+                delta,
+                entity.currentLocalCollider.position,
+            );
+            // TODO: add csp and whatever
+            //vec2.lerp(entity.localCollider.position, entity.trueCollider.position, .8)
+            if (entity.id === this.world.clientPlayerID) {
+            } else {
+                entity.currentLocalCollider = entity.trueCollider;
+            }
         }
     }
 }

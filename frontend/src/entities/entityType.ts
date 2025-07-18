@@ -3,6 +3,7 @@ import { vec2 } from "../math/vec2";
 import type { PacketEntity } from "../multiplayer/packets";
 import { StaticVelocity } from "../physics/velocity";
 import { Entity, type Collider, type RenderData } from "./entity";
+import { Bullet } from "./environment/bullet";
 import { Bush } from "./environment/bush";
 import { Rock } from "./environment/rock";
 import { Tree } from "./environment/tree";
@@ -13,7 +14,8 @@ const entityConstructorMap = {
     mage: Player,
     rock: Rock,
     tree: Tree,
-    bush: Bush
+    bush: Bush,
+    bullet: Bullet
 } as const;
 
 export function getEntityConstructor<K extends keyof typeof entityConstructorMap>(

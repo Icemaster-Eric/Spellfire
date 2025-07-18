@@ -13,6 +13,7 @@ const vec2Funcs = Object.freeze({
     magnitude,
     lerp,
     eq,
+    angle,
     ZERO: new Float64Array([0, 0]) as Vec2
 });
 
