@@ -15,8 +15,8 @@ func (w *World) MoveEntities(dt float64) {
 	for _, arch := range w.QueryArchetypesWith(archetype.GetSignature([]int{
 		component.X,
 		component.Y,
-		component.VX,
-		component.VY,
+		component.Vx,
+		component.Vy,
 	})) {
 		arch.Columns.Query(func(txn *column.Txn) error {
 			xCol := txn.Float64("X")
@@ -68,8 +68,8 @@ func (w *World) ProcessBullets(dt float64) {
 			vy := math.Sin(rotation)
 			if uint64(time.Now().UnixMilli())-lastFired > 333 { // shoot 3 times per second?
 				w.SpawnEntity(entity.Bullet{
-					X:        x + vx * 0.6, // spawn bullet outside of player for now
-					Y:        y + vy * 0.6,
+					X:        x + vx*0.6, // spawn bullet outside of player for now
+					Y:        y + vy*0.6,
 					VX:       vx * 5, // CHANGE THE SPEED LATER
 					VY:       vy * 5, // ACCORDING TO EACH GUN'S BULLET SPEED (?)
 					DAMAGE:   2,
@@ -107,7 +107,7 @@ func (w *World) ProcessBullets(dt float64) {
 					dx := x - playerX
 					dy := y - playerY
 
-					if dx * dx + dy * dy <= playerRadius * playerRadius {
+					if dx*dx+dy*dy <= playerRadius*playerRadius {
 						playerHealthCol.Merge(-damage)
 						removeBullets = append(removeBullets, entityID)
 					}
@@ -128,10 +128,10 @@ func (w *World) SpawnBushes(dt float64) { // temporary function, add proper envi
 	switch rand.Intn(3) {
 	case 0:
 		w.SpawnEntity(entity.Bush{
-			X: rand.Float64() * 100 - 50,
-			Y: rand.Float64() * 100 - 50,
+			X:        rand.Float64()*100 - 50,
+			Y:        rand.Float64()*100 - 50,
 			ROTATION: rand.Float64() * 2 * math.Pi,
-			RADIUS: rand.Float64() / 4 + 0.5,
+			RADIUS:   rand.Float64()/4 + 0.5,
 		})
 	}
 }
