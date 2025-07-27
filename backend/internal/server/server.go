@@ -120,25 +120,39 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 	p, ok := s.World.Players[name]
 	if !ok {
 		if conn, ok := s.sessions.Load(name); ok {
+			log.Println(name, "has died")
 			conn.WriteClose(1000, []byte("You are dead."))
 			return
 		}
 	}
 
-	if len(p.Inputs) == 4 {
-		// drop packet if more than 4 client packets queued
+	if len(p.Inputs) == 3 {
+		// drop packet if more than 3 client packets queued
 		log.Println("Dropped Packet:", name)
+		packet := &pb.ClientPacket{}
+		if err := proto.Unmarshal(message.Bytes(), packet); err != nil {
+			log.Println("Failed to parse:", err)
+			log.Println("Closing connection:", name)
+
+			defer socket.NetConn().Close()
+			return
+		}
+		log.Println(packet)
 		return
 	}
 
 	packet := &pb.ClientPacket{}
 	if err := proto.Unmarshal(message.Bytes(), packet); err != nil {
-		log.Fatalln("Failed to parse:", err)
+		log.Println("Failed to parse:", err)
+		log.Println("Closing connection:", name)
+
+		defer socket.NetConn().Close()
+		return
 	}
 
-	if s.msgs >= 120 {
-		log.Println("name:", name, packet)
+	if s.msgs >= 30 {
 		s.msgs = 0
+		log.Println(name, packet)
 	} else {
 		s.msgs++
 	}

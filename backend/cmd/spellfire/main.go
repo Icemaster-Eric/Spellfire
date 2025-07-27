@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/Icemaster-Eric/Spellfire/backend/internal/api"
 	"net/http"
+
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/api"
 )
 
 func main() {

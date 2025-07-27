@@ -36,7 +36,7 @@ func (w *World) MoveEntities(dt float64) {
 func (w *World) DecreasePlayerVelocity(dt float64) {
 	decayRate := math.Exp(-dt / 0.3) // CHANGE THIS TO A SET PLAYER COMPONENT LATER (?)
 
-	arch := w.GetArchetype(entity.PlayerSignature())
+	arch := w.Archetype(entity.PlayerSignature())
 	arch.Columns.Query(func(txn *column.Txn) error {
 		vxCol := txn.Float64("VX")
 		vyCol := txn.Float64("VY")
@@ -50,7 +50,7 @@ func (w *World) DecreasePlayerVelocity(dt float64) {
 }
 
 func (w *World) ProcessBullets(dt float64) {
-	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch := w.Archetype(entity.PlayerSignature())
 	playerArch.Columns.Query(func(txn *column.Txn) error {
 		xCol := txn.Float64("X")
 		yCol := txn.Float64("Y")
@@ -80,7 +80,7 @@ func (w *World) ProcessBullets(dt float64) {
 	})
 
 	removeBullets := []string{}
-	arch := w.GetArchetype(entity.BulletSignature())
+	arch := w.Archetype(entity.BulletSignature())
 	arch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		xCol := txn.Float64("X")
@@ -139,7 +139,7 @@ func (w *World) SpawnBushes(dt float64) { // temporary function, add proper envi
 func (w *World) KillPlayers(dt float64) {
 	toRemove := map[string]string{}
 
-	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch := w.Archetype(entity.PlayerSignature())
 	playerArch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")

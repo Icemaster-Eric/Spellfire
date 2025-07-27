@@ -63,7 +63,8 @@ func NewWorld() *World {
 	}
 }
 
-func (w *World) GetArchetype(signature *big.Int) *archetype.Archetype {
+func (w *World) Archetype(signature *big.Int) *archetype.Archetype {
+	// either finds or creates the archetype with the given signature
 	if a, ok := w.Archetypes[signature.Text(16)]; ok {
 		return a
 	}
@@ -107,7 +108,7 @@ func (w *World) SpawnEntity(e entity.Entity) uint32 {
 	entityID := w.NextEntityID
 	w.NextEntityID += 1
 
-	a := w.GetArchetype(e.GetSignature())
+	a := w.Archetype(e.GetSignature())
 	a.AddEntity(entityID, e.Insert)
 
 	return entityID
@@ -146,7 +147,7 @@ func (w *World) DespawnPlayer(name string) {
 }
 
 func (w *World) UpdatePlayers() {
-	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch := w.Archetype(entity.PlayerSignature())
 	playerArch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")
@@ -217,7 +218,7 @@ func (w *World) UpdatePlayers() {
 			})
 		})
 	})
-	bushArch := w.GetArchetype(entity.BushSignature())
+	bushArch := w.Archetype(entity.BushSignature())
 	bushArch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		xCol := txn.Float64("X")
@@ -271,7 +272,7 @@ func (w *World) UpdatePlayers() {
 			})
 		})
 	})
-	bulletArch := w.GetArchetype(entity.BulletSignature())
+	bulletArch := w.Archetype(entity.BulletSignature())
 	bulletArch.Columns.Query(func(txn *column.Txn) error {
 		entityIDCol := txn.Key()
 		xCol := txn.Float64("X")
@@ -310,8 +311,8 @@ func (w *World) UpdatePlayers() {
 									Type: pb.Entity_BULLET,
 									Collider: &pb.Collider{
 										Type:     pb.Collider_CIRCLE, // REVERT TO POINT LATER
-										Rotation: rotation, // THIS IS NEGATIVE BCS YES
-										Radius: 0.05,
+										Rotation: rotation,           // THIS IS NEGATIVE BCS YES
+										Radius:   0.05,
 										Position: &pb.Vec2{X: x, Y: y},
 										Velocity: &pb.Vec2{X: vx, Y: vy},
 									},
@@ -336,7 +337,7 @@ func (w *World) UpdatePlayers() {
 
 func (w *World) Tick(dt float64) {
 	// Consume player inputs
-	playerArch := w.GetArchetype(entity.PlayerSignature())
+	playerArch := w.Archetype(entity.PlayerSignature())
 	playerArch.Columns.Query(func(txn *column.Txn) error {
 		// entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")
