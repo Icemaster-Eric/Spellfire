@@ -54,7 +54,7 @@ message EntityAttribute {
     NAME = 1;
     HEALTH = 2;
     GUN = 3;
-    BULLET = 4;
+    DAMAGE = 4;
   }
   EntityAttributeType type = 1;
   string name = 2;
