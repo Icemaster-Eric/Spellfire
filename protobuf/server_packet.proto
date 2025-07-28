@@ -2,6 +2,7 @@ syntax = "proto3";
 package spellfire;
 
 import "types.proto";
+import "mage.proto";
 
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
@@ -55,12 +56,17 @@ message EntityAttribute {
     HEALTH = 2;
     GUN = 3;
     DAMAGE = 4;
+    SPELL_1_LAST_FIRE = 5;
+    SPELL_2_LAST_FIRE = 6;
+    SPELL_3_LAST_FIRE = 7;
   }
   EntityAttributeType type = 1;
   string name = 2;
   double health = 3;
   Gun gun = 4;
   double damage = 5;
+  repeated Spell spells_fired = 6;
+  Timestamp spell_fire_time = 7;
 }
 
 message Entity {
@@ -77,7 +83,6 @@ message Entity {
   }
   enum EntityState {
     ENTITY_STATE_UNSPECIFIED = 0;
-    RELOADING = 1;
   }
   uint32 id = 1;
   EntityType type = 2;

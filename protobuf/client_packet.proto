@@ -2,18 +2,31 @@ syntax = "proto3";
 package spellfire;
 
 import "types.proto";
+import "mage.proto";
 
 option go_package = "github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pb";
 
 message ClientEvent {
+  ClientEventType type = 1;
+  Timestamp timestamp = 2;
+  
   enum ClientEventType {
     CLIENT_EVENT_TYPE_UNSPECIFIED = 0;
     MOVE = 1;
     START_FIRE = 2;
     STOP_FIRE = 3;
+    CAST_SPELL_1 = 4;
+    CAST_SPELL_2 = 5;
+    CAST_SPELL_3 = 6;
+    EQUIP_SPELL_1 = 7;
+    EQUIP_SPELL_2 = 8;
+    EQUIP_SPELL_3 = 9;
   }
-  ClientEventType type = 1;
-  Vec2 movement = 2;
+  Vec2 movement = 4;
+  Vec2 shoot_dir = 5;
+  Spell casted_spell = 6;
+  Spell equipped_spell = 7;
+
 }
 
 message ClientPacket {
