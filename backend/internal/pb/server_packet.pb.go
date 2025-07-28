@@ -35,6 +35,9 @@ const (
 	Sprite_SPRITE_ROCK_2        Sprite = 8
 	Sprite_SPRITE_ROCK_3        Sprite = 9
 	Sprite_SPRITE_ROCK_4        Sprite = 10
+	Sprite_SPRITE_DEAD_BUSH_1   Sprite = 11
+	Sprite_SPRITE_DEAD_BUSH_2   Sprite = 12
+	Sprite_SPRITE_CACTUS_1      Sprite = 13
 )
 
 // Enum value maps for Sprite.
@@ -51,6 +54,9 @@ var (
 		8:  "SPRITE_ROCK_2",
 		9:  "SPRITE_ROCK_3",
 		10: "SPRITE_ROCK_4",
+		11: "SPRITE_DEAD_BUSH_1",
+		12: "SPRITE_DEAD_BUSH_2",
+		13: "SPRITE_CACTUS_1",
 	}
 	Sprite_value = map[string]int32{
 		"SPRITE_UNSPECIFIED":   0,
@@ -64,6 +70,9 @@ var (
 		"SPRITE_ROCK_2":        8,
 		"SPRITE_ROCK_3":        9,
 		"SPRITE_ROCK_4":        10,
+		"SPRITE_DEAD_BUSH_1":   11,
+		"SPRITE_DEAD_BUSH_2":   12,
+		"SPRITE_CACTUS_1":      13,
 	}
 )
 
@@ -257,6 +266,8 @@ const (
 	Entity_BUSH                    Entity_EntityType = 4
 	Entity_TREE                    Entity_EntityType = 5
 	Entity_ROCK                    Entity_EntityType = 6
+	Entity_DEAD_BUSH               Entity_EntityType = 7
+	Entity_CACTUS                  Entity_EntityType = 8
 )
 
 // Enum value maps for Entity_EntityType.
@@ -269,6 +280,8 @@ var (
 		4: "BUSH",
 		5: "TREE",
 		6: "ROCK",
+		7: "DEAD_BUSH",
+		8: "CACTUS",
 	}
 	Entity_EntityType_value = map[string]int32{
 		"ENTITY_TYPE_UNSPECIFIED": 0,
@@ -278,6 +291,8 @@ var (
 		"BUSH":                    4,
 		"TREE":                    5,
 		"ROCK":                    6,
+		"DEAD_BUSH":               7,
+		"CACTUS":                  8,
 	}
 )
 
@@ -495,6 +510,7 @@ func (x *Collider) GetIsStatic() bool {
 type RenderData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sprite        Sprite                 `protobuf:"varint,1,opt,name=sprite,proto3,enum=spellfire.Sprite" json:"sprite,omitempty"`
+	SpriteSize    float64                `protobuf:"fixed64,2,opt,name=sprite_size,json=spriteSize,proto3" json:"sprite_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -534,6 +550,13 @@ func (x *RenderData) GetSprite() Sprite {
 		return x.Sprite
 	}
 	return Sprite_SPRITE_UNSPECIFIED
+}
+
+func (x *RenderData) GetSpriteSize() float64 {
+	if x != nil {
+		return x.SpriteSize
+	}
+	return 0
 }
 
 type EntityAttribute struct {
@@ -826,10 +849,12 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x05POINT\x10\x01\x12\n" +
 	"\n" +
 	"\x06CIRCLE\x10\x02\x12\b\n" +
-	"\x04RECT\x10\x03\"7\n" +
+	"\x04RECT\x10\x03\"X\n" +
 	"\n" +
 	"RenderData\x12)\n" +
-	"\x06sprite\x18\x01 \x01(\x0e2\x11.spellfire.SpriteR\x06sprite\"\xa4\x02\n" +
+	"\x06sprite\x18\x01 \x01(\x0e2\x11.spellfire.SpriteR\x06sprite\x12\x1f\n" +
+	"\vsprite_size\x18\x02 \x01(\x01R\n" +
+	"spriteSize\"\xa4\x02\n" +
 	"\x0fEntityAttribute\x12B\n" +
 	"\x04type\x18\x01 \x01(\x0e2..spellfire.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -843,7 +868,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x06HEALTH\x10\x02\x12\a\n" +
 	"\x03GUN\x10\x03\x12\n" +
 	"\n" +
-	"\x06BULLET\x10\x04\"\xcd\x03\n" +
+	"\x06BULLET\x10\x04\"\xe9\x03\n" +
 	"\x06Entity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x120\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1c.spellfire.Entity.EntityTypeR\x04type\x12/\n" +
@@ -853,7 +878,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x06states\x18\x05 \x03(\x0e2\x1d.spellfire.Entity.EntityStateR\x06states\x12:\n" +
 	"\n" +
 	"attributes\x18\x06 \x03(\v2\x1a.spellfire.EntityAttributeR\n" +
-	"attributes\"i\n" +
+	"attributes\"\x84\x01\n" +
 	"\n" +
 	"EntityType\x12\x1b\n" +
 	"\x17ENTITY_TYPE_UNSPECIFIED\x10\x00\x12\n" +
@@ -864,7 +889,10 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x06BULLET\x10\x03\x12\b\n" +
 	"\x04BUSH\x10\x04\x12\b\n" +
 	"\x04TREE\x10\x05\x12\b\n" +
-	"\x04ROCK\x10\x06\":\n" +
+	"\x04ROCK\x10\x06\x12\r\n" +
+	"\tDEAD_BUSH\x10\a\x12\n" +
+	"\n" +
+	"\x06CACTUS\x10\b\":\n" +
 	"\vEntityState\x12\x1c\n" +
 	"\x18ENTITY_STATE_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tRELOADING\x10\x01\"\xc0\x01\n" +
@@ -878,7 +906,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\fServerPacket\x122\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12-\n" +
 	"\bentities\x18\x02 \x03(\v2\x11.spellfire.EntityR\bentities\x12.\n" +
-	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ServerEventR\x06events*\xec\x01\n" +
+	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ServerEventR\x06events*\xb1\x02\n" +
 	"\x06Sprite\x12\x16\n" +
 	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14SPRITE_PLAYER_GUNNER\x10\x01\x12\x16\n" +
@@ -891,7 +919,10 @@ const file_server_packet_proto_rawDesc = "" +
 	"\rSPRITE_ROCK_2\x10\b\x12\x11\n" +
 	"\rSPRITE_ROCK_3\x10\t\x12\x11\n" +
 	"\rSPRITE_ROCK_4\x10\n" +
-	"*3\n" +
+	"\x12\x16\n" +
+	"\x12SPRITE_DEAD_BUSH_1\x10\v\x12\x16\n" +
+	"\x12SPRITE_DEAD_BUSH_2\x10\f\x12\x13\n" +
+	"\x0fSPRITE_CACTUS_1\x10\r*3\n" +
 	"\x03Gun\x12\x13\n" +
 	"\x0fGUN_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13GUN_AUTOMATIC_RIFLE\x10\x01B?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"

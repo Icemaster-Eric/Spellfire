@@ -33,9 +33,15 @@ enum Sprite {
   SPRITE_ROCK_2 = 8;
   SPRITE_ROCK_3 = 9;
   SPRITE_ROCK_4 = 10;
+  SPRITE_DEAD_BUSH_1 = 11;
+  SPRITE_DEAD_BUSH_2 = 12;
+  SPRITE_CACTUS_1 = 13;
 }
 
-message RenderData { Sprite sprite = 1; }
+message RenderData {
+  Sprite sprite = 1;
+  double sprite_size = 2;
+}
 
 enum Gun {
   GUN_UNSPECIFIED = 0;
@@ -66,6 +72,8 @@ message Entity {
     BUSH = 4;
     TREE = 5;
     ROCK = 6;
+    DEAD_BUSH = 7;
+    CACTUS = 8;
   }
   enum EntityState {
     ENTITY_STATE_UNSPECIFIED = 0;
