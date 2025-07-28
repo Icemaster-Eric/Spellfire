@@ -15,6 +15,7 @@ import (
 const (
 	WorldWidth  = 1024
 	WorldHeight = 1024
+	WorldSize   = WorldWidth * WorldHeight
 )
 
 type BiomeType uint8
@@ -65,16 +66,18 @@ type Cell struct {
 }
 
 type World struct {
-	grid     [WorldWidth * WorldHeight]Cell
-	nextGrid [WorldWidth * WorldHeight]Cell
-	ticks    int
+	grid        [WorldSize]Cell
+	nextGrid    [WorldSize]Cell
+	heatmap     [WorldSize]map[int]float32
+	ticks       int
+	drawHeatmap bool
 }
 
 // create new world
 func NewWorld() *World {
 	w := &World{
-		grid:     [WorldWidth * WorldHeight]Cell{},
-		nextGrid: [WorldWidth * WorldHeight]Cell{},
+		grid:     [WorldSize]Cell{},
+		nextGrid: [WorldSize]Cell{},
 	}
 	w.init()
 	return w
@@ -83,14 +86,14 @@ func NewWorld() *World {
 // init world with seeds
 func (w *World) init() {
 	const (
-        numSeeds    = 500
-        centerRadius = 400.0
-        edgeCount   = 500
-        // thickness of the ring, in pixels:
-        borderThickness = 1
-    )
-    cx := float64(WorldWidth) / 2
-    cy := float64(WorldHeight) / 2
+		numSeeds     = 500
+		centerRadius = 400.0
+		edgeCount    = 500
+		// thickness of the ring, in pixels:
+		borderThickness = 1
+	)
+	cx := float64(WorldWidth) / 2
+	cy := float64(WorldHeight) / 2
 
 	for i := 0; i < numSeeds; i++ {
 		// random angle 0 ≤ θ < 2π
@@ -115,8 +118,8 @@ func (w *World) init() {
 			biome: BiomeType(SelectBiome([]int{
 				0,  // void
 				20, // water
-				20, // plains
-				15, // forest
+				23, // plains
+				12, // forest
 				4,  // desert
 				1,  // tundra
 				0,  // deep water
@@ -125,35 +128,35 @@ func (w *World) init() {
 	}
 
 	outer := float64(WorldWidth) / 2
-    inner := outer - borderThickness
+	inner := outer - borderThickness
 
-    for i := 0; i < edgeCount; i++ {
-        // random angle
-        theta := rand.Float64() * 2 * math.Pi
-        // random radius between inner and outer, with PDF ∝ r
-        // generate u in [inner², outer²], then r = sqrt(u)
-        u := rand.Float64()*(outer*outer-inner*inner) + inner*inner
-        r := math.Sqrt(u)
+	for i := 0; i < edgeCount; i++ {
+		// random angle
+		theta := rand.Float64() * 2 * math.Pi
+		// random radius between inner and outer, with PDF ∝ r
+		// generate u in [inner², outer²], then r = sqrt(u)
+		u := rand.Float64()*(outer*outer-inner*inner) + inner*inner
+		r := math.Sqrt(u)
 
-        dx := int(r * math.Cos(theta))
-        dy := int(r * math.Sin(theta))
+		dx := int(r * math.Cos(theta))
+		dy := int(r * math.Sin(theta))
 
-        x := int(cx) + dx
-        y := int(cy) + dy
+		x := int(cx) + dx
+		y := int(cy) + dy
 
-        // if out of bounds (very rare), retry
-        if x < 0 || x >= WorldWidth || y < 0 || y >= WorldHeight {
-            i--
-            continue
-        }
+		// if out of bounds (very rare), retry
+		if x < 0 || x >= WorldWidth || y < 0 || y >= WorldHeight {
+			i--
+			continue
+		}
 
-        w.grid[y*WorldWidth+x] = Cell{biome: DeepWater}
-    }
+		w.grid[y*WorldWidth+x] = Cell{biome: DeepWater}
+	}
 
 	w.grid[0] = Cell{biome: DeepWater}
 	w.grid[WorldWidth-1] = Cell{biome: DeepWater}
 	w.grid[WorldHeight*(WorldWidth-1)] = Cell{biome: DeepWater}
-	w.grid[WorldHeight*WorldWidth-1] = Cell{biome: DeepWater}
+	w.grid[WorldSize-1] = Cell{biome: DeepWater}
 }
 
 // one pass of majority‐rule smoothing:
@@ -190,7 +193,98 @@ func (w *World) SmoothEdges() {
 		w.nextGrid[i].biome = bestBiome
 	}
 
-	w.grid, w.nextGrid = w.nextGrid, w.grid
+	w.grid = w.nextGrid
+}
+
+// calculate biome "heatmap"
+func (w *World) GenerateHeatmap() {
+    const R = 8
+
+    // clamping functions idk
+    min := func(a, b int) int {
+        if a < b {
+            return a
+        }
+        return b
+    }
+    max := func(a, b int) int {
+        if a > b {
+            return a
+        }
+        return b
+    }
+
+    // init maps
+    for i := range w.heatmap {
+        w.heatmap[i] = make(map[int]float32)
+    }
+    // store horizontal‐blurred distributions
+    horiz := make([]map[int]float32, WorldSize)
+    for i := range horiz {
+        horiz[i] = make(map[int]float32)
+    }
+
+    // horizontal pass
+    for y := range WorldHeight {
+        for x := range WorldWidth {
+            counts := make(map[int]int)
+            x0 := max(0, x-R)
+            x1 := min(WorldWidth-1, x+R)
+            windowW := x1 - x0 + 1
+
+            // tally biomes along the row segment
+            base := y * WorldWidth
+            for xi := x0; xi <= x1; xi++ {
+                b := int(w.grid[base+xi].biome)
+                counts[b]++
+            }
+
+            idx := base + x
+            for b, cnt := range counts {
+                horiz[idx][b] = float32(cnt) / float32(windowW)
+            }
+        }
+    }
+
+    // vertical pass
+    for y := range WorldHeight {
+        for x := range WorldWidth {
+            agg := make(map[int]float32)
+            y0 := max(0, y-R)
+            y1 := min(WorldHeight-1, y+R)
+            windowH := y1 - y0 + 1
+
+            // sum up horizontal‐blurred values down the column
+            for yi := y0; yi <= y1; yi++ {
+                idx2 := yi*WorldWidth + x
+                for b, v := range horiz[idx2] {
+                    agg[b] += v
+                }
+            }
+
+            // normalize
+            idx := y*WorldWidth + x
+            for b, sum := range agg {
+                w.heatmap[idx][b] = sum / float32(windowH)
+            }
+        }
+    }
+}
+
+func saveData(fname string, data any) {
+	file, err := os.Create(fname)
+	if err != nil {
+		log.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+
+	if err := encoder.Encode(data); err != nil {
+		log.Println("Error encoding JSON:", err)
+		return
+	}
 }
 
 // update world state by one tick
@@ -199,29 +293,21 @@ func (w *World) Update() {
 		for range 5 {
 			w.SmoothEdges()
 		}
+
+		// generate and draw heatmap
+		w.GenerateHeatmap()
+		// w.drawHeatmap = true
+		// save generated heatmap
+		saveData("terrain/generations/generated-heatmap.json", w.heatmap)
+
 		// save generated grid
-		data := make([]int, len(w.grid))
+		biomeData := make([]int, len(w.grid))
 		for i, cell := range w.grid {
-			data[i] = int(cell.biome)
+			biomeData[i] = int(cell.biome)
 		}
+		saveData("terrain/generations/generated-biomes.json", biomeData)
 
-		file, err := os.Create("biomes.json")
-		if err != nil {
-			log.Println("Error creating file:", err)
-			return
-		}
-		defer file.Close()
-
-		encoder := json.NewEncoder(file)
-
-		if err := encoder.Encode(data); err != nil {
-			log.Println("Error encoding JSON:", err)
-			return
-		}
-
-		log.Println("Biomes saved to biomes.json")
 		w.ticks++
-
 		return
 	}
 	if w.ticks > 500 {
@@ -242,7 +328,7 @@ func (w *World) Update() {
 					}
 				}
 			}
-			if i+1 < WorldWidth*WorldHeight && rand.Intn(2) == 0 {
+			if i+1 < WorldSize && rand.Intn(2) == 0 {
 				switch w.grid[i+1].biome {
 				case Water:
 					w.nextGrid[i].biome = Water
@@ -262,7 +348,7 @@ func (w *World) Update() {
 					}
 				}
 			}
-			if i+WorldWidth < WorldWidth*WorldHeight && rand.Intn(2) == 0 {
+			if i+WorldWidth < WorldSize && rand.Intn(2) == 0 {
 				switch w.grid[i+WorldWidth].biome {
 				case Water:
 					w.nextGrid[i].biome = Water
@@ -282,7 +368,7 @@ func (w *World) Update() {
 					w.nextGrid[i].biome = w.nextGrid[i-1].biome
 				}
 			case 1:
-				if i+1 < WorldWidth*WorldHeight && w.grid[i+1].biome != Void && w.grid[i+1].biome != DeepWater {
+				if i+1 < WorldSize && w.grid[i+1].biome != Void && w.grid[i+1].biome != DeepWater {
 					w.nextGrid[i].biome = w.nextGrid[i+1].biome
 				}
 			case 2:
@@ -290,7 +376,7 @@ func (w *World) Update() {
 					w.nextGrid[i].biome = w.nextGrid[i-WorldWidth].biome
 				}
 			case 3:
-				if i+WorldWidth < WorldWidth*WorldHeight && w.grid[i+WorldWidth].biome != Void && w.grid[i+WorldWidth].biome != DeepWater {
+				if i+WorldWidth < WorldSize && w.grid[i+WorldWidth].biome != Void && w.grid[i+WorldWidth].biome != DeepWater {
 					w.nextGrid[i].biome = w.nextGrid[i+WorldWidth].biome
 				}
 			}
@@ -311,6 +397,32 @@ func (w *World) Update() {
 }
 
 func (w *World) Draw(pix []byte) {
+	if w.drawHeatmap {
+        // visualize blended heatmap
+        for i := range WorldSize {
+            // start accumulator
+            var rAcc, gAcc, bAcc float32
+
+            // get the fractional distribution for this cell
+            dist := w.heatmap[i]
+            for biomeID, weight := range dist {
+                col := biomeColors[BiomeType(biomeID)]
+                rAcc += float32(col.R) * weight
+                gAcc += float32(col.G) * weight
+                bAcc += float32(col.B) * weight
+            }
+
+            // clamp & write back into pix[]
+            idx := i * 4
+            // ensure values are in [0,255]
+            pix[idx]   = uint8(math.Min(float64(rAcc), 255))
+            pix[idx+1] = uint8(math.Min(float64(gAcc), 255))
+            pix[idx+2] = uint8(math.Min(float64(bAcc), 255))
+            pix[idx+3] = 255
+        }
+        return
+    }
+
 	for i, cell := range w.grid {
 		c := biomeColors[cell.biome]
 		pix[i*4] = c.R
@@ -333,7 +445,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	if g.pixels == nil {
-		g.pixels = make([]byte, WorldWidth*WorldHeight*4)
+		g.pixels = make([]byte, WorldSize*4)
 	}
 	g.world.Draw(g.pixels)
 	screen.WritePixels(g.pixels)
