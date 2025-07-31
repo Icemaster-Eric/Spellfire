@@ -22,24 +22,23 @@ message Collider {
   bool is_static = 7;
 }
 
-enum Sprite {
-  SPRITE_UNSPECIFIED = 0;
-  SPRITE_PLAYER_GUNNER = 1;
-  SPRITE_PLAYER_MAGE = 2;
-  SPRITE_BULLET_1 = 3;
-  SPRITE_BUSH_1 = 4;
-  SPRITE_TREE_1 = 5;
-  SPRITE_TREE_2 = 6;
-  SPRITE_ROCK_1 = 7;
-  SPRITE_ROCK_2 = 8;
-  SPRITE_ROCK_3 = 9;
-  SPRITE_ROCK_4 = 10;
-  SPRITE_DEAD_BUSH_1 = 11;
-  SPRITE_DEAD_BUSH_2 = 12;
-  SPRITE_CACTUS_1 = 13;
-}
-
 message RenderData {
+  enum Sprite {
+    SPRITE_UNSPECIFIED = 0;
+    SPRITE_PLAYER_GUNNER = 1;
+    SPRITE_PLAYER_MAGE = 2;
+    SPRITE_BULLET_1 = 3;
+    SPRITE_BUSH_1 = 4;
+    SPRITE_TREE_1 = 5;
+    SPRITE_TREE_2 = 6;
+    SPRITE_ROCK_1 = 7;
+    SPRITE_ROCK_2 = 8;
+    SPRITE_ROCK_3 = 9;
+    SPRITE_ROCK_4 = 10;
+    SPRITE_DEAD_BUSH_1 = 11;
+    SPRITE_DEAD_BUSH_2 = 12;
+    SPRITE_CACTUS_1 = 13;
+  }
   Sprite sprite = 1;
   double sprite_size = 2;
 }
