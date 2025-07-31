@@ -123,8 +123,8 @@ type RenderData_Sprite int32
 
 const (
 	RenderData_SPRITE_UNSPECIFIED RenderData_Sprite = 0
-	RenderData_PLAYER_GUNNER      RenderData_Sprite = 1
-	RenderData_PLAYER_MAGE        RenderData_Sprite = 2
+	RenderData_GUNNER             RenderData_Sprite = 1
+	RenderData_MAGE               RenderData_Sprite = 2
 	RenderData_BULLET_1           RenderData_Sprite = 3
 	RenderData_BUSH_1             RenderData_Sprite = 4
 	RenderData_TREE_1             RenderData_Sprite = 5
@@ -142,8 +142,8 @@ const (
 var (
 	RenderData_Sprite_name = map[int32]string{
 		0:  "SPRITE_UNSPECIFIED",
-		1:  "PLAYER_GUNNER",
-		2:  "PLAYER_MAGE",
+		1:  "GUNNER",
+		2:  "MAGE",
 		3:  "BULLET_1",
 		4:  "BUSH_1",
 		5:  "TREE_1",
@@ -158,8 +158,8 @@ var (
 	}
 	RenderData_Sprite_value = map[string]int32{
 		"SPRITE_UNSPECIFIED": 0,
-		"PLAYER_GUNNER":      1,
-		"PLAYER_MAGE":        2,
+		"GUNNER":             1,
+		"MAGE":               2,
 		"BULLET_1":           3,
 		"BUSH_1":             4,
 		"TREE_1":             5,
@@ -872,16 +872,17 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x05POINT\x10\x01\x12\n" +
 	"\n" +
 	"\x06CIRCLE\x10\x02\x12\b\n" +
-	"\x04RECT\x10\x03\"\xbc\x02\n" +
+	"\x04RECT\x10\x03\"\xae\x02\n" +
 	"\n" +
 	"RenderData\x124\n" +
 	"\x06sprite\x18\x01 \x01(\x0e2\x1c.spellfire.RenderData.SpriteR\x06sprite\x12\x1f\n" +
 	"\vsprite_size\x18\x02 \x01(\x01R\n" +
-	"spriteSize\"\xd6\x01\n" +
+	"spriteSize\"\xc8\x01\n" +
 	"\x06Sprite\x12\x16\n" +
-	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\x11\n" +
-	"\rPLAYER_GUNNER\x10\x01\x12\x0f\n" +
-	"\vPLAYER_MAGE\x10\x02\x12\f\n" +
+	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\n" +
+	"\n" +
+	"\x06GUNNER\x10\x01\x12\b\n" +
+	"\x04MAGE\x10\x02\x12\f\n" +
 	"\bBULLET_1\x10\x03\x12\n" +
 	"\n" +
 	"\x06BUSH_1\x10\x04\x12\n" +
