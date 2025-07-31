@@ -7,9 +7,7 @@ use bevy::{
 };
 
 use crate::{
-    camera::camera_target::{move_camera_target, spawn_camera_target, CameraTarget},
-    display::transform::collider_to_transform,
-};
+    client::ClientPlayer, display::camera::camera_target::CameraTarget, entity::collider::{collider_to_transform, Position}};
 
 #[derive(Component)]
 #[component(storage = "SparseSet")]
@@ -35,20 +33,25 @@ pub fn spawn_camera(mut commands: Commands, window: Single<&Window, With<Primary
 }
 
 pub fn move_camera_to_camera_target(
-    camera_target_pos: Single<&Transform, (With<CameraTarget>, Without<GameCamera>)>,
+    camera_target: Res<CameraTarget>,
     mut camera_transform: Single<&mut Transform, With<GameCamera>>,
+    player_pos: Single<&Position, With<ClientPlayer>>,
 ) {
-    camera_transform.translation = camera_target_pos.translation;
+    match *camera_target {
+        CameraTarget::FollowingClient { offset } => {
+            camera_transform.translation = (player_pos.0 + offset).extend(0.);
+        }
+        CameraTarget::Static { at } => {
+            camera_transform.translation = at.extend(0.);
+        }
+    }
 }
 
 pub fn camera_plugin(app: &mut App) {
-    app.add_systems(Startup, (spawn_camera, spawn_camera_target)).add_systems(
+    app.insert_resource(CameraTarget::FollowingClient { offset: Vec2::ZERO }).add_systems(Startup, (spawn_camera)).add_systems(
         Update,
         (
             move_camera_to_camera_target,
-            move_camera_target
-                .before(move_camera_to_camera_target)
-                .after(collider_to_transform),
         ),
     );
 }

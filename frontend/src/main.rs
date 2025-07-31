@@ -1,12 +1,13 @@
 use bevy::{asset::AssetMetaCheck, input::mouse::MouseMotion, prelude::*, time::TimeUpdateStrategy, window::PresentMode};
 use bevy_framepace::FramepacePlugin;
+use bevy_hanabi::prelude::*;
+use bevy_tween::DefaultTweenPlugins;
 use bevy_web_keepalive::WebKeepalivePlugin;
 use iyes_perf_ui::prelude::*;
 
 use crate::{
-    camera::camera_plugin, client::client_plugin, connection::ConnectionPlugin, display::display_plugin, entity::entity_plugin, packet::packet_plugin, physics::physics_plugin
+    display::camera::camera_plugin, client::client_plugin, connection::ConnectionPlugin, display::display_plugin, entity::entity_plugin, packet::packet_plugin, physics::physics_plugin
 };
-mod camera;
 pub mod client;
 mod connection;
 pub mod display;
@@ -15,6 +16,7 @@ mod util;
 pub mod packet;
 pub mod physics;
 pub mod protobuf_codegen;
+pub mod world;
 use bevy_inspector_egui::{bevy_egui::EguiPlugin, quick::WorldInspectorPlugin};
 use bevy::winit::{WinitSettings, UpdateMode};
 
@@ -41,6 +43,8 @@ pub fn main() {
         .add_plugins(WebKeepalivePlugin {
             wake_delay: 1000. / 60.
         })
+        .add_plugins(DefaultTweenPlugins)
+        .add_plugins(HanabiPlugin)
         //.add_plugins(FramepacePlugin)
         .add_plugins(camera_plugin)
         .add_plugins(physics_plugin)
@@ -63,6 +67,7 @@ pub fn main() {
 
 fn spawn_perf_ui(mut commands: Commands) {
     commands.spawn(PerfUiDefaultEntries::default());
+    info!("hello world");
 }
 
 fn shim_fixed_update_time(time_update_strategy: ResMut<TimeUpdateStrategy>) {

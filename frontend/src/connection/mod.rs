@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use protobuf::Message as _;
 use wasm_sockets::{Message, PollingClient};
 
-use crate::connection::client_packets::{send_client_events, ClientEvent};
+use crate::connection::client_packets::{ClientEvent, send_client_events};
 use crate::connection::ping::{PingTimer, send_ping};
 use crate::connection::server_packets::{InitializeEvent, PacketEntitiesSent, send_server_events};
 use crate::protobuf_codegen::server_packet::ServerEvent;

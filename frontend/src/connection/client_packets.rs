@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::PrimaryWindow};
 use protobuf::Message as _;
-use wasm_timer::{SystemTime, UNIX_EPOCH};
 use wasm_sockets::ConnectionStatus;
+use wasm_timer::{SystemTime, UNIX_EPOCH};
 
 use crate::{
     connection::Connection,
@@ -46,17 +46,17 @@ pub fn send_client_events(
             },
         })
         .collect();
-
+    
     let cursor_pos = window.cursor_position().unwrap_or_default();
     let rel_cursor_pos = (window.size() / 2. - cursor_pos) * Vec2::NEG_Y;
     let client_packet = ClientPacket {
-        timestamp: protobuf::MessageField::some(timestamp),
         cursor: protobuf::MessageField::some(PacketVec2 {
             x: rel_cursor_pos.x as f64,
             y: rel_cursor_pos.y as f64,
             ..Default::default()
         }),
         events: packet_client_events,
+
         ..Default::default()
     };
 
