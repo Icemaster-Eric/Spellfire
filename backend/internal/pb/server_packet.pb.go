@@ -21,88 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Sprite int32
-
-const (
-	Sprite_SPRITE_UNSPECIFIED   Sprite = 0
-	Sprite_SPRITE_PLAYER_GUNNER Sprite = 1
-	Sprite_SPRITE_PLAYER_MAGE   Sprite = 2
-	Sprite_SPRITE_BULLET_1      Sprite = 3
-	Sprite_SPRITE_BUSH_1        Sprite = 4
-	Sprite_SPRITE_TREE_1        Sprite = 5
-	Sprite_SPRITE_TREE_2        Sprite = 6
-	Sprite_SPRITE_ROCK_1        Sprite = 7
-	Sprite_SPRITE_ROCK_2        Sprite = 8
-	Sprite_SPRITE_ROCK_3        Sprite = 9
-	Sprite_SPRITE_ROCK_4        Sprite = 10
-	Sprite_SPRITE_DEAD_BUSH_1   Sprite = 11
-	Sprite_SPRITE_DEAD_BUSH_2   Sprite = 12
-	Sprite_SPRITE_CACTUS_1      Sprite = 13
-)
-
-// Enum value maps for Sprite.
-var (
-	Sprite_name = map[int32]string{
-		0:  "SPRITE_UNSPECIFIED",
-		1:  "SPRITE_PLAYER_GUNNER",
-		2:  "SPRITE_PLAYER_MAGE",
-		3:  "SPRITE_BULLET_1",
-		4:  "SPRITE_BUSH_1",
-		5:  "SPRITE_TREE_1",
-		6:  "SPRITE_TREE_2",
-		7:  "SPRITE_ROCK_1",
-		8:  "SPRITE_ROCK_2",
-		9:  "SPRITE_ROCK_3",
-		10: "SPRITE_ROCK_4",
-		11: "SPRITE_DEAD_BUSH_1",
-		12: "SPRITE_DEAD_BUSH_2",
-		13: "SPRITE_CACTUS_1",
-	}
-	Sprite_value = map[string]int32{
-		"SPRITE_UNSPECIFIED":   0,
-		"SPRITE_PLAYER_GUNNER": 1,
-		"SPRITE_PLAYER_MAGE":   2,
-		"SPRITE_BULLET_1":      3,
-		"SPRITE_BUSH_1":        4,
-		"SPRITE_TREE_1":        5,
-		"SPRITE_TREE_2":        6,
-		"SPRITE_ROCK_1":        7,
-		"SPRITE_ROCK_2":        8,
-		"SPRITE_ROCK_3":        9,
-		"SPRITE_ROCK_4":        10,
-		"SPRITE_DEAD_BUSH_1":   11,
-		"SPRITE_DEAD_BUSH_2":   12,
-		"SPRITE_CACTUS_1":      13,
-	}
-)
-
-func (x Sprite) Enum() *Sprite {
-	p := new(Sprite)
-	*p = x
-	return p
-}
-
-func (x Sprite) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Sprite) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[0].Descriptor()
-}
-
-func (Sprite) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[0]
-}
-
-func (x Sprite) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Sprite.Descriptor instead.
-func (Sprite) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{0}
-}
-
 type Gun int32
 
 const (
@@ -133,11 +51,11 @@ func (x Gun) String() string {
 }
 
 func (Gun) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[1].Descriptor()
+	return file_server_packet_proto_enumTypes[0].Descriptor()
 }
 
 func (Gun) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[1]
+	return &file_server_packet_proto_enumTypes[0]
 }
 
 func (x Gun) Number() protoreflect.EnumNumber {
@@ -146,7 +64,7 @@ func (x Gun) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Gun.Descriptor instead.
 func (Gun) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{1}
+	return file_server_packet_proto_rawDescGZIP(), []int{0}
 }
 
 type Collider_ColliderType int32
@@ -185,11 +103,11 @@ func (x Collider_ColliderType) String() string {
 }
 
 func (Collider_ColliderType) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[2].Descriptor()
+	return file_server_packet_proto_enumTypes[1].Descriptor()
 }
 
 func (Collider_ColliderType) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[2]
+	return &file_server_packet_proto_enumTypes[1]
 }
 
 func (x Collider_ColliderType) Number() protoreflect.EnumNumber {
@@ -201,6 +119,88 @@ func (Collider_ColliderType) EnumDescriptor() ([]byte, []int) {
 	return file_server_packet_proto_rawDescGZIP(), []int{0, 0}
 }
 
+type RenderData_Sprite int32
+
+const (
+	RenderData_SPRITE_UNSPECIFIED RenderData_Sprite = 0
+	RenderData_PLAYER_GUNNER      RenderData_Sprite = 1
+	RenderData_PLAYER_MAGE        RenderData_Sprite = 2
+	RenderData_BULLET_1           RenderData_Sprite = 3
+	RenderData_BUSH_1             RenderData_Sprite = 4
+	RenderData_TREE_1             RenderData_Sprite = 5
+	RenderData_TREE_2             RenderData_Sprite = 6
+	RenderData_ROCK_1             RenderData_Sprite = 7
+	RenderData_ROCK_2             RenderData_Sprite = 8
+	RenderData_ROCK_3             RenderData_Sprite = 9
+	RenderData_ROCK_4             RenderData_Sprite = 10
+	RenderData_DEAD_BUSH_1        RenderData_Sprite = 11
+	RenderData_DEAD_BUSH_2        RenderData_Sprite = 12
+	RenderData_CACTUS_1           RenderData_Sprite = 13
+)
+
+// Enum value maps for RenderData_Sprite.
+var (
+	RenderData_Sprite_name = map[int32]string{
+		0:  "SPRITE_UNSPECIFIED",
+		1:  "PLAYER_GUNNER",
+		2:  "PLAYER_MAGE",
+		3:  "BULLET_1",
+		4:  "BUSH_1",
+		5:  "TREE_1",
+		6:  "TREE_2",
+		7:  "ROCK_1",
+		8:  "ROCK_2",
+		9:  "ROCK_3",
+		10: "ROCK_4",
+		11: "DEAD_BUSH_1",
+		12: "DEAD_BUSH_2",
+		13: "CACTUS_1",
+	}
+	RenderData_Sprite_value = map[string]int32{
+		"SPRITE_UNSPECIFIED": 0,
+		"PLAYER_GUNNER":      1,
+		"PLAYER_MAGE":        2,
+		"BULLET_1":           3,
+		"BUSH_1":             4,
+		"TREE_1":             5,
+		"TREE_2":             6,
+		"ROCK_1":             7,
+		"ROCK_2":             8,
+		"ROCK_3":             9,
+		"ROCK_4":             10,
+		"DEAD_BUSH_1":        11,
+		"DEAD_BUSH_2":        12,
+		"CACTUS_1":           13,
+	}
+)
+
+func (x RenderData_Sprite) Enum() *RenderData_Sprite {
+	p := new(RenderData_Sprite)
+	*p = x
+	return p
+}
+
+func (x RenderData_Sprite) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RenderData_Sprite) Descriptor() protoreflect.EnumDescriptor {
+	return file_server_packet_proto_enumTypes[2].Descriptor()
+}
+
+func (RenderData_Sprite) Type() protoreflect.EnumType {
+	return &file_server_packet_proto_enumTypes[2]
+}
+
+func (x RenderData_Sprite) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RenderData_Sprite.Descriptor instead.
+func (RenderData_Sprite) EnumDescriptor() ([]byte, []int) {
+	return file_server_packet_proto_rawDescGZIP(), []int{1, 0}
+}
+
 type EntityAttribute_EntityAttributeType int32
 
 const (
@@ -208,7 +208,10 @@ const (
 	EntityAttribute_NAME                              EntityAttribute_EntityAttributeType = 1
 	EntityAttribute_HEALTH                            EntityAttribute_EntityAttributeType = 2
 	EntityAttribute_GUN                               EntityAttribute_EntityAttributeType = 3
-	EntityAttribute_BULLET                            EntityAttribute_EntityAttributeType = 4
+	EntityAttribute_DAMAGE                            EntityAttribute_EntityAttributeType = 4
+	EntityAttribute_SPELL_1_LAST_FIRE                 EntityAttribute_EntityAttributeType = 5
+	EntityAttribute_SPELL_2_LAST_FIRE                 EntityAttribute_EntityAttributeType = 6
+	EntityAttribute_SPELL_3_LAST_FIRE                 EntityAttribute_EntityAttributeType = 7
 )
 
 // Enum value maps for EntityAttribute_EntityAttributeType.
@@ -218,14 +221,20 @@ var (
 		1: "NAME",
 		2: "HEALTH",
 		3: "GUN",
-		4: "BULLET",
+		4: "DAMAGE",
+		5: "SPELL_1_LAST_FIRE",
+		6: "SPELL_2_LAST_FIRE",
+		7: "SPELL_3_LAST_FIRE",
 	}
 	EntityAttribute_EntityAttributeType_value = map[string]int32{
 		"ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED": 0,
 		"NAME":                              1,
 		"HEALTH":                            2,
 		"GUN":                               3,
-		"BULLET":                            4,
+		"DAMAGE":                            4,
+		"SPELL_1_LAST_FIRE":                 5,
+		"SPELL_2_LAST_FIRE":                 6,
+		"SPELL_3_LAST_FIRE":                 7,
 	}
 )
 
@@ -327,18 +336,15 @@ type Entity_EntityState int32
 
 const (
 	Entity_ENTITY_STATE_UNSPECIFIED Entity_EntityState = 0
-	Entity_RELOADING                Entity_EntityState = 1
 )
 
 // Enum value maps for Entity_EntityState.
 var (
 	Entity_EntityState_name = map[int32]string{
 		0: "ENTITY_STATE_UNSPECIFIED",
-		1: "RELOADING",
 	}
 	Entity_EntityState_value = map[string]int32{
 		"ENTITY_STATE_UNSPECIFIED": 0,
-		"RELOADING":                1,
 	}
 )
 
@@ -509,7 +515,7 @@ func (x *Collider) GetIsStatic() bool {
 
 type RenderData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sprite        Sprite                 `protobuf:"varint,1,opt,name=sprite,proto3,enum=spellfire.Sprite" json:"sprite,omitempty"`
+	Sprite        RenderData_Sprite      `protobuf:"varint,1,opt,name=sprite,proto3,enum=spellfire.RenderData_Sprite" json:"sprite,omitempty"`
 	SpriteSize    float64                `protobuf:"fixed64,2,opt,name=sprite_size,json=spriteSize,proto3" json:"sprite_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -545,11 +551,11 @@ func (*RenderData) Descriptor() ([]byte, []int) {
 	return file_server_packet_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *RenderData) GetSprite() Sprite {
+func (x *RenderData) GetSprite() RenderData_Sprite {
 	if x != nil {
 		return x.Sprite
 	}
-	return Sprite_SPRITE_UNSPECIFIED
+	return RenderData_SPRITE_UNSPECIFIED
 }
 
 func (x *RenderData) GetSpriteSize() float64 {
@@ -566,6 +572,8 @@ type EntityAttribute struct {
 	Health        float64                             `protobuf:"fixed64,3,opt,name=health,proto3" json:"health,omitempty"`
 	Gun           Gun                                 `protobuf:"varint,4,opt,name=gun,proto3,enum=spellfire.Gun" json:"gun,omitempty"`
 	Damage        float64                             `protobuf:"fixed64,5,opt,name=damage,proto3" json:"damage,omitempty"`
+	SpellsFired   []Spell                             `protobuf:"varint,6,rep,packed,name=spells_fired,json=spellsFired,proto3,enum=spellfire.Spell" json:"spells_fired,omitempty"`
+	SpellFireTime *Timestamp                          `protobuf:"bytes,7,opt,name=spell_fire_time,json=spellFireTime,proto3" json:"spell_fire_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -633,6 +641,20 @@ func (x *EntityAttribute) GetDamage() float64 {
 		return x.Damage
 	}
 	return 0
+}
+
+func (x *EntityAttribute) GetSpellsFired() []Spell {
+	if x != nil {
+		return x.SpellsFired
+	}
+	return nil
+}
+
+func (x *EntityAttribute) GetSpellFireTime() *Timestamp {
+	if x != nil {
+		return x.SpellFireTime
+	}
+	return nil
 }
 
 type Entity struct {
@@ -835,7 +857,8 @@ var File_server_packet_proto protoreflect.FileDescriptor
 
 const file_server_packet_proto_rawDesc = "" +
 	"\n" +
-	"\x13server_packet.proto\x12\tspellfire\x1a\vtypes.proto\"\xe0\x02\n" +
+	"\x13server_packet.proto\x12\tspellfire\x1a\vtypes.proto\x1a\n" +
+	"mage.proto\"\xe0\x02\n" +
 	"\bCollider\x124\n" +
 	"\x04type\x18\x01 \x01(\x0e2 .spellfire.Collider.ColliderTypeR\x04type\x12\x1a\n" +
 	"\brotation\x18\x02 \x01(\x01R\brotation\x12#\n" +
@@ -849,18 +872,43 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x05POINT\x10\x01\x12\n" +
 	"\n" +
 	"\x06CIRCLE\x10\x02\x12\b\n" +
-	"\x04RECT\x10\x03\"X\n" +
+	"\x04RECT\x10\x03\"\xbc\x02\n" +
 	"\n" +
-	"RenderData\x12)\n" +
-	"\x06sprite\x18\x01 \x01(\x0e2\x11.spellfire.SpriteR\x06sprite\x12\x1f\n" +
+	"RenderData\x124\n" +
+	"\x06sprite\x18\x01 \x01(\x0e2\x1c.spellfire.RenderData.SpriteR\x06sprite\x12\x1f\n" +
 	"\vsprite_size\x18\x02 \x01(\x01R\n" +
-	"spriteSize\"\xa4\x02\n" +
+	"spriteSize\"\xd6\x01\n" +
+	"\x06Sprite\x12\x16\n" +
+	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\x11\n" +
+	"\rPLAYER_GUNNER\x10\x01\x12\x0f\n" +
+	"\vPLAYER_MAGE\x10\x02\x12\f\n" +
+	"\bBULLET_1\x10\x03\x12\n" +
+	"\n" +
+	"\x06BUSH_1\x10\x04\x12\n" +
+	"\n" +
+	"\x06TREE_1\x10\x05\x12\n" +
+	"\n" +
+	"\x06TREE_2\x10\x06\x12\n" +
+	"\n" +
+	"\x06ROCK_1\x10\a\x12\n" +
+	"\n" +
+	"\x06ROCK_2\x10\b\x12\n" +
+	"\n" +
+	"\x06ROCK_3\x10\t\x12\n" +
+	"\n" +
+	"\x06ROCK_4\x10\n" +
+	"\x12\x0f\n" +
+	"\vDEAD_BUSH_1\x10\v\x12\x0f\n" +
+	"\vDEAD_BUSH_2\x10\f\x12\f\n" +
+	"\bCACTUS_1\x10\r\"\xdd\x03\n" +
 	"\x0fEntityAttribute\x12B\n" +
 	"\x04type\x18\x01 \x01(\x0e2..spellfire.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06health\x18\x03 \x01(\x01R\x06health\x12 \n" +
 	"\x03gun\x18\x04 \x01(\x0e2\x0e.spellfire.GunR\x03gun\x12\x16\n" +
-	"\x06damage\x18\x05 \x01(\x01R\x06damage\"g\n" +
+	"\x06damage\x18\x05 \x01(\x01R\x06damage\x123\n" +
+	"\fspells_fired\x18\x06 \x03(\x0e2\x10.spellfire.SpellR\vspellsFired\x12<\n" +
+	"\x0fspell_fire_time\x18\a \x01(\v2\x14.spellfire.TimestampR\rspellFireTime\"\xac\x01\n" +
 	"\x13EntityAttributeType\x12%\n" +
 	"!ENTITY_ATTRIBUTE_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04NAME\x10\x01\x12\n" +
@@ -868,7 +916,10 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x06HEALTH\x10\x02\x12\a\n" +
 	"\x03GUN\x10\x03\x12\n" +
 	"\n" +
-	"\x06BULLET\x10\x04\"\xe9\x03\n" +
+	"\x06DAMAGE\x10\x04\x12\x15\n" +
+	"\x11SPELL_1_LAST_FIRE\x10\x05\x12\x15\n" +
+	"\x11SPELL_2_LAST_FIRE\x10\x06\x12\x15\n" +
+	"\x11SPELL_3_LAST_FIRE\x10\a\"\xda\x03\n" +
 	"\x06Entity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x120\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1c.spellfire.Entity.EntityTypeR\x04type\x12/\n" +
@@ -892,10 +943,9 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x04ROCK\x10\x06\x12\r\n" +
 	"\tDEAD_BUSH\x10\a\x12\n" +
 	"\n" +
-	"\x06CACTUS\x10\b\":\n" +
+	"\x06CACTUS\x10\b\"+\n" +
 	"\vEntityState\x12\x1c\n" +
-	"\x18ENTITY_STATE_UNSPECIFIED\x10\x00\x12\r\n" +
-	"\tRELOADING\x10\x01\"\xc0\x01\n" +
+	"\x18ENTITY_STATE_UNSPECIFIED\x10\x00\"\xc0\x01\n" +
 	"\vServerEvent\x12:\n" +
 	"\x04type\x18\x01 \x01(\x0e2&.spellfire.ServerEvent.ServerEventTypeR\x04type\x12/\n" +
 	"\x14enter_game_player_id\x18\x02 \x01(\rR\x11enterGamePlayerId\"D\n" +
@@ -906,23 +956,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\fServerPacket\x122\n" +
 	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12-\n" +
 	"\bentities\x18\x02 \x03(\v2\x11.spellfire.EntityR\bentities\x12.\n" +
-	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ServerEventR\x06events*\xb1\x02\n" +
-	"\x06Sprite\x12\x16\n" +
-	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14SPRITE_PLAYER_GUNNER\x10\x01\x12\x16\n" +
-	"\x12SPRITE_PLAYER_MAGE\x10\x02\x12\x13\n" +
-	"\x0fSPRITE_BULLET_1\x10\x03\x12\x11\n" +
-	"\rSPRITE_BUSH_1\x10\x04\x12\x11\n" +
-	"\rSPRITE_TREE_1\x10\x05\x12\x11\n" +
-	"\rSPRITE_TREE_2\x10\x06\x12\x11\n" +
-	"\rSPRITE_ROCK_1\x10\a\x12\x11\n" +
-	"\rSPRITE_ROCK_2\x10\b\x12\x11\n" +
-	"\rSPRITE_ROCK_3\x10\t\x12\x11\n" +
-	"\rSPRITE_ROCK_4\x10\n" +
-	"\x12\x16\n" +
-	"\x12SPRITE_DEAD_BUSH_1\x10\v\x12\x16\n" +
-	"\x12SPRITE_DEAD_BUSH_2\x10\f\x12\x13\n" +
-	"\x0fSPRITE_CACTUS_1\x10\r*3\n" +
+	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ServerEventR\x06events*3\n" +
 	"\x03Gun\x12\x13\n" +
 	"\x0fGUN_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13GUN_AUTOMATIC_RIFLE\x10\x01B?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
@@ -942,9 +976,9 @@ func file_server_packet_proto_rawDescGZIP() []byte {
 var file_server_packet_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
 var file_server_packet_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_server_packet_proto_goTypes = []any{
-	(Sprite)(0),                              // 0: spellfire.Sprite
-	(Gun)(0),                                 // 1: spellfire.Gun
-	(Collider_ColliderType)(0),               // 2: spellfire.Collider.ColliderType
+	(Gun)(0),                                 // 0: spellfire.Gun
+	(Collider_ColliderType)(0),               // 1: spellfire.Collider.ColliderType
+	(RenderData_Sprite)(0),                   // 2: spellfire.RenderData.Sprite
 	(EntityAttribute_EntityAttributeType)(0), // 3: spellfire.EntityAttribute.EntityAttributeType
 	(Entity_EntityType)(0),                   // 4: spellfire.Entity.EntityType
 	(Entity_EntityState)(0),                  // 5: spellfire.Entity.EntityState
@@ -956,30 +990,33 @@ var file_server_packet_proto_goTypes = []any{
 	(*ServerEvent)(nil),                      // 11: spellfire.ServerEvent
 	(*ServerPacket)(nil),                     // 12: spellfire.ServerPacket
 	(*Vec2)(nil),                             // 13: spellfire.Vec2
-	(*Timestamp)(nil),                        // 14: spellfire.Timestamp
+	(Spell)(0),                               // 14: spellfire.Spell
+	(*Timestamp)(nil),                        // 15: spellfire.Timestamp
 }
 var file_server_packet_proto_depIdxs = []int32{
-	2,  // 0: spellfire.Collider.type:type_name -> spellfire.Collider.ColliderType
+	1,  // 0: spellfire.Collider.type:type_name -> spellfire.Collider.ColliderType
 	13, // 1: spellfire.Collider.size:type_name -> spellfire.Vec2
 	13, // 2: spellfire.Collider.position:type_name -> spellfire.Vec2
 	13, // 3: spellfire.Collider.velocity:type_name -> spellfire.Vec2
-	0,  // 4: spellfire.RenderData.sprite:type_name -> spellfire.Sprite
+	2,  // 4: spellfire.RenderData.sprite:type_name -> spellfire.RenderData.Sprite
 	3,  // 5: spellfire.EntityAttribute.type:type_name -> spellfire.EntityAttribute.EntityAttributeType
-	1,  // 6: spellfire.EntityAttribute.gun:type_name -> spellfire.Gun
-	4,  // 7: spellfire.Entity.type:type_name -> spellfire.Entity.EntityType
-	7,  // 8: spellfire.Entity.collider:type_name -> spellfire.Collider
-	8,  // 9: spellfire.Entity.render_data:type_name -> spellfire.RenderData
-	5,  // 10: spellfire.Entity.states:type_name -> spellfire.Entity.EntityState
-	9,  // 11: spellfire.Entity.attributes:type_name -> spellfire.EntityAttribute
-	6,  // 12: spellfire.ServerEvent.type:type_name -> spellfire.ServerEvent.ServerEventType
-	14, // 13: spellfire.ServerPacket.timestamp:type_name -> spellfire.Timestamp
-	10, // 14: spellfire.ServerPacket.entities:type_name -> spellfire.Entity
-	11, // 15: spellfire.ServerPacket.events:type_name -> spellfire.ServerEvent
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	0,  // 6: spellfire.EntityAttribute.gun:type_name -> spellfire.Gun
+	14, // 7: spellfire.EntityAttribute.spells_fired:type_name -> spellfire.Spell
+	15, // 8: spellfire.EntityAttribute.spell_fire_time:type_name -> spellfire.Timestamp
+	4,  // 9: spellfire.Entity.type:type_name -> spellfire.Entity.EntityType
+	7,  // 10: spellfire.Entity.collider:type_name -> spellfire.Collider
+	8,  // 11: spellfire.Entity.render_data:type_name -> spellfire.RenderData
+	5,  // 12: spellfire.Entity.states:type_name -> spellfire.Entity.EntityState
+	9,  // 13: spellfire.Entity.attributes:type_name -> spellfire.EntityAttribute
+	6,  // 14: spellfire.ServerEvent.type:type_name -> spellfire.ServerEvent.ServerEventType
+	15, // 15: spellfire.ServerPacket.timestamp:type_name -> spellfire.Timestamp
+	10, // 16: spellfire.ServerPacket.entities:type_name -> spellfire.Entity
+	11, // 17: spellfire.ServerPacket.events:type_name -> spellfire.ServerEvent
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_server_packet_proto_init() }
@@ -988,6 +1025,7 @@ func file_server_packet_proto_init() {
 		return
 	}
 	file_types_proto_init()
+	file_mage_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
