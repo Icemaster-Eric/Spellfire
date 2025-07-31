@@ -15,22 +15,13 @@ message ClientEvent {
     MOVE = 1;
     START_FIRE = 2;
     STOP_FIRE = 3;
-    CAST_SPELL_1 = 4;
-    CAST_SPELL_2 = 5;
-    CAST_SPELL_3 = 6;
-    EQUIP_SPELL_1 = 7;
-    EQUIP_SPELL_2 = 8;
-    EQUIP_SPELL_3 = 9;
+    CAST_SPELL = 4;
   }
   Vec2 movement = 4;
-  Vec2 shoot_dir = 5;
-  Spell casted_spell = 6;
-  Spell equipped_spell = 7;
-
+  Spell spell = 6;
 }
 
 message ClientPacket {
-  Timestamp timestamp = 1;
   Vec2 cursor = 2;
   repeated ClientEvent events = 3;
 }

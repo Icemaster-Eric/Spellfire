@@ -28,12 +28,7 @@ const (
 	ClientEvent_MOVE                          ClientEvent_ClientEventType = 1
 	ClientEvent_START_FIRE                    ClientEvent_ClientEventType = 2
 	ClientEvent_STOP_FIRE                     ClientEvent_ClientEventType = 3
-	ClientEvent_CAST_SPELL_1                  ClientEvent_ClientEventType = 4
-	ClientEvent_CAST_SPELL_2                  ClientEvent_ClientEventType = 5
-	ClientEvent_CAST_SPELL_3                  ClientEvent_ClientEventType = 6
-	ClientEvent_EQUIP_SPELL_1                 ClientEvent_ClientEventType = 7
-	ClientEvent_EQUIP_SPELL_2                 ClientEvent_ClientEventType = 8
-	ClientEvent_EQUIP_SPELL_3                 ClientEvent_ClientEventType = 9
+	ClientEvent_CAST_SPELL                    ClientEvent_ClientEventType = 4
 )
 
 // Enum value maps for ClientEvent_ClientEventType.
@@ -43,24 +38,14 @@ var (
 		1: "MOVE",
 		2: "START_FIRE",
 		3: "STOP_FIRE",
-		4: "CAST_SPELL_1",
-		5: "CAST_SPELL_2",
-		6: "CAST_SPELL_3",
-		7: "EQUIP_SPELL_1",
-		8: "EQUIP_SPELL_2",
-		9: "EQUIP_SPELL_3",
+		4: "CAST_SPELL",
 	}
 	ClientEvent_ClientEventType_value = map[string]int32{
 		"CLIENT_EVENT_TYPE_UNSPECIFIED": 0,
 		"MOVE":                          1,
 		"START_FIRE":                    2,
 		"STOP_FIRE":                     3,
-		"CAST_SPELL_1":                  4,
-		"CAST_SPELL_2":                  5,
-		"CAST_SPELL_3":                  6,
-		"EQUIP_SPELL_1":                 7,
-		"EQUIP_SPELL_2":                 8,
-		"EQUIP_SPELL_3":                 9,
+		"CAST_SPELL":                    4,
 	}
 )
 
@@ -96,9 +81,7 @@ type ClientEvent struct {
 	Type          ClientEvent_ClientEventType `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.ClientEvent_ClientEventType" json:"type,omitempty"`
 	Timestamp     *Timestamp                  `protobuf:"bytes,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	Movement      *Vec2                       `protobuf:"bytes,4,opt,name=movement,proto3" json:"movement,omitempty"`
-	ShootDir      *Vec2                       `protobuf:"bytes,5,opt,name=shoot_dir,json=shootDir,proto3" json:"shoot_dir,omitempty"`
-	CastedSpell   Spell                       `protobuf:"varint,6,opt,name=casted_spell,json=castedSpell,proto3,enum=spellfire.Spell" json:"casted_spell,omitempty"`
-	EquippedSpell Spell                       `protobuf:"varint,7,opt,name=equipped_spell,json=equippedSpell,proto3,enum=spellfire.Spell" json:"equipped_spell,omitempty"`
+	Spell         Spell                       `protobuf:"varint,6,opt,name=spell,proto3,enum=spellfire.Spell" json:"spell,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -154,30 +137,15 @@ func (x *ClientEvent) GetMovement() *Vec2 {
 	return nil
 }
 
-func (x *ClientEvent) GetShootDir() *Vec2 {
+func (x *ClientEvent) GetSpell() Spell {
 	if x != nil {
-		return x.ShootDir
-	}
-	return nil
-}
-
-func (x *ClientEvent) GetCastedSpell() Spell {
-	if x != nil {
-		return x.CastedSpell
-	}
-	return Spell_SPELL_FIREBALL
-}
-
-func (x *ClientEvent) GetEquippedSpell() Spell {
-	if x != nil {
-		return x.EquippedSpell
+		return x.Spell
 	}
 	return Spell_SPELL_FIREBALL
 }
 
 type ClientPacket struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Timestamp     *Timestamp             `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	Cursor        *Vec2                  `protobuf:"bytes,2,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	Events        []*ClientEvent         `protobuf:"bytes,3,rep,name=events,proto3" json:"events,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -214,13 +182,6 @@ func (*ClientPacket) Descriptor() ([]byte, []int) {
 	return file_client_packet_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ClientPacket) GetTimestamp() *Timestamp {
-	if x != nil {
-		return x.Timestamp
-	}
-	return nil
-}
-
 func (x *ClientPacket) GetCursor() *Vec2 {
 	if x != nil {
 		return x.Cursor
@@ -240,28 +201,21 @@ var File_client_packet_proto protoreflect.FileDescriptor
 const file_client_packet_proto_rawDesc = "" +
 	"\n" +
 	"\x13client_packet.proto\x12\tspellfire\x1a\vtypes.proto\x1a\n" +
-	"mage.proto\"\x95\x04\n" +
+	"mage.proto\"\xc1\x02\n" +
 	"\vClientEvent\x12:\n" +
 	"\x04type\x18\x01 \x01(\x0e2&.spellfire.ClientEvent.ClientEventTypeR\x04type\x122\n" +
 	"\ttimestamp\x18\x02 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12+\n" +
-	"\bmovement\x18\x04 \x01(\v2\x0f.spellfire.Vec2R\bmovement\x12,\n" +
-	"\tshoot_dir\x18\x05 \x01(\v2\x0f.spellfire.Vec2R\bshootDir\x123\n" +
-	"\fcasted_spell\x18\x06 \x01(\x0e2\x10.spellfire.SpellR\vcastedSpell\x127\n" +
-	"\x0eequipped_spell\x18\a \x01(\x0e2\x10.spellfire.SpellR\requippedSpell\"\xcc\x01\n" +
+	"\bmovement\x18\x04 \x01(\v2\x0f.spellfire.Vec2R\bmovement\x12&\n" +
+	"\x05spell\x18\x06 \x01(\x0e2\x10.spellfire.SpellR\x05spell\"m\n" +
 	"\x0fClientEventType\x12!\n" +
 	"\x1dCLIENT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04MOVE\x10\x01\x12\x0e\n" +
 	"\n" +
 	"START_FIRE\x10\x02\x12\r\n" +
-	"\tSTOP_FIRE\x10\x03\x12\x10\n" +
-	"\fCAST_SPELL_1\x10\x04\x12\x10\n" +
-	"\fCAST_SPELL_2\x10\x05\x12\x10\n" +
-	"\fCAST_SPELL_3\x10\x06\x12\x11\n" +
-	"\rEQUIP_SPELL_1\x10\a\x12\x11\n" +
-	"\rEQUIP_SPELL_2\x10\b\x12\x11\n" +
-	"\rEQUIP_SPELL_3\x10\t\"\x9b\x01\n" +
-	"\fClientPacket\x122\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x14.spellfire.TimestampR\ttimestamp\x12'\n" +
+	"\tSTOP_FIRE\x10\x03\x12\x0e\n" +
+	"\n" +
+	"CAST_SPELL\x10\x04\"g\n" +
+	"\fClientPacket\x12'\n" +
 	"\x06cursor\x18\x02 \x01(\v2\x0f.spellfire.Vec2R\x06cursor\x12.\n" +
 	"\x06events\x18\x03 \x03(\v2\x16.spellfire.ClientEventR\x06eventsB?Z=github.com/Icemaster-Eric/Spellfire/backend/internal/proto;pbb\x06proto3"
 
@@ -291,17 +245,14 @@ var file_client_packet_proto_depIdxs = []int32{
 	0, // 0: spellfire.ClientEvent.type:type_name -> spellfire.ClientEvent.ClientEventType
 	3, // 1: spellfire.ClientEvent.timestamp:type_name -> spellfire.Timestamp
 	4, // 2: spellfire.ClientEvent.movement:type_name -> spellfire.Vec2
-	4, // 3: spellfire.ClientEvent.shoot_dir:type_name -> spellfire.Vec2
-	5, // 4: spellfire.ClientEvent.casted_spell:type_name -> spellfire.Spell
-	5, // 5: spellfire.ClientEvent.equipped_spell:type_name -> spellfire.Spell
-	3, // 6: spellfire.ClientPacket.timestamp:type_name -> spellfire.Timestamp
-	4, // 7: spellfire.ClientPacket.cursor:type_name -> spellfire.Vec2
-	1, // 8: spellfire.ClientPacket.events:type_name -> spellfire.ClientEvent
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	5, // 3: spellfire.ClientEvent.spell:type_name -> spellfire.Spell
+	4, // 4: spellfire.ClientPacket.cursor:type_name -> spellfire.Vec2
+	1, // 5: spellfire.ClientPacket.events:type_name -> spellfire.ClientEvent
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_client_packet_proto_init() }
