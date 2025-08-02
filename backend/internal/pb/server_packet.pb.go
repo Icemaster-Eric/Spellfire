@@ -119,88 +119,6 @@ func (Collider_ColliderType) EnumDescriptor() ([]byte, []int) {
 	return file_server_packet_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type RenderData_Sprite int32
-
-const (
-	RenderData_SPRITE_UNSPECIFIED RenderData_Sprite = 0
-	RenderData_GUNNER             RenderData_Sprite = 1
-	RenderData_MAGE               RenderData_Sprite = 2
-	RenderData_BULLET_1           RenderData_Sprite = 3
-	RenderData_BUSH_1             RenderData_Sprite = 4
-	RenderData_TREE_1             RenderData_Sprite = 5
-	RenderData_TREE_2             RenderData_Sprite = 6
-	RenderData_ROCK_1             RenderData_Sprite = 7
-	RenderData_ROCK_2             RenderData_Sprite = 8
-	RenderData_ROCK_3             RenderData_Sprite = 9
-	RenderData_ROCK_4             RenderData_Sprite = 10
-	RenderData_DEAD_BUSH_1        RenderData_Sprite = 11
-	RenderData_DEAD_BUSH_2        RenderData_Sprite = 12
-	RenderData_CACTUS_1           RenderData_Sprite = 13
-)
-
-// Enum value maps for RenderData_Sprite.
-var (
-	RenderData_Sprite_name = map[int32]string{
-		0:  "SPRITE_UNSPECIFIED",
-		1:  "GUNNER",
-		2:  "MAGE",
-		3:  "BULLET_1",
-		4:  "BUSH_1",
-		5:  "TREE_1",
-		6:  "TREE_2",
-		7:  "ROCK_1",
-		8:  "ROCK_2",
-		9:  "ROCK_3",
-		10: "ROCK_4",
-		11: "DEAD_BUSH_1",
-		12: "DEAD_BUSH_2",
-		13: "CACTUS_1",
-	}
-	RenderData_Sprite_value = map[string]int32{
-		"SPRITE_UNSPECIFIED": 0,
-		"GUNNER":             1,
-		"MAGE":               2,
-		"BULLET_1":           3,
-		"BUSH_1":             4,
-		"TREE_1":             5,
-		"TREE_2":             6,
-		"ROCK_1":             7,
-		"ROCK_2":             8,
-		"ROCK_3":             9,
-		"ROCK_4":             10,
-		"DEAD_BUSH_1":        11,
-		"DEAD_BUSH_2":        12,
-		"CACTUS_1":           13,
-	}
-)
-
-func (x RenderData_Sprite) Enum() *RenderData_Sprite {
-	p := new(RenderData_Sprite)
-	*p = x
-	return p
-}
-
-func (x RenderData_Sprite) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (RenderData_Sprite) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[2].Descriptor()
-}
-
-func (RenderData_Sprite) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[2]
-}
-
-func (x RenderData_Sprite) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use RenderData_Sprite.Descriptor instead.
-func (RenderData_Sprite) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{1, 0}
-}
-
 type EntityAttribute_EntityAttributeType int32
 
 const (
@@ -249,11 +167,11 @@ func (x EntityAttribute_EntityAttributeType) String() string {
 }
 
 func (EntityAttribute_EntityAttributeType) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[3].Descriptor()
+	return file_server_packet_proto_enumTypes[2].Descriptor()
 }
 
 func (EntityAttribute_EntityAttributeType) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[3]
+	return &file_server_packet_proto_enumTypes[2]
 }
 
 func (x EntityAttribute_EntityAttributeType) Number() protoreflect.EnumNumber {
@@ -262,7 +180,7 @@ func (x EntityAttribute_EntityAttributeType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use EntityAttribute_EntityAttributeType.Descriptor instead.
 func (EntityAttribute_EntityAttributeType) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{2, 0}
+	return file_server_packet_proto_rawDescGZIP(), []int{1, 0}
 }
 
 type Entity_EntityType int32
@@ -316,11 +234,11 @@ func (x Entity_EntityType) String() string {
 }
 
 func (Entity_EntityType) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[4].Descriptor()
+	return file_server_packet_proto_enumTypes[3].Descriptor()
 }
 
 func (Entity_EntityType) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[4]
+	return &file_server_packet_proto_enumTypes[3]
 }
 
 func (x Entity_EntityType) Number() protoreflect.EnumNumber {
@@ -329,7 +247,7 @@ func (x Entity_EntityType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Entity_EntityType.Descriptor instead.
 func (Entity_EntityType) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{3, 0}
+	return file_server_packet_proto_rawDescGZIP(), []int{2, 0}
 }
 
 type Entity_EntityState int32
@@ -359,11 +277,11 @@ func (x Entity_EntityState) String() string {
 }
 
 func (Entity_EntityState) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[5].Descriptor()
+	return file_server_packet_proto_enumTypes[4].Descriptor()
 }
 
 func (Entity_EntityState) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[5]
+	return &file_server_packet_proto_enumTypes[4]
 }
 
 func (x Entity_EntityState) Number() protoreflect.EnumNumber {
@@ -372,7 +290,7 @@ func (x Entity_EntityState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Entity_EntityState.Descriptor instead.
 func (Entity_EntityState) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{3, 1}
+	return file_server_packet_proto_rawDescGZIP(), []int{2, 1}
 }
 
 type ServerEvent_ServerEventType int32
@@ -405,11 +323,11 @@ func (x ServerEvent_ServerEventType) String() string {
 }
 
 func (ServerEvent_ServerEventType) Descriptor() protoreflect.EnumDescriptor {
-	return file_server_packet_proto_enumTypes[6].Descriptor()
+	return file_server_packet_proto_enumTypes[5].Descriptor()
 }
 
 func (ServerEvent_ServerEventType) Type() protoreflect.EnumType {
-	return &file_server_packet_proto_enumTypes[6]
+	return &file_server_packet_proto_enumTypes[5]
 }
 
 func (x ServerEvent_ServerEventType) Number() protoreflect.EnumNumber {
@@ -418,7 +336,7 @@ func (x ServerEvent_ServerEventType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ServerEvent_ServerEventType.Descriptor instead.
 func (ServerEvent_ServerEventType) EnumDescriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{4, 0}
+	return file_server_packet_proto_rawDescGZIP(), []int{3, 0}
 }
 
 type Collider struct {
@@ -513,58 +431,6 @@ func (x *Collider) GetIsStatic() bool {
 	return false
 }
 
-type RenderData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sprite        RenderData_Sprite      `protobuf:"varint,1,opt,name=sprite,proto3,enum=spellfire.RenderData_Sprite" json:"sprite,omitempty"`
-	SpriteSize    float64                `protobuf:"fixed64,2,opt,name=sprite_size,json=spriteSize,proto3" json:"sprite_size,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RenderData) Reset() {
-	*x = RenderData{}
-	mi := &file_server_packet_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RenderData) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RenderData) ProtoMessage() {}
-
-func (x *RenderData) ProtoReflect() protoreflect.Message {
-	mi := &file_server_packet_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RenderData.ProtoReflect.Descriptor instead.
-func (*RenderData) Descriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RenderData) GetSprite() RenderData_Sprite {
-	if x != nil {
-		return x.Sprite
-	}
-	return RenderData_SPRITE_UNSPECIFIED
-}
-
-func (x *RenderData) GetSpriteSize() float64 {
-	if x != nil {
-		return x.SpriteSize
-	}
-	return 0
-}
-
 type EntityAttribute struct {
 	state         protoimpl.MessageState              `protogen:"open.v1"`
 	Type          EntityAttribute_EntityAttributeType `protobuf:"varint,1,opt,name=type,proto3,enum=spellfire.EntityAttribute_EntityAttributeType" json:"type,omitempty"`
@@ -580,7 +446,7 @@ type EntityAttribute struct {
 
 func (x *EntityAttribute) Reset() {
 	*x = EntityAttribute{}
-	mi := &file_server_packet_proto_msgTypes[2]
+	mi := &file_server_packet_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -592,7 +458,7 @@ func (x *EntityAttribute) String() string {
 func (*EntityAttribute) ProtoMessage() {}
 
 func (x *EntityAttribute) ProtoReflect() protoreflect.Message {
-	mi := &file_server_packet_proto_msgTypes[2]
+	mi := &file_server_packet_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -605,7 +471,7 @@ func (x *EntityAttribute) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntityAttribute.ProtoReflect.Descriptor instead.
 func (*EntityAttribute) Descriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{2}
+	return file_server_packet_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *EntityAttribute) GetType() EntityAttribute_EntityAttributeType {
@@ -662,7 +528,6 @@ type Entity struct {
 	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Type          Entity_EntityType      `protobuf:"varint,2,opt,name=type,proto3,enum=spellfire.Entity_EntityType" json:"type,omitempty"`
 	Collider      *Collider              `protobuf:"bytes,3,opt,name=collider,proto3" json:"collider,omitempty"`
-	RenderData    *RenderData            `protobuf:"bytes,4,opt,name=render_data,json=renderData,proto3" json:"render_data,omitempty"`
 	States        []Entity_EntityState   `protobuf:"varint,5,rep,packed,name=states,proto3,enum=spellfire.Entity_EntityState" json:"states,omitempty"`
 	Attributes    []*EntityAttribute     `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -671,7 +536,7 @@ type Entity struct {
 
 func (x *Entity) Reset() {
 	*x = Entity{}
-	mi := &file_server_packet_proto_msgTypes[3]
+	mi := &file_server_packet_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -683,7 +548,7 @@ func (x *Entity) String() string {
 func (*Entity) ProtoMessage() {}
 
 func (x *Entity) ProtoReflect() protoreflect.Message {
-	mi := &file_server_packet_proto_msgTypes[3]
+	mi := &file_server_packet_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -696,7 +561,7 @@ func (x *Entity) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Entity.ProtoReflect.Descriptor instead.
 func (*Entity) Descriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{3}
+	return file_server_packet_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Entity) GetId() uint32 {
@@ -716,13 +581,6 @@ func (x *Entity) GetType() Entity_EntityType {
 func (x *Entity) GetCollider() *Collider {
 	if x != nil {
 		return x.Collider
-	}
-	return nil
-}
-
-func (x *Entity) GetRenderData() *RenderData {
-	if x != nil {
-		return x.RenderData
 	}
 	return nil
 }
@@ -751,7 +609,7 @@ type ServerEvent struct {
 
 func (x *ServerEvent) Reset() {
 	*x = ServerEvent{}
-	mi := &file_server_packet_proto_msgTypes[4]
+	mi := &file_server_packet_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -763,7 +621,7 @@ func (x *ServerEvent) String() string {
 func (*ServerEvent) ProtoMessage() {}
 
 func (x *ServerEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_server_packet_proto_msgTypes[4]
+	mi := &file_server_packet_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -776,7 +634,7 @@ func (x *ServerEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServerEvent.ProtoReflect.Descriptor instead.
 func (*ServerEvent) Descriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{4}
+	return file_server_packet_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ServerEvent) GetType() ServerEvent_ServerEventType {
@@ -804,7 +662,7 @@ type ServerPacket struct {
 
 func (x *ServerPacket) Reset() {
 	*x = ServerPacket{}
-	mi := &file_server_packet_proto_msgTypes[5]
+	mi := &file_server_packet_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -816,7 +674,7 @@ func (x *ServerPacket) String() string {
 func (*ServerPacket) ProtoMessage() {}
 
 func (x *ServerPacket) ProtoReflect() protoreflect.Message {
-	mi := &file_server_packet_proto_msgTypes[5]
+	mi := &file_server_packet_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -829,7 +687,7 @@ func (x *ServerPacket) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ServerPacket.ProtoReflect.Descriptor instead.
 func (*ServerPacket) Descriptor() ([]byte, []int) {
-	return file_server_packet_proto_rawDescGZIP(), []int{5}
+	return file_server_packet_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ServerPacket) GetTimestamp() *Timestamp {
@@ -872,36 +730,7 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x05POINT\x10\x01\x12\n" +
 	"\n" +
 	"\x06CIRCLE\x10\x02\x12\b\n" +
-	"\x04RECT\x10\x03\"\xae\x02\n" +
-	"\n" +
-	"RenderData\x124\n" +
-	"\x06sprite\x18\x01 \x01(\x0e2\x1c.spellfire.RenderData.SpriteR\x06sprite\x12\x1f\n" +
-	"\vsprite_size\x18\x02 \x01(\x01R\n" +
-	"spriteSize\"\xc8\x01\n" +
-	"\x06Sprite\x12\x16\n" +
-	"\x12SPRITE_UNSPECIFIED\x10\x00\x12\n" +
-	"\n" +
-	"\x06GUNNER\x10\x01\x12\b\n" +
-	"\x04MAGE\x10\x02\x12\f\n" +
-	"\bBULLET_1\x10\x03\x12\n" +
-	"\n" +
-	"\x06BUSH_1\x10\x04\x12\n" +
-	"\n" +
-	"\x06TREE_1\x10\x05\x12\n" +
-	"\n" +
-	"\x06TREE_2\x10\x06\x12\n" +
-	"\n" +
-	"\x06ROCK_1\x10\a\x12\n" +
-	"\n" +
-	"\x06ROCK_2\x10\b\x12\n" +
-	"\n" +
-	"\x06ROCK_3\x10\t\x12\n" +
-	"\n" +
-	"\x06ROCK_4\x10\n" +
-	"\x12\x0f\n" +
-	"\vDEAD_BUSH_1\x10\v\x12\x0f\n" +
-	"\vDEAD_BUSH_2\x10\f\x12\f\n" +
-	"\bCACTUS_1\x10\r\"\xdd\x03\n" +
+	"\x04RECT\x10\x03\"\xdd\x03\n" +
 	"\x0fEntityAttribute\x12B\n" +
 	"\x04type\x18\x01 \x01(\x0e2..spellfire.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
@@ -920,13 +749,11 @@ const file_server_packet_proto_rawDesc = "" +
 	"\x06DAMAGE\x10\x04\x12\x15\n" +
 	"\x11SPELL_1_LAST_FIRE\x10\x05\x12\x15\n" +
 	"\x11SPELL_2_LAST_FIRE\x10\x06\x12\x15\n" +
-	"\x11SPELL_3_LAST_FIRE\x10\a\"\xda\x03\n" +
+	"\x11SPELL_3_LAST_FIRE\x10\a\"\xa2\x03\n" +
 	"\x06Entity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x120\n" +
 	"\x04type\x18\x02 \x01(\x0e2\x1c.spellfire.Entity.EntityTypeR\x04type\x12/\n" +
-	"\bcollider\x18\x03 \x01(\v2\x13.spellfire.ColliderR\bcollider\x126\n" +
-	"\vrender_data\x18\x04 \x01(\v2\x15.spellfire.RenderDataR\n" +
-	"renderData\x125\n" +
+	"\bcollider\x18\x03 \x01(\v2\x13.spellfire.ColliderR\bcollider\x125\n" +
 	"\x06states\x18\x05 \x03(\x0e2\x1d.spellfire.Entity.EntityStateR\x06states\x12:\n" +
 	"\n" +
 	"attributes\x18\x06 \x03(\v2\x1a.spellfire.EntityAttributeR\n" +
@@ -974,50 +801,46 @@ func file_server_packet_proto_rawDescGZIP() []byte {
 	return file_server_packet_proto_rawDescData
 }
 
-var file_server_packet_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
-var file_server_packet_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_server_packet_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_server_packet_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_server_packet_proto_goTypes = []any{
 	(Gun)(0),                                 // 0: spellfire.Gun
 	(Collider_ColliderType)(0),               // 1: spellfire.Collider.ColliderType
-	(RenderData_Sprite)(0),                   // 2: spellfire.RenderData.Sprite
-	(EntityAttribute_EntityAttributeType)(0), // 3: spellfire.EntityAttribute.EntityAttributeType
-	(Entity_EntityType)(0),                   // 4: spellfire.Entity.EntityType
-	(Entity_EntityState)(0),                  // 5: spellfire.Entity.EntityState
-	(ServerEvent_ServerEventType)(0),         // 6: spellfire.ServerEvent.ServerEventType
-	(*Collider)(nil),                         // 7: spellfire.Collider
-	(*RenderData)(nil),                       // 8: spellfire.RenderData
-	(*EntityAttribute)(nil),                  // 9: spellfire.EntityAttribute
-	(*Entity)(nil),                           // 10: spellfire.Entity
-	(*ServerEvent)(nil),                      // 11: spellfire.ServerEvent
-	(*ServerPacket)(nil),                     // 12: spellfire.ServerPacket
-	(*Vec2)(nil),                             // 13: spellfire.Vec2
-	(Spell)(0),                               // 14: spellfire.Spell
-	(*Timestamp)(nil),                        // 15: spellfire.Timestamp
+	(EntityAttribute_EntityAttributeType)(0), // 2: spellfire.EntityAttribute.EntityAttributeType
+	(Entity_EntityType)(0),                   // 3: spellfire.Entity.EntityType
+	(Entity_EntityState)(0),                  // 4: spellfire.Entity.EntityState
+	(ServerEvent_ServerEventType)(0),         // 5: spellfire.ServerEvent.ServerEventType
+	(*Collider)(nil),                         // 6: spellfire.Collider
+	(*EntityAttribute)(nil),                  // 7: spellfire.EntityAttribute
+	(*Entity)(nil),                           // 8: spellfire.Entity
+	(*ServerEvent)(nil),                      // 9: spellfire.ServerEvent
+	(*ServerPacket)(nil),                     // 10: spellfire.ServerPacket
+	(*Vec2)(nil),                             // 11: spellfire.Vec2
+	(Spell)(0),                               // 12: spellfire.Spell
+	(*Timestamp)(nil),                        // 13: spellfire.Timestamp
 }
 var file_server_packet_proto_depIdxs = []int32{
 	1,  // 0: spellfire.Collider.type:type_name -> spellfire.Collider.ColliderType
-	13, // 1: spellfire.Collider.size:type_name -> spellfire.Vec2
-	13, // 2: spellfire.Collider.position:type_name -> spellfire.Vec2
-	13, // 3: spellfire.Collider.velocity:type_name -> spellfire.Vec2
-	2,  // 4: spellfire.RenderData.sprite:type_name -> spellfire.RenderData.Sprite
-	3,  // 5: spellfire.EntityAttribute.type:type_name -> spellfire.EntityAttribute.EntityAttributeType
-	0,  // 6: spellfire.EntityAttribute.gun:type_name -> spellfire.Gun
-	14, // 7: spellfire.EntityAttribute.spells_fired:type_name -> spellfire.Spell
-	15, // 8: spellfire.EntityAttribute.spell_fire_time:type_name -> spellfire.Timestamp
-	4,  // 9: spellfire.Entity.type:type_name -> spellfire.Entity.EntityType
-	7,  // 10: spellfire.Entity.collider:type_name -> spellfire.Collider
-	8,  // 11: spellfire.Entity.render_data:type_name -> spellfire.RenderData
-	5,  // 12: spellfire.Entity.states:type_name -> spellfire.Entity.EntityState
-	9,  // 13: spellfire.Entity.attributes:type_name -> spellfire.EntityAttribute
-	6,  // 14: spellfire.ServerEvent.type:type_name -> spellfire.ServerEvent.ServerEventType
-	15, // 15: spellfire.ServerPacket.timestamp:type_name -> spellfire.Timestamp
-	10, // 16: spellfire.ServerPacket.entities:type_name -> spellfire.Entity
-	11, // 17: spellfire.ServerPacket.events:type_name -> spellfire.ServerEvent
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	11, // 1: spellfire.Collider.size:type_name -> spellfire.Vec2
+	11, // 2: spellfire.Collider.position:type_name -> spellfire.Vec2
+	11, // 3: spellfire.Collider.velocity:type_name -> spellfire.Vec2
+	2,  // 4: spellfire.EntityAttribute.type:type_name -> spellfire.EntityAttribute.EntityAttributeType
+	0,  // 5: spellfire.EntityAttribute.gun:type_name -> spellfire.Gun
+	12, // 6: spellfire.EntityAttribute.spells_fired:type_name -> spellfire.Spell
+	13, // 7: spellfire.EntityAttribute.spell_fire_time:type_name -> spellfire.Timestamp
+	3,  // 8: spellfire.Entity.type:type_name -> spellfire.Entity.EntityType
+	6,  // 9: spellfire.Entity.collider:type_name -> spellfire.Collider
+	4,  // 10: spellfire.Entity.states:type_name -> spellfire.Entity.EntityState
+	7,  // 11: spellfire.Entity.attributes:type_name -> spellfire.EntityAttribute
+	5,  // 12: spellfire.ServerEvent.type:type_name -> spellfire.ServerEvent.ServerEventType
+	13, // 13: spellfire.ServerPacket.timestamp:type_name -> spellfire.Timestamp
+	8,  // 14: spellfire.ServerPacket.entities:type_name -> spellfire.Entity
+	9,  // 15: spellfire.ServerPacket.events:type_name -> spellfire.ServerEvent
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_server_packet_proto_init() }
@@ -1032,8 +855,8 @@ func file_server_packet_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_server_packet_proto_rawDesc), len(file_server_packet_proto_rawDesc)),
-			NumEnums:      7,
-			NumMessages:   6,
+			NumEnums:      6,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

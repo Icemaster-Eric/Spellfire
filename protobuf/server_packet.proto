@@ -22,27 +22,6 @@ message Collider {
   bool is_static = 7;
 }
 
-message RenderData {
-  enum Sprite {
-    SPRITE_UNSPECIFIED = 0;
-    GUNNER = 1;
-    MAGE = 2;
-    BULLET_1 = 3;
-    BUSH_1 = 4;
-    TREE_1 = 5;
-    TREE_2 = 6;
-    ROCK_1 = 7;
-    ROCK_2 = 8;
-    ROCK_3 = 9;
-    ROCK_4 = 10;
-    DEAD_BUSH_1 = 11;
-    DEAD_BUSH_2 = 12;
-    CACTUS_1 = 13;
-  }
-  Sprite sprite = 1;
-  double sprite_size = 2;
-}
-
 enum Gun {
   GUN_UNSPECIFIED = 0;
   GUN_AUTOMATIC_RIFLE = 1;
@@ -86,7 +65,6 @@ message Entity {
   uint32 id = 1;
   EntityType type = 2;
   Collider collider = 3;
-  RenderData render_data = 4;
   repeated EntityState states = 5;
   repeated EntityAttribute attributes = 6;
 }
