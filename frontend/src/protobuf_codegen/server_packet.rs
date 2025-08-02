@@ -337,7 +337,7 @@ pub mod collider {
 pub struct RenderData {
     // message fields
     // @@protoc_insertion_point(field:spellfire.RenderData.sprite)
-    pub sprite: ::protobuf::EnumOrUnknown<Sprite>,
+    pub sprite: ::protobuf::EnumOrUnknown<render_data::Sprite>,
     // @@protoc_insertion_point(field:spellfire.RenderData.sprite_size)
     pub sprite_size: f64,
     // special fields
@@ -405,7 +405,7 @@ impl ::protobuf::Message for RenderData {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u64 {
         let mut my_size = 0;
-        if self.sprite != ::protobuf::EnumOrUnknown::new(Sprite::SPRITE_UNSPECIFIED) {
+        if self.sprite != ::protobuf::EnumOrUnknown::new(render_data::Sprite::SPRITE_UNSPECIFIED) {
             my_size += ::protobuf::rt::int32_size(1, self.sprite.value());
         }
         if self.sprite_size != 0. {
@@ -417,7 +417,7 @@ impl ::protobuf::Message for RenderData {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-        if self.sprite != ::protobuf::EnumOrUnknown::new(Sprite::SPRITE_UNSPECIFIED) {
+        if self.sprite != ::protobuf::EnumOrUnknown::new(render_data::Sprite::SPRITE_UNSPECIFIED) {
             os.write_enum(1, ::protobuf::EnumOrUnknown::value(&self.sprite))?;
         }
         if self.sprite_size != 0. {
@@ -440,7 +440,7 @@ impl ::protobuf::Message for RenderData {
     }
 
     fn clear(&mut self) {
-        self.sprite = ::protobuf::EnumOrUnknown::new(Sprite::SPRITE_UNSPECIFIED);
+        self.sprite = ::protobuf::EnumOrUnknown::new(render_data::Sprite::SPRITE_UNSPECIFIED);
         self.sprite_size = 0.;
         self.special_fields.clear();
     }
@@ -470,6 +470,131 @@ impl ::std::fmt::Display for RenderData {
 
 impl ::protobuf::reflect::ProtobufValue for RenderData {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+/// Nested message and enums of message `RenderData`
+pub mod render_data {
+    #[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
+    // @@protoc_insertion_point(enum:spellfire.RenderData.Sprite)
+    pub enum Sprite {
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.SPRITE_UNSPECIFIED)
+        SPRITE_UNSPECIFIED = 0,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.GUNNER)
+        GUNNER = 1,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.MAGE)
+        MAGE = 2,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.BULLET_1)
+        BULLET_1 = 3,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.BUSH_1)
+        BUSH_1 = 4,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.TREE_1)
+        TREE_1 = 5,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.TREE_2)
+        TREE_2 = 6,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.ROCK_1)
+        ROCK_1 = 7,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.ROCK_2)
+        ROCK_2 = 8,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.ROCK_3)
+        ROCK_3 = 9,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.ROCK_4)
+        ROCK_4 = 10,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.DEAD_BUSH_1)
+        DEAD_BUSH_1 = 11,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.DEAD_BUSH_2)
+        DEAD_BUSH_2 = 12,
+        // @@protoc_insertion_point(enum_value:spellfire.RenderData.Sprite.CACTUS_1)
+        CACTUS_1 = 13,
+    }
+
+    impl ::protobuf::Enum for Sprite {
+        const NAME: &'static str = "Sprite";
+
+        fn value(&self) -> i32 {
+            *self as i32
+        }
+
+        fn from_i32(value: i32) -> ::std::option::Option<Sprite> {
+            match value {
+                0 => ::std::option::Option::Some(Sprite::SPRITE_UNSPECIFIED),
+                1 => ::std::option::Option::Some(Sprite::GUNNER),
+                2 => ::std::option::Option::Some(Sprite::MAGE),
+                3 => ::std::option::Option::Some(Sprite::BULLET_1),
+                4 => ::std::option::Option::Some(Sprite::BUSH_1),
+                5 => ::std::option::Option::Some(Sprite::TREE_1),
+                6 => ::std::option::Option::Some(Sprite::TREE_2),
+                7 => ::std::option::Option::Some(Sprite::ROCK_1),
+                8 => ::std::option::Option::Some(Sprite::ROCK_2),
+                9 => ::std::option::Option::Some(Sprite::ROCK_3),
+                10 => ::std::option::Option::Some(Sprite::ROCK_4),
+                11 => ::std::option::Option::Some(Sprite::DEAD_BUSH_1),
+                12 => ::std::option::Option::Some(Sprite::DEAD_BUSH_2),
+                13 => ::std::option::Option::Some(Sprite::CACTUS_1),
+                _ => ::std::option::Option::None
+            }
+        }
+
+        fn from_str(str: &str) -> ::std::option::Option<Sprite> {
+            match str {
+                "SPRITE_UNSPECIFIED" => ::std::option::Option::Some(Sprite::SPRITE_UNSPECIFIED),
+                "GUNNER" => ::std::option::Option::Some(Sprite::GUNNER),
+                "MAGE" => ::std::option::Option::Some(Sprite::MAGE),
+                "BULLET_1" => ::std::option::Option::Some(Sprite::BULLET_1),
+                "BUSH_1" => ::std::option::Option::Some(Sprite::BUSH_1),
+                "TREE_1" => ::std::option::Option::Some(Sprite::TREE_1),
+                "TREE_2" => ::std::option::Option::Some(Sprite::TREE_2),
+                "ROCK_1" => ::std::option::Option::Some(Sprite::ROCK_1),
+                "ROCK_2" => ::std::option::Option::Some(Sprite::ROCK_2),
+                "ROCK_3" => ::std::option::Option::Some(Sprite::ROCK_3),
+                "ROCK_4" => ::std::option::Option::Some(Sprite::ROCK_4),
+                "DEAD_BUSH_1" => ::std::option::Option::Some(Sprite::DEAD_BUSH_1),
+                "DEAD_BUSH_2" => ::std::option::Option::Some(Sprite::DEAD_BUSH_2),
+                "CACTUS_1" => ::std::option::Option::Some(Sprite::CACTUS_1),
+                _ => ::std::option::Option::None
+            }
+        }
+
+        const VALUES: &'static [Sprite] = &[
+            Sprite::SPRITE_UNSPECIFIED,
+            Sprite::GUNNER,
+            Sprite::MAGE,
+            Sprite::BULLET_1,
+            Sprite::BUSH_1,
+            Sprite::TREE_1,
+            Sprite::TREE_2,
+            Sprite::ROCK_1,
+            Sprite::ROCK_2,
+            Sprite::ROCK_3,
+            Sprite::ROCK_4,
+            Sprite::DEAD_BUSH_1,
+            Sprite::DEAD_BUSH_2,
+            Sprite::CACTUS_1,
+        ];
+    }
+
+    impl ::protobuf::EnumFull for Sprite {
+        fn enum_descriptor() -> ::protobuf::reflect::EnumDescriptor {
+            static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::rt::Lazy::new();
+            descriptor.get(|| super::file_descriptor().enum_by_package_relative_name("RenderData.Sprite").unwrap()).clone()
+        }
+
+        fn descriptor(&self) -> ::protobuf::reflect::EnumValueDescriptor {
+            let index = *self as usize;
+            Self::enum_descriptor().value_by_index(index)
+        }
+    }
+
+    impl ::std::default::Default for Sprite {
+        fn default() -> Self {
+            Sprite::SPRITE_UNSPECIFIED
+        }
+    }
+
+    impl Sprite {
+        pub(in super) fn generated_enum_descriptor_data() -> ::protobuf::reflect::GeneratedEnumDescriptorData {
+            ::protobuf::reflect::GeneratedEnumDescriptorData::new::<Sprite>("RenderData.Sprite")
+        }
+    }
 }
 
 // @@protoc_insertion_point(message:spellfire.EntityAttribute)
@@ -1535,128 +1660,6 @@ impl ::protobuf::reflect::ProtobufValue for ServerPacket {
 }
 
 #[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
-// @@protoc_insertion_point(enum:spellfire.Sprite)
-pub enum Sprite {
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_UNSPECIFIED)
-    SPRITE_UNSPECIFIED = 0,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_PLAYER_GUNNER)
-    SPRITE_PLAYER_GUNNER = 1,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_PLAYER_MAGE)
-    SPRITE_PLAYER_MAGE = 2,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_BULLET_1)
-    SPRITE_BULLET_1 = 3,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_BUSH_1)
-    SPRITE_BUSH_1 = 4,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_TREE_1)
-    SPRITE_TREE_1 = 5,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_TREE_2)
-    SPRITE_TREE_2 = 6,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_ROCK_1)
-    SPRITE_ROCK_1 = 7,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_ROCK_2)
-    SPRITE_ROCK_2 = 8,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_ROCK_3)
-    SPRITE_ROCK_3 = 9,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_ROCK_4)
-    SPRITE_ROCK_4 = 10,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_DEAD_BUSH_1)
-    SPRITE_DEAD_BUSH_1 = 11,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_DEAD_BUSH_2)
-    SPRITE_DEAD_BUSH_2 = 12,
-    // @@protoc_insertion_point(enum_value:spellfire.Sprite.SPRITE_CACTUS_1)
-    SPRITE_CACTUS_1 = 13,
-}
-
-impl ::protobuf::Enum for Sprite {
-    const NAME: &'static str = "Sprite";
-
-    fn value(&self) -> i32 {
-        *self as i32
-    }
-
-    fn from_i32(value: i32) -> ::std::option::Option<Sprite> {
-        match value {
-            0 => ::std::option::Option::Some(Sprite::SPRITE_UNSPECIFIED),
-            1 => ::std::option::Option::Some(Sprite::SPRITE_PLAYER_GUNNER),
-            2 => ::std::option::Option::Some(Sprite::SPRITE_PLAYER_MAGE),
-            3 => ::std::option::Option::Some(Sprite::SPRITE_BULLET_1),
-            4 => ::std::option::Option::Some(Sprite::SPRITE_BUSH_1),
-            5 => ::std::option::Option::Some(Sprite::SPRITE_TREE_1),
-            6 => ::std::option::Option::Some(Sprite::SPRITE_TREE_2),
-            7 => ::std::option::Option::Some(Sprite::SPRITE_ROCK_1),
-            8 => ::std::option::Option::Some(Sprite::SPRITE_ROCK_2),
-            9 => ::std::option::Option::Some(Sprite::SPRITE_ROCK_3),
-            10 => ::std::option::Option::Some(Sprite::SPRITE_ROCK_4),
-            11 => ::std::option::Option::Some(Sprite::SPRITE_DEAD_BUSH_1),
-            12 => ::std::option::Option::Some(Sprite::SPRITE_DEAD_BUSH_2),
-            13 => ::std::option::Option::Some(Sprite::SPRITE_CACTUS_1),
-            _ => ::std::option::Option::None
-        }
-    }
-
-    fn from_str(str: &str) -> ::std::option::Option<Sprite> {
-        match str {
-            "SPRITE_UNSPECIFIED" => ::std::option::Option::Some(Sprite::SPRITE_UNSPECIFIED),
-            "SPRITE_PLAYER_GUNNER" => ::std::option::Option::Some(Sprite::SPRITE_PLAYER_GUNNER),
-            "SPRITE_PLAYER_MAGE" => ::std::option::Option::Some(Sprite::SPRITE_PLAYER_MAGE),
-            "SPRITE_BULLET_1" => ::std::option::Option::Some(Sprite::SPRITE_BULLET_1),
-            "SPRITE_BUSH_1" => ::std::option::Option::Some(Sprite::SPRITE_BUSH_1),
-            "SPRITE_TREE_1" => ::std::option::Option::Some(Sprite::SPRITE_TREE_1),
-            "SPRITE_TREE_2" => ::std::option::Option::Some(Sprite::SPRITE_TREE_2),
-            "SPRITE_ROCK_1" => ::std::option::Option::Some(Sprite::SPRITE_ROCK_1),
-            "SPRITE_ROCK_2" => ::std::option::Option::Some(Sprite::SPRITE_ROCK_2),
-            "SPRITE_ROCK_3" => ::std::option::Option::Some(Sprite::SPRITE_ROCK_3),
-            "SPRITE_ROCK_4" => ::std::option::Option::Some(Sprite::SPRITE_ROCK_4),
-            "SPRITE_DEAD_BUSH_1" => ::std::option::Option::Some(Sprite::SPRITE_DEAD_BUSH_1),
-            "SPRITE_DEAD_BUSH_2" => ::std::option::Option::Some(Sprite::SPRITE_DEAD_BUSH_2),
-            "SPRITE_CACTUS_1" => ::std::option::Option::Some(Sprite::SPRITE_CACTUS_1),
-            _ => ::std::option::Option::None
-        }
-    }
-
-    const VALUES: &'static [Sprite] = &[
-        Sprite::SPRITE_UNSPECIFIED,
-        Sprite::SPRITE_PLAYER_GUNNER,
-        Sprite::SPRITE_PLAYER_MAGE,
-        Sprite::SPRITE_BULLET_1,
-        Sprite::SPRITE_BUSH_1,
-        Sprite::SPRITE_TREE_1,
-        Sprite::SPRITE_TREE_2,
-        Sprite::SPRITE_ROCK_1,
-        Sprite::SPRITE_ROCK_2,
-        Sprite::SPRITE_ROCK_3,
-        Sprite::SPRITE_ROCK_4,
-        Sprite::SPRITE_DEAD_BUSH_1,
-        Sprite::SPRITE_DEAD_BUSH_2,
-        Sprite::SPRITE_CACTUS_1,
-    ];
-}
-
-impl ::protobuf::EnumFull for Sprite {
-    fn enum_descriptor() -> ::protobuf::reflect::EnumDescriptor {
-        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::rt::Lazy::new();
-        descriptor.get(|| file_descriptor().enum_by_package_relative_name("Sprite").unwrap()).clone()
-    }
-
-    fn descriptor(&self) -> ::protobuf::reflect::EnumValueDescriptor {
-        let index = *self as usize;
-        Self::enum_descriptor().value_by_index(index)
-    }
-}
-
-impl ::std::default::Default for Sprite {
-    fn default() -> Self {
-        Sprite::SPRITE_UNSPECIFIED
-    }
-}
-
-impl Sprite {
-    fn generated_enum_descriptor_data() -> ::protobuf::reflect::GeneratedEnumDescriptorData {
-        ::protobuf::reflect::GeneratedEnumDescriptorData::new::<Sprite>("Sprite")
-    }
-}
-
-#[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
 // @@protoc_insertion_point(enum:spellfire.Gun)
 pub enum Gun {
     // @@protoc_insertion_point(enum_value:spellfire.Gun.GUN_UNSPECIFIED)
@@ -1728,49 +1731,48 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     +\n\x08velocity\x18\x06\x20\x01(\x0b2\x0f.spellfire.Vec2R\x08velocity\
     \x12\x1b\n\tis_static\x18\x07\x20\x01(\x08R\x08isStatic\"N\n\x0cCollider\
     Type\x12\x1d\n\x19COLLIDER_TYPE_UNSPECIFIED\x10\0\x12\t\n\x05POINT\x10\
-    \x01\x12\n\n\x06CIRCLE\x10\x02\x12\x08\n\x04RECT\x10\x03\"X\n\nRenderDat\
-    a\x12)\n\x06sprite\x18\x01\x20\x01(\x0e2\x11.spellfire.SpriteR\x06sprite\
-    \x12\x1f\n\x0bsprite_size\x18\x02\x20\x01(\x01R\nspriteSize\"\xdd\x03\n\
-    \x0fEntityAttribute\x12B\n\x04type\x18\x01\x20\x01(\x0e2..spellfire.Enti\
-    tyAttribute.EntityAttributeTypeR\x04type\x12\x12\n\x04name\x18\x02\x20\
-    \x01(\tR\x04name\x12\x16\n\x06health\x18\x03\x20\x01(\x01R\x06health\x12\
-    \x20\n\x03gun\x18\x04\x20\x01(\x0e2\x0e.spellfire.GunR\x03gun\x12\x16\n\
-    \x06damage\x18\x05\x20\x01(\x01R\x06damage\x123\n\x0cspells_fired\x18\
-    \x06\x20\x03(\x0e2\x10.spellfire.SpellR\x0bspellsFired\x12<\n\x0fspell_f\
-    ire_time\x18\x07\x20\x01(\x0b2\x14.spellfire.TimestampR\rspellFireTime\"\
-    \xac\x01\n\x13EntityAttributeType\x12%\n!ENTITY_ATTRIBUTE_TYPE_UNSPECIFI\
-    ED\x10\0\x12\x08\n\x04NAME\x10\x01\x12\n\n\x06HEALTH\x10\x02\x12\x07\n\
-    \x03GUN\x10\x03\x12\n\n\x06DAMAGE\x10\x04\x12\x15\n\x11SPELL_1_LAST_FIRE\
-    \x10\x05\x12\x15\n\x11SPELL_2_LAST_FIRE\x10\x06\x12\x15\n\x11SPELL_3_LAS\
-    T_FIRE\x10\x07\"\xda\x03\n\x06Entity\x12\x0e\n\x02id\x18\x01\x20\x01(\rR\
-    \x02id\x120\n\x04type\x18\x02\x20\x01(\x0e2\x1c.spellfire.Entity.EntityT\
-    ypeR\x04type\x12/\n\x08collider\x18\x03\x20\x01(\x0b2\x13.spellfire.Coll\
-    iderR\x08collider\x126\n\x0brender_data\x18\x04\x20\x01(\x0b2\x15.spellf\
-    ire.RenderDataR\nrenderData\x125\n\x06states\x18\x05\x20\x03(\x0e2\x1d.s\
-    pellfire.Entity.EntityStateR\x06states\x12:\n\nattributes\x18\x06\x20\
-    \x03(\x0b2\x1a.spellfire.EntityAttributeR\nattributes\"\x84\x01\n\nEntit\
-    yType\x12\x1b\n\x17ENTITY_TYPE_UNSPECIFIED\x10\0\x12\n\n\x06GUNNER\x10\
-    \x01\x12\x08\n\x04MAGE\x10\x02\x12\n\n\x06BULLET\x10\x03\x12\x08\n\x04BU\
-    SH\x10\x04\x12\x08\n\x04TREE\x10\x05\x12\x08\n\x04ROCK\x10\x06\x12\r\n\t\
-    DEAD_BUSH\x10\x07\x12\n\n\x06CACTUS\x10\x08\"+\n\x0bEntityState\x12\x1c\
-    \n\x18ENTITY_STATE_UNSPECIFIED\x10\0\"\xc0\x01\n\x0bServerEvent\x12:\n\
-    \x04type\x18\x01\x20\x01(\x0e2&.spellfire.ServerEvent.ServerEventTypeR\
-    \x04type\x12/\n\x14enter_game_player_id\x18\x02\x20\x01(\rR\x11enterGame\
-    PlayerId\"D\n\x0fServerEventType\x12!\n\x1dSERVER_EVENT_TYPE_UNSPECIFIED\
-    \x10\0\x12\x0e\n\nENTER_GAME\x10\x01\"\xa1\x01\n\x0cServerPacket\x122\n\
-    \ttimestamp\x18\x01\x20\x01(\x0b2\x14.spellfire.TimestampR\ttimestamp\
-    \x12-\n\x08entities\x18\x02\x20\x03(\x0b2\x11.spellfire.EntityR\x08entit\
-    ies\x12.\n\x06events\x18\x03\x20\x03(\x0b2\x16.spellfire.ServerEventR\
-    \x06events*\xb1\x02\n\x06Sprite\x12\x16\n\x12SPRITE_UNSPECIFIED\x10\0\
-    \x12\x18\n\x14SPRITE_PLAYER_GUNNER\x10\x01\x12\x16\n\x12SPRITE_PLAYER_MA\
-    GE\x10\x02\x12\x13\n\x0fSPRITE_BULLET_1\x10\x03\x12\x11\n\rSPRITE_BUSH_1\
-    \x10\x04\x12\x11\n\rSPRITE_TREE_1\x10\x05\x12\x11\n\rSPRITE_TREE_2\x10\
-    \x06\x12\x11\n\rSPRITE_ROCK_1\x10\x07\x12\x11\n\rSPRITE_ROCK_2\x10\x08\
-    \x12\x11\n\rSPRITE_ROCK_3\x10\t\x12\x11\n\rSPRITE_ROCK_4\x10\n\x12\x16\n\
-    \x12SPRITE_DEAD_BUSH_1\x10\x0b\x12\x16\n\x12SPRITE_DEAD_BUSH_2\x10\x0c\
-    \x12\x13\n\x0fSPRITE_CACTUS_1\x10\r*3\n\x03Gun\x12\x13\n\x0fGUN_UNSPECIF\
-    IED\x10\0\x12\x17\n\x13GUN_AUTOMATIC_RIFLE\x10\x01B?Z=github.com/Icemast\
-    er-Eric/Spellfire/backend/internal/proto;pbb\x06proto3\
+    \x01\x12\n\n\x06CIRCLE\x10\x02\x12\x08\n\x04RECT\x10\x03\"\xae\x02\n\nRe\
+    nderData\x124\n\x06sprite\x18\x01\x20\x01(\x0e2\x1c.spellfire.RenderData\
+    .SpriteR\x06sprite\x12\x1f\n\x0bsprite_size\x18\x02\x20\x01(\x01R\nsprit\
+    eSize\"\xc8\x01\n\x06Sprite\x12\x16\n\x12SPRITE_UNSPECIFIED\x10\0\x12\n\
+    \n\x06GUNNER\x10\x01\x12\x08\n\x04MAGE\x10\x02\x12\x0c\n\x08BULLET_1\x10\
+    \x03\x12\n\n\x06BUSH_1\x10\x04\x12\n\n\x06TREE_1\x10\x05\x12\n\n\x06TREE\
+    _2\x10\x06\x12\n\n\x06ROCK_1\x10\x07\x12\n\n\x06ROCK_2\x10\x08\x12\n\n\
+    \x06ROCK_3\x10\t\x12\n\n\x06ROCK_4\x10\n\x12\x0f\n\x0bDEAD_BUSH_1\x10\
+    \x0b\x12\x0f\n\x0bDEAD_BUSH_2\x10\x0c\x12\x0c\n\x08CACTUS_1\x10\r\"\xdd\
+    \x03\n\x0fEntityAttribute\x12B\n\x04type\x18\x01\x20\x01(\x0e2..spellfir\
+    e.EntityAttribute.EntityAttributeTypeR\x04type\x12\x12\n\x04name\x18\x02\
+    \x20\x01(\tR\x04name\x12\x16\n\x06health\x18\x03\x20\x01(\x01R\x06health\
+    \x12\x20\n\x03gun\x18\x04\x20\x01(\x0e2\x0e.spellfire.GunR\x03gun\x12\
+    \x16\n\x06damage\x18\x05\x20\x01(\x01R\x06damage\x123\n\x0cspells_fired\
+    \x18\x06\x20\x03(\x0e2\x10.spellfire.SpellR\x0bspellsFired\x12<\n\x0fspe\
+    ll_fire_time\x18\x07\x20\x01(\x0b2\x14.spellfire.TimestampR\rspellFireTi\
+    me\"\xac\x01\n\x13EntityAttributeType\x12%\n!ENTITY_ATTRIBUTE_TYPE_UNSPE\
+    CIFIED\x10\0\x12\x08\n\x04NAME\x10\x01\x12\n\n\x06HEALTH\x10\x02\x12\x07\
+    \n\x03GUN\x10\x03\x12\n\n\x06DAMAGE\x10\x04\x12\x15\n\x11SPELL_1_LAST_FI\
+    RE\x10\x05\x12\x15\n\x11SPELL_2_LAST_FIRE\x10\x06\x12\x15\n\x11SPELL_3_L\
+    AST_FIRE\x10\x07\"\xda\x03\n\x06Entity\x12\x0e\n\x02id\x18\x01\x20\x01(\
+    \rR\x02id\x120\n\x04type\x18\x02\x20\x01(\x0e2\x1c.spellfire.Entity.Enti\
+    tyTypeR\x04type\x12/\n\x08collider\x18\x03\x20\x01(\x0b2\x13.spellfire.C\
+    olliderR\x08collider\x126\n\x0brender_data\x18\x04\x20\x01(\x0b2\x15.spe\
+    llfire.RenderDataR\nrenderData\x125\n\x06states\x18\x05\x20\x03(\x0e2\
+    \x1d.spellfire.Entity.EntityStateR\x06states\x12:\n\nattributes\x18\x06\
+    \x20\x03(\x0b2\x1a.spellfire.EntityAttributeR\nattributes\"\x84\x01\n\nE\
+    ntityType\x12\x1b\n\x17ENTITY_TYPE_UNSPECIFIED\x10\0\x12\n\n\x06GUNNER\
+    \x10\x01\x12\x08\n\x04MAGE\x10\x02\x12\n\n\x06BULLET\x10\x03\x12\x08\n\
+    \x04BUSH\x10\x04\x12\x08\n\x04TREE\x10\x05\x12\x08\n\x04ROCK\x10\x06\x12\
+    \r\n\tDEAD_BUSH\x10\x07\x12\n\n\x06CACTUS\x10\x08\"+\n\x0bEntityState\
+    \x12\x1c\n\x18ENTITY_STATE_UNSPECIFIED\x10\0\"\xc0\x01\n\x0bServerEvent\
+    \x12:\n\x04type\x18\x01\x20\x01(\x0e2&.spellfire.ServerEvent.ServerEvent\
+    TypeR\x04type\x12/\n\x14enter_game_player_id\x18\x02\x20\x01(\rR\x11ente\
+    rGamePlayerId\"D\n\x0fServerEventType\x12!\n\x1dSERVER_EVENT_TYPE_UNSPEC\
+    IFIED\x10\0\x12\x0e\n\nENTER_GAME\x10\x01\"\xa1\x01\n\x0cServerPacket\
+    \x122\n\ttimestamp\x18\x01\x20\x01(\x0b2\x14.spellfire.TimestampR\ttimes\
+    tamp\x12-\n\x08entities\x18\x02\x20\x03(\x0b2\x11.spellfire.EntityR\x08e\
+    ntities\x12.\n\x06events\x18\x03\x20\x03(\x0b2\x16.spellfire.ServerEvent\
+    R\x06events*3\n\x03Gun\x12\x13\n\x0fGUN_UNSPECIFIED\x10\0\x12\x17\n\x13G\
+    UN_AUTOMATIC_RIFLE\x10\x01B?Z=github.com/Icemaster-Eric/Spellfire/backen\
+    d/internal/proto;pbb\x06proto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -1798,9 +1800,9 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(ServerEvent::generated_message_descriptor_data());
             messages.push(ServerPacket::generated_message_descriptor_data());
             let mut enums = ::std::vec::Vec::with_capacity(7);
-            enums.push(Sprite::generated_enum_descriptor_data());
             enums.push(Gun::generated_enum_descriptor_data());
             enums.push(collider::ColliderType::generated_enum_descriptor_data());
+            enums.push(render_data::Sprite::generated_enum_descriptor_data());
             enums.push(entity_attribute::EntityAttributeType::generated_enum_descriptor_data());
             enums.push(entity::EntityType::generated_enum_descriptor_data());
             enums.push(entity::EntityState::generated_enum_descriptor_data());

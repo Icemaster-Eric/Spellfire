@@ -25,6 +25,7 @@ pub fn send_server_events(
             Message::Binary(bin) => {
                 if let Ok(server_packet) = ServerPacket::parse_from_bytes(&bin) {
                     packet_entities_writer.write(PacketEntitiesSent(server_packet.entities));
+                    info!("received events: {:?}", server_packet.events);
                     for event in server_packet.events {
                         match event.type_.enum_value_or_default() {
                             crate::protobuf_codegen::server_packet::server_event::ServerEventType::SERVER_EVENT_TYPE_UNSPECIFIED => unimplemented!(),

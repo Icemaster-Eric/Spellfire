@@ -34,12 +34,8 @@ pub struct ClientEvent {
     pub timestamp: ::protobuf::MessageField<super::types::Timestamp>,
     // @@protoc_insertion_point(field:spellfire.ClientEvent.movement)
     pub movement: ::protobuf::MessageField<super::types::Vec2>,
-    // @@protoc_insertion_point(field:spellfire.ClientEvent.shoot_dir)
-    pub shoot_dir: ::protobuf::MessageField<super::types::Vec2>,
-    // @@protoc_insertion_point(field:spellfire.ClientEvent.casted_spell)
-    pub casted_spell: ::protobuf::EnumOrUnknown<super::mage::Spell>,
-    // @@protoc_insertion_point(field:spellfire.ClientEvent.equipped_spell)
-    pub equipped_spell: ::protobuf::EnumOrUnknown<super::mage::Spell>,
+    // @@protoc_insertion_point(field:spellfire.ClientEvent.spell)
+    pub spell: ::protobuf::EnumOrUnknown<super::mage::Spell>,
     // special fields
     // @@protoc_insertion_point(special_field:spellfire.ClientEvent.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
@@ -57,7 +53,7 @@ impl ClientEvent {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(6);
+        let mut fields = ::std::vec::Vec::with_capacity(4);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
             "type",
@@ -74,20 +70,10 @@ impl ClientEvent {
             |m: &ClientEvent| { &m.movement },
             |m: &mut ClientEvent| { &mut m.movement },
         ));
-        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, super::types::Vec2>(
-            "shoot_dir",
-            |m: &ClientEvent| { &m.shoot_dir },
-            |m: &mut ClientEvent| { &mut m.shoot_dir },
-        ));
         fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
-            "casted_spell",
-            |m: &ClientEvent| { &m.casted_spell },
-            |m: &mut ClientEvent| { &mut m.casted_spell },
-        ));
-        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
-            "equipped_spell",
-            |m: &ClientEvent| { &m.equipped_spell },
-            |m: &mut ClientEvent| { &mut m.equipped_spell },
+            "spell",
+            |m: &ClientEvent| { &m.spell },
+            |m: &mut ClientEvent| { &mut m.spell },
         ));
         ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<ClientEvent>(
             "ClientEvent",
@@ -116,14 +102,8 @@ impl ::protobuf::Message for ClientEvent {
                 34 => {
                     ::protobuf::rt::read_singular_message_into_field(is, &mut self.movement)?;
                 },
-                42 => {
-                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.shoot_dir)?;
-                },
                 48 => {
-                    self.casted_spell = is.read_enum_or_unknown()?;
-                },
-                56 => {
-                    self.equipped_spell = is.read_enum_or_unknown()?;
+                    self.spell = is.read_enum_or_unknown()?;
                 },
                 tag => {
                     ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
@@ -148,15 +128,8 @@ impl ::protobuf::Message for ClientEvent {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
         }
-        if let Some(v) = self.shoot_dir.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
-        }
-        if self.casted_spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
-            my_size += ::protobuf::rt::int32_size(6, self.casted_spell.value());
-        }
-        if self.equipped_spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
-            my_size += ::protobuf::rt::int32_size(7, self.equipped_spell.value());
+        if self.spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
+            my_size += ::protobuf::rt::int32_size(6, self.spell.value());
         }
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
@@ -173,14 +146,8 @@ impl ::protobuf::Message for ClientEvent {
         if let Some(v) = self.movement.as_ref() {
             ::protobuf::rt::write_message_field_with_cached_size(4, v, os)?;
         }
-        if let Some(v) = self.shoot_dir.as_ref() {
-            ::protobuf::rt::write_message_field_with_cached_size(5, v, os)?;
-        }
-        if self.casted_spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
-            os.write_enum(6, ::protobuf::EnumOrUnknown::value(&self.casted_spell))?;
-        }
-        if self.equipped_spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
-            os.write_enum(7, ::protobuf::EnumOrUnknown::value(&self.equipped_spell))?;
+        if self.spell != ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL) {
+            os.write_enum(6, ::protobuf::EnumOrUnknown::value(&self.spell))?;
         }
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -202,9 +169,7 @@ impl ::protobuf::Message for ClientEvent {
         self.type_ = ::protobuf::EnumOrUnknown::new(client_event::ClientEventType::CLIENT_EVENT_TYPE_UNSPECIFIED);
         self.timestamp.clear();
         self.movement.clear();
-        self.shoot_dir.clear();
-        self.casted_spell = ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL);
-        self.equipped_spell = ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL);
+        self.spell = ::protobuf::EnumOrUnknown::new(super::mage::Spell::SPELL_FIREBALL);
         self.special_fields.clear();
     }
 
@@ -213,9 +178,7 @@ impl ::protobuf::Message for ClientEvent {
             type_: ::protobuf::EnumOrUnknown::from_i32(0),
             timestamp: ::protobuf::MessageField::none(),
             movement: ::protobuf::MessageField::none(),
-            shoot_dir: ::protobuf::MessageField::none(),
-            casted_spell: ::protobuf::EnumOrUnknown::from_i32(0),
-            equipped_spell: ::protobuf::EnumOrUnknown::from_i32(0),
+            spell: ::protobuf::EnumOrUnknown::from_i32(0),
             special_fields: ::protobuf::SpecialFields::new(),
         };
         &instance
@@ -252,18 +215,8 @@ pub mod client_event {
         START_FIRE = 2,
         // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.STOP_FIRE)
         STOP_FIRE = 3,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.CAST_SPELL_1)
-        CAST_SPELL_1 = 4,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.CAST_SPELL_2)
-        CAST_SPELL_2 = 5,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.CAST_SPELL_3)
-        CAST_SPELL_3 = 6,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.EQUIP_SPELL_1)
-        EQUIP_SPELL_1 = 7,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.EQUIP_SPELL_2)
-        EQUIP_SPELL_2 = 8,
-        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.EQUIP_SPELL_3)
-        EQUIP_SPELL_3 = 9,
+        // @@protoc_insertion_point(enum_value:spellfire.ClientEvent.ClientEventType.CAST_SPELL)
+        CAST_SPELL = 4,
     }
 
     impl ::protobuf::Enum for ClientEventType {
@@ -279,12 +232,7 @@ pub mod client_event {
                 1 => ::std::option::Option::Some(ClientEventType::MOVE),
                 2 => ::std::option::Option::Some(ClientEventType::START_FIRE),
                 3 => ::std::option::Option::Some(ClientEventType::STOP_FIRE),
-                4 => ::std::option::Option::Some(ClientEventType::CAST_SPELL_1),
-                5 => ::std::option::Option::Some(ClientEventType::CAST_SPELL_2),
-                6 => ::std::option::Option::Some(ClientEventType::CAST_SPELL_3),
-                7 => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_1),
-                8 => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_2),
-                9 => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_3),
+                4 => ::std::option::Option::Some(ClientEventType::CAST_SPELL),
                 _ => ::std::option::Option::None
             }
         }
@@ -295,12 +243,7 @@ pub mod client_event {
                 "MOVE" => ::std::option::Option::Some(ClientEventType::MOVE),
                 "START_FIRE" => ::std::option::Option::Some(ClientEventType::START_FIRE),
                 "STOP_FIRE" => ::std::option::Option::Some(ClientEventType::STOP_FIRE),
-                "CAST_SPELL_1" => ::std::option::Option::Some(ClientEventType::CAST_SPELL_1),
-                "CAST_SPELL_2" => ::std::option::Option::Some(ClientEventType::CAST_SPELL_2),
-                "CAST_SPELL_3" => ::std::option::Option::Some(ClientEventType::CAST_SPELL_3),
-                "EQUIP_SPELL_1" => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_1),
-                "EQUIP_SPELL_2" => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_2),
-                "EQUIP_SPELL_3" => ::std::option::Option::Some(ClientEventType::EQUIP_SPELL_3),
+                "CAST_SPELL" => ::std::option::Option::Some(ClientEventType::CAST_SPELL),
                 _ => ::std::option::Option::None
             }
         }
@@ -310,12 +253,7 @@ pub mod client_event {
             ClientEventType::MOVE,
             ClientEventType::START_FIRE,
             ClientEventType::STOP_FIRE,
-            ClientEventType::CAST_SPELL_1,
-            ClientEventType::CAST_SPELL_2,
-            ClientEventType::CAST_SPELL_3,
-            ClientEventType::EQUIP_SPELL_1,
-            ClientEventType::EQUIP_SPELL_2,
-            ClientEventType::EQUIP_SPELL_3,
+            ClientEventType::CAST_SPELL,
         ];
     }
 
@@ -348,8 +286,6 @@ pub mod client_event {
 #[derive(PartialEq,Clone,Default,Debug)]
 pub struct ClientPacket {
     // message fields
-    // @@protoc_insertion_point(field:spellfire.ClientPacket.timestamp)
-    pub timestamp: ::protobuf::MessageField<super::types::Timestamp>,
     // @@protoc_insertion_point(field:spellfire.ClientPacket.cursor)
     pub cursor: ::protobuf::MessageField<super::types::Vec2>,
     // @@protoc_insertion_point(field:spellfire.ClientPacket.events)
@@ -371,13 +307,8 @@ impl ClientPacket {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(3);
+        let mut fields = ::std::vec::Vec::with_capacity(2);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
-        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, super::types::Timestamp>(
-            "timestamp",
-            |m: &ClientPacket| { &m.timestamp },
-            |m: &mut ClientPacket| { &mut m.timestamp },
-        ));
         fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, super::types::Vec2>(
             "cursor",
             |m: &ClientPacket| { &m.cursor },
@@ -406,9 +337,6 @@ impl ::protobuf::Message for ClientPacket {
     fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
         while let Some(tag) = is.read_raw_tag_or_eof()? {
             match tag {
-                10 => {
-                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.timestamp)?;
-                },
                 18 => {
                     ::protobuf::rt::read_singular_message_into_field(is, &mut self.cursor)?;
                 },
@@ -427,10 +355,6 @@ impl ::protobuf::Message for ClientPacket {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u64 {
         let mut my_size = 0;
-        if let Some(v) = self.timestamp.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
-        }
         if let Some(v) = self.cursor.as_ref() {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
@@ -445,9 +369,6 @@ impl ::protobuf::Message for ClientPacket {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-        if let Some(v) = self.timestamp.as_ref() {
-            ::protobuf::rt::write_message_field_with_cached_size(1, v, os)?;
-        }
         if let Some(v) = self.cursor.as_ref() {
             ::protobuf::rt::write_message_field_with_cached_size(2, v, os)?;
         }
@@ -471,7 +392,6 @@ impl ::protobuf::Message for ClientPacket {
     }
 
     fn clear(&mut self) {
-        self.timestamp.clear();
         self.cursor.clear();
         self.events.clear();
         self.special_fields.clear();
@@ -479,7 +399,6 @@ impl ::protobuf::Message for ClientPacket {
 
     fn default_instance() -> &'static ClientPacket {
         static instance: ClientPacket = ClientPacket {
-            timestamp: ::protobuf::MessageField::none(),
             cursor: ::protobuf::MessageField::none(),
             events: ::std::vec::Vec::new(),
             special_fields: ::protobuf::SpecialFields::new(),
@@ -507,20 +426,14 @@ impl ::protobuf::reflect::ProtobufValue for ClientPacket {
 
 static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x13client_packet.proto\x12\tspellfire\x1a\x0btypes.proto\x1a\nmage.pr\
-    oto\"\x95\x04\n\x0bClientEvent\x12:\n\x04type\x18\x01\x20\x01(\x0e2&.spe\
+    oto\"\xc1\x02\n\x0bClientEvent\x12:\n\x04type\x18\x01\x20\x01(\x0e2&.spe\
     llfire.ClientEvent.ClientEventTypeR\x04type\x122\n\ttimestamp\x18\x02\
     \x20\x01(\x0b2\x14.spellfire.TimestampR\ttimestamp\x12+\n\x08movement\
-    \x18\x04\x20\x01(\x0b2\x0f.spellfire.Vec2R\x08movement\x12,\n\tshoot_dir\
-    \x18\x05\x20\x01(\x0b2\x0f.spellfire.Vec2R\x08shootDir\x123\n\x0ccasted_\
-    spell\x18\x06\x20\x01(\x0e2\x10.spellfire.SpellR\x0bcastedSpell\x127\n\
-    \x0eequipped_spell\x18\x07\x20\x01(\x0e2\x10.spellfire.SpellR\requippedS\
-    pell\"\xcc\x01\n\x0fClientEventType\x12!\n\x1dCLIENT_EVENT_TYPE_UNSPECIF\
-    IED\x10\0\x12\x08\n\x04MOVE\x10\x01\x12\x0e\n\nSTART_FIRE\x10\x02\x12\r\
-    \n\tSTOP_FIRE\x10\x03\x12\x10\n\x0cCAST_SPELL_1\x10\x04\x12\x10\n\x0cCAS\
-    T_SPELL_2\x10\x05\x12\x10\n\x0cCAST_SPELL_3\x10\x06\x12\x11\n\rEQUIP_SPE\
-    LL_1\x10\x07\x12\x11\n\rEQUIP_SPELL_2\x10\x08\x12\x11\n\rEQUIP_SPELL_3\
-    \x10\t\"\x9b\x01\n\x0cClientPacket\x122\n\ttimestamp\x18\x01\x20\x01(\
-    \x0b2\x14.spellfire.TimestampR\ttimestamp\x12'\n\x06cursor\x18\x02\x20\
+    \x18\x04\x20\x01(\x0b2\x0f.spellfire.Vec2R\x08movement\x12&\n\x05spell\
+    \x18\x06\x20\x01(\x0e2\x10.spellfire.SpellR\x05spell\"m\n\x0fClientEvent\
+    Type\x12!\n\x1dCLIENT_EVENT_TYPE_UNSPECIFIED\x10\0\x12\x08\n\x04MOVE\x10\
+    \x01\x12\x0e\n\nSTART_FIRE\x10\x02\x12\r\n\tSTOP_FIRE\x10\x03\x12\x0e\n\
+    \nCAST_SPELL\x10\x04\"g\n\x0cClientPacket\x12'\n\x06cursor\x18\x02\x20\
     \x01(\x0b2\x0f.spellfire.Vec2R\x06cursor\x12.\n\x06events\x18\x03\x20\
     \x03(\x0b2\x16.spellfire.ClientEventR\x06eventsB?Z=github.com/Icemaster-\
     Eric/Spellfire/backend/internal/proto;pbb\x06proto3\
