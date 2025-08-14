@@ -57,7 +57,6 @@ func (sc *SignatureChecker) MatchesWithWithout(signature *big.Int) bool {
 	return sc.tmp2.Sign() == 0
 }
 
-
 func NewSignatureChecker(withSig, withoutSig *big.Int) *SignatureChecker {
 	return &SignatureChecker{
 		withSig:    new(big.Int).Set(withSig),

@@ -5,32 +5,29 @@ import (
 )
 
 const (
-	EntityID = iota
-	Sprite
-	X
-	Y
-	Vx
-	Vy
-	Rotation
-	Radius
-	Name
-	Health
-	Damage
-	LastFired
-	IsStatic
-	IsTransparent
-	IsPlayer
-	IsBush
-	IsBullet
-	IsFiring
+	EntityID      = iota // string
+	EntityType           // int
+	X                    // float64
+	Y                    // float64
+	Vx                   // float64
+	Vy                   // float64
+	Rotation             // float64
+	Radius               // float64
+	Name                 // string
+	Health               // float64
+	Damage               // float64
+	LastFired            // uint64
+	IsTransparent        // bool
+	IsFiring             // bool
+	IsPlayer // bool
 )
 
 var ComponentMap = map[int]func(col *column.Collection){
 	EntityID: func(col *column.Collection) {
 		col.CreateColumn("ENTITY_ID", column.ForKey())
 	},
-	Sprite: func(col *column.Collection) {
-		col.CreateColumn("SPRITE", column.ForEnum())
+	EntityType: func(col *column.Collection) {
+		col.CreateColumn("ENTITY_TYPE", column.ForInt())
 	},
 	X: func(col *column.Collection) {
 		col.CreateColumn("X", column.ForFloat64())
@@ -62,22 +59,13 @@ var ComponentMap = map[int]func(col *column.Collection){
 	LastFired: func(col *column.Collection) {
 		col.CreateColumn("LAST_FIRED", column.ForUint64())
 	},
-	IsStatic: func(col *column.Collection) {
-		col.CreateColumn("IS_STATIC", column.ForBool())
-	},
 	IsTransparent: func(col *column.Collection) {
 		col.CreateColumn("IS_TRANSPARENT", column.ForBool())
 	},
-	IsPlayer: func(col *column.Collection) {
-		col.CreateColumn("IS_PLAYER", column.ForBool())
-	},
-	IsBush: func(col *column.Collection) {
-		col.CreateColumn("IS_BUSH", column.ForBool())
-	},
-	IsBullet: func(col *column.Collection) {
-		col.CreateColumn("IS_BULLET", column.ForBool())
-	},
 	IsFiring: func(col *column.Collection) {
 		col.CreateColumn("IS_FIRING", column.ForBool())
+	},
+	IsPlayer: func(col *column.Collection) {
+		col.CreateColumn("IS_PLAYER", column.ForBool())
 	},
 }

@@ -8,11 +8,11 @@ import (
 	"github.com/kelindar/column"
 )
 
-type Bush struct {
+type Rock struct {
 	X, Y, ROTATION, RADIUS, HEALTH float64
 }
 
-var bushSignature *big.Int
+var rockSignature *big.Int
 
 func init() {
 	comps := []int{
@@ -29,19 +29,19 @@ func init() {
 	for _, c := range comps {
 		sig.SetBit(sig, c, 1)
 	}
-	bushSignature = sig
+	rockSignature = sig
 }
 
-func BushSignature() *big.Int {
-	return new(big.Int).Set(bushSignature)
+func RockSignature() *big.Int {
+	return new(big.Int).Set(rockSignature)
 }
 
-func (Bush) GetSignature() *big.Int {
-	return BushSignature()
+func (Rock) GetSignature() *big.Int {
+	return RockSignature()
 }
 
-func (e Bush) Insert(r column.Row) error {
-	r.SetInt("ENTITY_TYPE", int(pb.Entity_BUSH))
+func (e Rock) Insert(r column.Row) error {
+	r.SetInt("ENTITY_TYPE", int(pb.Entity_ROCK))
 	r.SetFloat64("X", e.X)
 	r.SetFloat64("Y", e.Y)
 	r.SetFloat64("ROTATION", e.ROTATION)

@@ -129,15 +129,6 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 	if len(p.Inputs) == 3 {
 		// drop packet if more than 3 client packets queued
 		log.Println("Dropped Packet:", name)
-		packet := &pb.ClientPacket{}
-		if err := proto.Unmarshal(message.Bytes(), packet); err != nil {
-			log.Println("Failed to parse:", err)
-			log.Println("Closing connection:", name)
-
-			defer socket.NetConn().Close()
-			return
-		}
-		log.Println(packet)
 		return
 	}
 
@@ -146,7 +137,7 @@ func (s *Server) OnMessage(socket *gws.Conn, message *gws.Message) {
 		log.Println("Failed to parse:", err)
 		log.Println("Closing connection:", name)
 
-		defer socket.NetConn().Close()
+		socket.NetConn().Close()
 		return
 	}
 

@@ -51,6 +51,7 @@ type World struct {
 	NextEntityID uint32
 	Archetypes   map[string]*archetype.Archetype
 	Players      map[string]*Player
+	ticks        uint32
 }
 
 func NewWorld() *World {
@@ -122,12 +123,12 @@ func (w *World) DespawnEntity(entityID uint32, signature *big.Int) {
 }
 
 func (w *World) SpawnPlayer(name string) {
-	e := entity.Player{
-		NAME:   name,
-		RADIUS: 0.5,
-		HEALTH: 100,
-	}
-	entityID := w.SpawnEntity(e)
+	// just spawn mages for now
+	entityID := w.SpawnEntity(entity.Mage{ // SPAWN IN RANDOM LOCATION THAT ISN'T WATER
+		NAME:        name,
+		RADIUS:      0.5,
+		HEALTH:      100,
+	})
 	p := NewPlayer(entityID)
 	p.WriteUpdate(func(pkt *pb.ServerPacket) {
 		pkt.Events = append(pkt.Events, &pb.ServerEvent{
@@ -141,192 +142,168 @@ func (w *World) SpawnPlayer(name string) {
 func (w *World) DespawnPlayer(name string) {
 	p, ok := w.Players[name]
 	if ok {
-		w.DespawnEntity(p.ID, entity.PlayerSignature())
+		w.DespawnEntity(p.ID, entity.MageSignature()) // mages only for now
 	}
 	delete(w.Players, name)
 }
 
 func (w *World) UpdatePlayers() {
-	playerArch := w.Archetype(entity.PlayerSignature())
-	playerArch.Columns.Query(func(txn *column.Txn) error {
-		entityIDCol := txn.Key()
-		nameCol := txn.String("NAME")
-		xCol := txn.Float64("X")
-		yCol := txn.Float64("Y")
-		vxCol := txn.Float64("VX")
-		vyCol := txn.Float64("VY")
-		rotationCol := txn.Float64("ROTATION")
-		radiusCol := txn.Float64("RADIUS")
-		healthCol := txn.Float64("HEALTH")
+	playerArch := w.Archetype(entity.MageSignature()) // mages only for now
 
-		return txn.Range(func(idx uint32) {
-			key, _ := entityIDCol.Get()
-			entityID64, _ := strconv.ParseUint(key, 16, 32)
-			entityID := uint32(entityID64)
-			name, _ := nameCol.Get()
-			x, _ := xCol.Get()
-			y, _ := yCol.Get()
-			vx, _ := vxCol.Get()
-			vy, _ := vyCol.Get()
-			rotation, _ := rotationCol.Get()
-			radius, _ := radiusCol.Get()
-			health, _ := healthCol.Get()
+	staticObjChecker := archetype.NewSignatureChecker(
+		archetype.GetSignature([]int{
+			// very general components, refine later on as needed
+			component.EntityID,
+			component.Rotation,
+			component.Radius, // fix for square objects in the future (?)
+			component.Health, // fix for objects without health in the future (?)
+			// send is_transparent data?
+		}),
+		archetype.GetSignature([]int{
+			component.Vx, // static only
+			component.Vy,
+		}),
+	)
 
-			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
-				playerXCol := playerTxn.Float64("X")
-				playerYCol := playerTxn.Float64("Y")
-				playerNameCol := playerTxn.String("NAME")
+	// get all archetypes with a position
+	for _, arch := range w.QueryArchetypesWith(archetype.GetSignature([]int{
+		component.X,
+		component.Y,
+	})) {
+		// if player arch (make check stricter)
+		if arch.Signature.Cmp(entity.GunnerSignature()) == 0 || arch.Signature.Cmp(entity.MageSignature()) == 0 {
+			// select the following columns for every player
+			arch.Columns.Query(func(txn *column.Txn) error {
+				entityIDCol := txn.Key()
+				nameCol := txn.String("NAME")
+				xCol := txn.Float64("X")
+				yCol := txn.Float64("Y")
+				vxCol := txn.Float64("VX")
+				vyCol := txn.Float64("VY")
+				rotationCol := txn.Float64("ROTATION")
+				radiusCol := txn.Float64("RADIUS")
+				healthCol := txn.Float64("HEALTH")
 
-				return playerTxn.Range(func(playerIdx uint32) {
-					playerX, _ := playerXCol.Get()
-					playerY, _ := playerYCol.Get()
+				// loop through each player and grab their full information to send to other players
+				return txn.Range(func(idx uint32) {
+					key, _ := entityIDCol.Get()
+					entityID64, _ := strconv.ParseUint(key, 16, 32)
+					entityID := uint32(entityID64)
+					name, _ := nameCol.Get()
+					x, _ := xCol.Get()
+					y, _ := yCol.Get()
+					vx, _ := vxCol.Get()
+					vy, _ := vyCol.Get()
+					rotation, _ := rotationCol.Get()
+					radius, _ := radiusCol.Get()
+					health, _ := healthCol.Get()
 
-					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
-					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
-						playerName, _ := playerNameCol.Get()
-						p, ok := w.Players[playerName]
-						if ok {
-							p.WriteUpdate(func(pkt *pb.ServerPacket) {
-								pkt.Entities = append(pkt.Entities, &pb.Entity{
-									Id:   entityID,
-									Type: pb.Entity_GUNNER,
-									Collider: &pb.Collider{
-										Type:     pb.Collider_CIRCLE,
-										Rotation: rotation,
-										Radius:   radius,
-										Position: &pb.Vec2{X: x, Y: y},
-										Velocity: &pb.Vec2{X: vx, Y: vy},
-									},
-									RenderData: &pb.RenderData{
-										Sprite: pb.Sprite_SPRITE_PLAYER_GUNNER,
-									},
-									Attributes: []*pb.EntityAttribute{
-										{
-											Type: pb.EntityAttribute_NAME,
-											Name: name,
+					// select every player and grab their viewbox and name
+					playerArch.Columns.Query(func(playerTxn *column.Txn) error {
+						playerNameCol := playerTxn.String("NAME")
+
+						// loop through every player and check if the object is in their viewbox
+						return playerTxn.WithFloat("X", func(v float64) bool {
+							return math.Abs(x-v) < 8 + radius
+						}).WithFloat("Y", func(v float64) bool {
+							return math.Abs(y-v) < 4.5 + radius
+						}).Range(func(playerIdx uint32) {
+							playerName, _ := playerNameCol.Get()
+							p, ok := w.Players[playerName]
+							if ok {
+								// write update
+								p.WriteUpdate(func(pkt *pb.ServerPacket) {
+									pkt.Entities = append(pkt.Entities, &pb.Entity{
+										Id:   entityID,
+										Type: pb.Entity_MAGE,
+										Collider: &pb.Collider{
+											Type:     pb.Collider_CIRCLE,
+											Rotation: rotation,
+											Radius:   radius,
+											Position: &pb.Vec2{X: x, Y: y},
+											Velocity: &pb.Vec2{X: vx, Y: vy},
 										},
-										{
-											Type:   pb.EntityAttribute_HEALTH,
-											Health: health,
+										Attributes: []*pb.EntityAttribute{
+											{
+												Type: pb.EntityAttribute_NAME,
+												Name: name,
+											},
+											{
+												Type:   pb.EntityAttribute_HEALTH,
+												Health: health,
+											},
 										},
-									},
+									})
 								})
-							})
-						}
-					}
+							}
+						})
+					})
 				})
 			})
-		})
-	})
-	bushArch := w.Archetype(entity.BushSignature())
-	bushArch.Columns.Query(func(txn *column.Txn) error {
-		entityIDCol := txn.Key()
-		xCol := txn.Float64("X")
-		yCol := txn.Float64("Y")
-		rotationCol := txn.Float64("ROTATION")
-		radiusCol := txn.Float64("RADIUS")
+		} else if staticObjChecker.MatchesWithWithout(arch.Signature) {
+			arch.Columns.Query(func(txn *column.Txn) error {
+				entityIDCol := txn.Key()
+				entityTypeCol := txn.Int("ENTITY_TYPE")
+				xCol := txn.Float64("X")
+				yCol := txn.Float64("Y")
+				rotationCol := txn.Float64("ROTATION")
+				radiusCol := txn.Float64("RADIUS")
+				healthCol := txn.Float64("HEALTH")
 
-		return txn.Range(func(idx uint32) {
-			key, _ := entityIDCol.Get()
-			entityID64, _ := strconv.ParseUint(key, 16, 32)
-			entityID := uint32(entityID64)
-			x, _ := xCol.Get()
-			y, _ := yCol.Get()
-			rotation, _ := rotationCol.Get()
-			radius, _ := radiusCol.Get()
+				// loop through each player and grab their full information to send to other players
+				return txn.Range(func(idx uint32) {
+					key, _ := entityIDCol.Get()
+					entityID64, _ := strconv.ParseUint(key, 16, 32)
+					entityID := uint32(entityID64)
+					entityType, _ := entityTypeCol.Get()
+					x, _ := xCol.Get()
+					y, _ := yCol.Get()
+					rotation, _ := rotationCol.Get()
+					radius, _ := radiusCol.Get()
+					health, _ := healthCol.Get()
 
-			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
-				playerXCol := playerTxn.Float64("X")
-				playerYCol := playerTxn.Float64("Y")
-				playerNameCol := playerTxn.String("NAME")
+					// select every player and grab their viewbox and name
+					playerArch.Columns.Query(func(playerTxn *column.Txn) error {
+						playerNameCol := playerTxn.String("NAME")
 
-				return playerTxn.Range(func(playerIdx uint32) {
-					playerX, _ := playerXCol.Get()
-					playerY, _ := playerYCol.Get()
-
-					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
-					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
-						playerName, _ := playerNameCol.Get()
-						p, ok := w.Players[playerName]
-						if ok {
-							p.WriteUpdate(func(pkt *pb.ServerPacket) {
-								pkt.Entities = append(pkt.Entities, &pb.Entity{
-									Id:   entityID,
-									Type: pb.Entity_BUSH,
-									Collider: &pb.Collider{
-										Type:     pb.Collider_CIRCLE,
-										Rotation: rotation,
-										Radius:   radius,
-										Position: &pb.Vec2{X: x, Y: y},
-										IsStatic: true,
-										// ADD BUSH TRANSPARENCY
-									},
-									RenderData: &pb.RenderData{
-										Sprite: pb.Sprite_SPRITE_BUSH_1,
-									},
+						// loop through every player and check if the object is in their viewbox
+						return playerTxn.WithFloat("X", func(v float64) bool {
+							return math.Abs(x-v) < 8 + radius
+						}).WithFloat("Y", func(v float64) bool {
+							return math.Abs(y-v) < 4.5 + radius
+						}).Range(func(playerIdx uint32) {
+							playerName, _ := playerNameCol.Get()
+							p, ok := w.Players[playerName]
+							if ok {
+								// write update
+								p.WriteUpdate(func(pkt *pb.ServerPacket) {
+									pkt.Entities = append(pkt.Entities, &pb.Entity{
+										Id:   entityID,
+										Type: pb.Entity_EntityType(entityType),
+										Collider: &pb.Collider{
+											Type:     pb.Collider_CIRCLE,
+											Rotation: rotation,
+											Radius:   radius,
+											Position: &pb.Vec2{X: x, Y: y},
+										},
+										Attributes: []*pb.EntityAttribute{
+											{
+												Type:   pb.EntityAttribute_HEALTH,
+												Health: health,
+											},
+										},
+									})
 								})
-							})
-						}
-					}
+							}
+						})
+					})
 				})
 			})
-		})
-	})
-	bulletArch := w.Archetype(entity.BulletSignature())
-	bulletArch.Columns.Query(func(txn *column.Txn) error {
-		entityIDCol := txn.Key()
-		xCol := txn.Float64("X")
-		yCol := txn.Float64("Y")
-		vxCol := txn.Float64("VX")
-		vyCol := txn.Float64("VY")
-		rotationCol := txn.Float64("ROTATION")
+		} else {
+			// ignore for now (?)
+		}
+	}
 
-		return txn.Range(func(idx uint32) {
-			key, _ := entityIDCol.Get()
-			entityID64, _ := strconv.ParseUint(key, 16, 32)
-			entityID := uint32(entityID64)
-			x, _ := xCol.Get()
-			y, _ := yCol.Get()
-			vx, _ := vxCol.Get()
-			vy, _ := vyCol.Get()
-			rotation, _ := rotationCol.Get()
-
-			playerArch.Columns.Query(func(playerTxn *column.Txn) error {
-				playerXCol := playerTxn.Float64("X")
-				playerYCol := playerTxn.Float64("Y")
-				playerNameCol := playerTxn.String("NAME")
-
-				return playerTxn.Range(func(playerIdx uint32) {
-					playerX, _ := playerXCol.Get()
-					playerY, _ := playerYCol.Get()
-
-					// CHANGE THESE VALUES ACCORDINGLY FOR EACH PLAYER
-					if math.Abs(playerX-x) < 16 && math.Abs(playerY-y) < 9 {
-						playerName, _ := playerNameCol.Get()
-						p, ok := w.Players[playerName]
-						if ok {
-							p.WriteUpdate(func(pkt *pb.ServerPacket) {
-								pkt.Entities = append(pkt.Entities, &pb.Entity{
-									Id:   entityID,
-									Type: pb.Entity_BULLET,
-									Collider: &pb.Collider{
-										Type:     pb.Collider_CIRCLE, // REVERT TO POINT LATER
-										Rotation: rotation,           // THIS IS NEGATIVE BCS YES
-										Radius:   0.05,
-										Position: &pb.Vec2{X: x, Y: y},
-										Velocity: &pb.Vec2{X: vx, Y: vy},
-									},
-									RenderData: &pb.RenderData{
-										Sprite: pb.Sprite_SPRITE_BULLET_1,
-									},
-								})
-							})
-						}
-					}
-				})
-			})
-		})
-	})
 	// add timestamps to each packet
 	for _, player := range w.Players {
 		player.WriteUpdate(func(pkt *pb.ServerPacket) {
@@ -337,7 +314,7 @@ func (w *World) UpdatePlayers() {
 
 func (w *World) Tick(dt float64) {
 	// Consume player inputs
-	playerArch := w.Archetype(entity.PlayerSignature())
+	playerArch := w.Archetype(entity.MageSignature()) // mages only for now
 	playerArch.Columns.Query(func(txn *column.Txn) error {
 		// entityIDCol := txn.Key()
 		nameCol := txn.String("NAME")
@@ -346,7 +323,7 @@ func (w *World) Tick(dt float64) {
 		vxCol := txn.Float64("VX")
 		vyCol := txn.Float64("VY")
 		rotationCol := txn.Float64("ROTATION")
-		isFiringCol := txn.Bool("IS_FIRING")
+		// isFiringCol := txn.Bool("IS_FIRING")
 		// radiusCol := txn.Float64("RADIUS")
 		// healthCol := txn.Float32("HEALTH")
 
@@ -377,12 +354,8 @@ func (w *World) Tick(dt float64) {
 								return
 							}
 							newVx, newVy := event.Movement.X/l, event.Movement.Y/l
-							vxCol.Set(newVx * 2) // TEMPORARY, TO MAKE PLAYER GO ZOOM
-							vyCol.Set(newVy * 2) // TEMPORARY, TO MAKE PLAYER GO ZOOM
-						case pb.ClientEvent_START_FIRE:
-							isFiringCol.Set(true)
-						case pb.ClientEvent_STOP_FIRE:
-							isFiringCol.Set(false)
+							vxCol.Set(newVx * 3) // USE SPEED COMPONENT
+							vyCol.Set(newVy * 3)
 						}
 					}
 					cursorDx := packet.Cursor.X - x
@@ -399,9 +372,11 @@ func (w *World) Tick(dt float64) {
 	// Systems
 	w.MoveEntities(dt)
 	w.DecreasePlayerVelocity(dt)
-	w.ProcessBullets(dt)
 	w.KillPlayers(dt) // dt is unneeded
-	w.SpawnBushes(dt)
+	if w.ticks % 60 == 0 { // run once per 3s
+		w.SpawnEntities(dt)
+	}
 	// Send updates
 	w.UpdatePlayers()
+	w.ticks++
 }

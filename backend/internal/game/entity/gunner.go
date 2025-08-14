@@ -5,19 +5,21 @@ import (
 	"time"
 
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/component"
+	"github.com/Icemaster-Eric/Spellfire/backend/internal/pb"
 	"github.com/kelindar/column"
 )
 
-type Player struct {
+type Gunner struct {
 	X, Y, VX, VY, ROTATION, RADIUS, HEALTH float64
 	NAME                                   string
 }
 
-var playerSignature *big.Int
+var gunnerSignature *big.Int
 
 func init() {
 	comps := []int{
 		component.EntityID,
+		component.EntityType,
 		component.X,
 		component.Y,
 		component.Vx,
@@ -35,18 +37,19 @@ func init() {
 	for _, c := range comps {
 		sig.SetBit(sig, c, 1)
 	}
-	playerSignature = sig
+	gunnerSignature = sig
 }
 
-func PlayerSignature() *big.Int {
-	return new(big.Int).Set(playerSignature)
+func GunnerSignature() *big.Int {
+	return new(big.Int).Set(gunnerSignature)
 }
 
-func (Player) GetSignature() *big.Int {
-	return PlayerSignature()
+func (Gunner) GetSignature() *big.Int {
+	return GunnerSignature()
 }
 
-func (e Player) Insert(r column.Row) error {
+func (e Gunner) Insert(r column.Row) error {
+	r.SetInt("ENTITY_TYPE", int(pb.Entity_GUNNER))
 	r.SetFloat64("X", e.X)
 	r.SetFloat64("Y", e.Y)
 	r.SetFloat64("VX", e.VX)

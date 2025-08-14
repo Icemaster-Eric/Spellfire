@@ -2,19 +2,18 @@ package entity
 
 import (
 	"math/big"
-	"time"
 
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/game/component"
 	"github.com/Icemaster-Eric/Spellfire/backend/internal/pb"
 	"github.com/kelindar/column"
 )
 
-type Bullet struct {
-	X, Y, VX, VY, ROTATION, DAMAGE float64
-	LIFESPAN time.Duration
+type Mage struct {
+	X, Y, VX, VY, ROTATION, RADIUS, HEALTH float64
+	NAME                                   string
 }
 
-var bulletSignature *big.Int
+var mageSignature *big.Int
 
 func init() {
 	comps := []int{
@@ -25,32 +24,37 @@ func init() {
 		component.Vx,
 		component.Vy,
 		component.Rotation,
-		component.Damage,
+		component.Radius,
+		component.Health,
+		component.Name,
+		component.IsPlayer,
 	}
 
 	sig := big.NewInt(0)
 	for _, c := range comps {
 		sig.SetBit(sig, c, 1)
 	}
-	bulletSignature = sig
+	mageSignature = sig
 }
 
-func BulletSignature() *big.Int {
-	return new(big.Int).Set(bulletSignature)
+func MageSignature() *big.Int {
+	return new(big.Int).Set(mageSignature)
 }
 
-func (Bullet) GetSignature() *big.Int {
-	return BulletSignature()
+func (Mage) GetSignature() *big.Int {
+	return MageSignature()
 }
 
-func (e Bullet) Insert(r column.Row) error {
-	r.SetInt("ENTITY_TYPE", int(pb.Entity_BULLET))
+func (e Mage) Insert(r column.Row) error {
+	r.SetInt("ENTITY_TYPE", int(pb.Entity_MAGE))
 	r.SetFloat64("X", e.X)
 	r.SetFloat64("Y", e.Y)
 	r.SetFloat64("VX", e.VX)
 	r.SetFloat64("VY", e.VY)
 	r.SetFloat64("ROTATION", e.ROTATION)
-	r.SetFloat64("DAMAGE", e.DAMAGE)
-	r.SetTTL(e.LIFESPAN)
+	r.SetFloat64("RADIUS", e.RADIUS)
+	r.SetFloat64("HEALTH", e.HEALTH)
+	r.SetString("NAME", e.NAME)
+	r.SetBool("IS_PLAYER", true)
 	return nil
 }
