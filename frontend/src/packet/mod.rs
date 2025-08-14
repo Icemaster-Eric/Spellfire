@@ -2,17 +2,14 @@ use bevy::{platform::collections::HashMap, prelude::*};
 pub mod conv;
 pub mod entity;
 use crate::{
-    connection::server_packets::{PacketEntitiesSent, send_server_events},
+    connection::server_packets::{send_server_events, PacketEntitiesSent},
     entity::{
-        EntityID,
-        collider::{Position, Velocity},
+        collider::{LastTickPosition, LastTickVelocity, Position, Velocity}, EntityID
     },
     packet::{
         conv::conv_packet_vec2,
         entity::{
-            BulletSpawn, BushSpawn, CactusSpawn, DeadBushSpawn, EntitySpawn,
-            EntitySpawnEventWriters, GunnerSpawn, MageSpawn, RockSpawn, TreeSpawn,
-            spawn_packet_entity,
+            spawn_packet_entity, BulletSpawn, BushSpawn, CactusSpawn, DeadBushSpawn, EntitySpawn, EntitySpawnEventWriters, GunnerSpawn, MageSpawn, RockSpawn, TreeSpawn
         },
     },
     protobuf_codegen::{server_packet::Entity as PacketEntity, types::Vec2 as PacketVec2},
@@ -20,7 +17,7 @@ use crate::{
 
 pub fn update_world_from_received_packets(
     mut packet_entities_reader: EventReader<PacketEntitiesSent>,
-    world_entities: Query<(Entity, &EntityID, &mut Velocity, &mut Position)>,
+    world_entities: Query<(Entity, &EntityID, &mut LastTickVelocity, &mut LastTickPosition, &mut Velocity, &mut Position)>,
     mut commands: Commands,
     mut entity_spawn_event_writers: EntitySpawnEventWriters,
 ) {
@@ -28,12 +25,14 @@ pub fn update_world_from_received_packets(
         return;
     };
     let mut sent_entities: HashMap<EntityID, &PacketEntity> = HashMap::new();
-    for packet_entity in &**packet_entities {
+    for packet_entity in &packet_entities.entities {
         sent_entities.insert(EntityID(packet_entity.id), packet_entity);
     }
     // update sent and despawn unsent entities
-    for (entity, id, mut velocity, mut position) in world_entities {
+    for (entity, id, mut last_tick_velocity, mut last_tick_position, mut velocity, mut position) in world_entities {
         if let Some(packet_entity) = sent_entities.remove(id) {
+            **last_tick_position = position.0;
+            **last_tick_velocity = velocity.0;
             **position = conv_packet_vec2(&packet_entity.collider.position);
             **velocity = conv_packet_vec2(&packet_entity.collider.velocity);
         } else {
@@ -59,6 +58,6 @@ pub fn packet_plugin(app: &mut App) {
         .add_event::<EntitySpawn<CactusSpawn>>()
         .add_systems(
             FixedPreUpdate,
-            update_world_from_received_packets.after(send_server_events),
+            update_world_from_received_packets,
         );
 }

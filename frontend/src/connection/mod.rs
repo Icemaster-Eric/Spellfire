@@ -34,7 +34,7 @@ impl Plugin for ConnectionPlugin {
         .add_event::<InitializeEvent>()
         .add_event::<ClientEvent>()
         .insert_resource(PingTimer(Timer::from_seconds(5., TimerMode::Repeating)))
-        .add_systems(FixedUpdate, (send_server_events, send_ping))
-        .add_systems(FixedUpdate, send_client_events);
+        .add_systems(FixedPreUpdate, (send_server_events, send_ping))
+        .add_systems(FixedPostUpdate, send_client_events);
     }
 }

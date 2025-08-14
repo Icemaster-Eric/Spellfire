@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
-use crate::client::controls::move_client;
+use crate::client::controls::{aim_client, move_client, open_inventory};
 use crate::client::keybinds::Keybinds;
 use crate::connection::server_packets::{InitializeEvent, PacketEntitiesSent};
-use crate::entity::entity_types::EntitySpawnSet;
 use crate::entity::EntityID;
+use crate::entity::entity_types::EntitySpawnSet;
 use crate::packet::update_world_from_received_packets;
 pub mod controls;
 pub mod keybinds;
@@ -18,11 +18,8 @@ pub struct ClientPlayer;
 
 pub fn client_plugin(app: &mut App) {
     app.insert_resource(Keybinds::default())
-        .add_systems(
-            FixedUpdate,
-            init_client_player.after(EntitySpawnSet),
-        )
-        .add_systems(FixedUpdate, move_client);
+        .add_systems(FixedUpdate, init_client_player.after(EntitySpawnSet))
+        .add_systems(FixedUpdate, (move_client, aim_client, open_inventory));
 }
 
 pub fn init_client_player(
@@ -37,7 +34,14 @@ pub fn init_client_player(
         {
             commands.entity(client_entity).insert(ClientPlayer);
         } else {
-            info!("{}", q_entities.iter().map(|(_, id)| id.0.to_string()).collect::<Vec<_>>().join(", "));
+            info!(
+                "entity ids: {}",
+                q_entities
+                    .iter()
+                    .map(|(_, id)| id.0.to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
             error!("client id received does not match any entity");
         }
     }

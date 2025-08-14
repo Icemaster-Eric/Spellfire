@@ -3,7 +3,7 @@ use std::ops::DerefMut;
 use bevy::{prelude::*, window::PrimaryWindow};
 
 use crate::{
-    client::{keybinds::{Action, InputMethods}, ClientPlayer}, connection::client_packets::ClientEvent, entity::collider::{Rotation, Velocity},
+    client::{keybinds::{Action, InputMethods}, ClientPlayer}, connection::client_packets::ClientEvent, entity::collider::{Rotation, Velocity}, ui::{actions::UIAction, events::UIEvent},
 };
 use crate::client::keybinds::Keybinds;
 
@@ -15,8 +15,9 @@ pub fn move_client(
 ) {
     let (client_velocity,) = &mut *client;
     let move_dir = get_move_dir(&input_methods, &keybinds);
-
-    ***client_velocity = move_dir.normalize_or_zero() * 2.;
+    if move_dir != Vec2::ZERO {
+        ***client_velocity = move_dir.normalize_or_zero() * 3.;
+    }
     client_event_writer.write(ClientEvent::Move {
         x: move_dir.x,
         y: move_dir.y,
@@ -50,6 +51,14 @@ fn get_move_dir(input_methods: &InputMethods, keybinds: &Keybinds) -> Vec2 {
 
 pub fn aim_client(mut client_rotation: Single<&mut Rotation, With<ClientPlayer>>, window: Single<&Window, With<PrimaryWindow>>, mut client_event_writer: EventWriter<ClientEvent>) {
     if let Some(cursor_pos) = window.cursor_position() {
-        ***client_rotation = ((cursor_pos - (window.size() / 2.)) * Vec2::NEG_Y).to_angle();
+        ***client_rotation = ((cursor_pos - (window.size() / 2.)) * vec2(1., -1.)).to_angle();
     }
+}
+
+pub fn open_inventory(input_methods: InputMethods, keybinds: Res<Keybinds>, mut ui_actions_writer: EventWriter<UIAction>) {
+        if let Some(input) = keybinds.get_input_from_action(Action::ToggleInventoryInterface) {
+            if input_methods.is_just_pressed(input) {
+                ui_actions_writer.write(UIAction::ToggleInventoryInterface);
+            }
+        }
 }

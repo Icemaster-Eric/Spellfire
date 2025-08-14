@@ -21,9 +21,5 @@ pub struct Player {
     pub name: String,
 }
 
-#[derive(Component, Debug, Deref, DerefMut)]
+#[derive(Component, Debug, Deref, DerefMut, Reflect)]
 pub struct Health(pub f32);
-
-#[derive(Component, Debug, Deref, DerefMut)]
-pub struct PlayerName(pub String);
-

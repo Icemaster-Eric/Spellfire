@@ -11,6 +11,7 @@ pub enum Action {
     SelectSlot1,
     SelectSlot2,
     SelectSlot3,
+    ToggleInventoryInterface,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -63,7 +64,6 @@ impl Keybinds {
     pub fn set_binding(&mut self, input: Input, action: Action) {
         self.bindings.insert(input, action);
     }
-    
 }
 
 impl Default for Keybinds {
@@ -77,7 +77,8 @@ impl Default for Keybinds {
                 (KeyCode::Digit1.into(), Action::SelectSlot1),
                 (KeyCode::Digit2.into(), Action::SelectSlot2),
                 (KeyCode::Digit3.into(), Action::SelectSlot3),
-                (MouseButton::Left.into(), Action::Fire)
+                (MouseButton::Left.into(), Action::Fire),
+                (KeyCode::KeyC.into(), Action::ToggleInventoryInterface),
             ]),
         }
     }

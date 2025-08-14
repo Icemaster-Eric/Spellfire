@@ -5,7 +5,6 @@ use crate::entity::entity_types::gunner::Gun;
 use crate::entity::entity_types::*;
 use crate::packet::conv::conv_packet_vec2;
 use crate::protobuf_codegen::server_packet::Gun as PacketGun;
-use crate::protobuf_codegen::server_packet::render_data::Sprite as PacketSprite;
 use crate::protobuf_codegen::server_packet::collider::ColliderType as PacketColliderType;
 use crate::protobuf_codegen::server_packet::entity::EntityType as PacketEntityType;
 use crate::protobuf_codegen::server_packet::entity_attribute::EntityAttributeType as PacketEntityAttributeType;
@@ -52,8 +51,6 @@ pub struct EntitySpawn<T> {
     pub velocity: Vec2,
     pub rotation: f32,
     pub shape: Shape,
-    pub sprite_variant: u8,
-    pub sprite_size: f32,
 }
 
 pub struct GunnerSpawn {
@@ -126,26 +123,6 @@ pub fn spawn_packet_entity(
             PacketEntityAttributeType::SPELL_3_LAST_FIRE => {}
         }
     }
-    let sprite_size = packet_entity.render_data.sprite_size as f32;
-    let sprite_variant = match packet_entity.render_data.sprite.enum_value_or_default() {
-        PacketSprite::SPRITE_UNSPECIFIED => {
-            error!("sprite unspecified");
-            1
-        }
-        PacketSprite::GUNNER => 1,
-        PacketSprite::MAGE => 1,
-        PacketSprite::BULLET_1 => 1,
-        PacketSprite::BUSH_1 => 1,
-        PacketSprite::TREE_1 => 1,
-        PacketSprite::TREE_2 => 2,
-        PacketSprite::ROCK_1 => 1,
-        PacketSprite::ROCK_2 => 2,
-        PacketSprite::ROCK_3 => 3,
-        PacketSprite::ROCK_4 => 4,
-        PacketSprite::DEAD_BUSH_1 => 1,
-        PacketSprite::DEAD_BUSH_2 => 2,
-        PacketSprite::CACTUS_1 => 1,
-    };
     let position = conv_packet_vec2(&packet_entity.collider.position);
     let velocity = conv_packet_vec2(&packet_entity.collider.velocity);
     let rotation = packet_entity.collider.rotation as f32;
@@ -166,8 +143,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::MAGE => {
@@ -181,8 +156,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::BULLET => {
@@ -195,8 +168,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::BUSH => {
@@ -207,8 +178,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::TREE => {
@@ -219,8 +188,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::ROCK => {
@@ -231,8 +198,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::DEAD_BUSH => {
@@ -243,8 +208,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
         PacketEntityType::CACTUS => {
@@ -255,8 +218,6 @@ pub fn spawn_packet_entity(
                 velocity,
                 rotation,
                 shape,
-                sprite_variant,
-                sprite_size,
             });
         }
     };

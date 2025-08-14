@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use wasm_sockets::ConnectionStatus;
 
 use crate::connection::Connection;
 
@@ -8,6 +9,8 @@ pub struct PingTimer(pub Timer);
 pub fn send_ping(connection: NonSend<Connection>, time: Res<Time>, mut timer: ResMut<PingTimer>) {
     timer.tick(time.delta());
     if timer.just_finished() {
-        let _ = connection.client.send_string("ping");
+        if connection.client.status() == ConnectionStatus::Connected {
+            let _ = connection.client.send_string("ping");
+        }
     }
 }

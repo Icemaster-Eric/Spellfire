@@ -11,8 +11,8 @@ pub fn spawn_mages(
         let mut entity: EntityCommands<'_> = commands.spawn_empty();
         entity.insert((
             Sprite {
-                image: assets.load("playerBody1.png"),
-                custom_size: Some(vec2(0.3, 0.3)),
+                image: assets.load("sprites/playerBody1.png"),
+                custom_size: Some(vec2(1.,  1.)),
                 ..default()
             },
             Layer::PLAYER,
@@ -28,33 +28,36 @@ pub fn spawn_mages(
                     LeftHand,
                     Name::new("Left Hand"),
                     Sprite {
-                        image: assets.load("playerHand.png"),
+                        image: assets.load("sprites/playerHand.png"),
                         custom_size: Some(vec2(0.3, 0.3)),
                         ..default()
                     },
-                    Transform::from_xyz(1., 1., 0.),
+                    Transform::from_xyz(0.5, 0.5, 0.),
+                    Layer::BELOW_PLAYER
                 ),
                 // held item
                 (
                     MageHeldItem::Staff {},
                     Name::new("Held Item"),
                     Sprite {
-                        image: assets.load("staff1.png"),
-                        custom_size: Some(vec2(0.5, 1.)),
+                        image: assets.load("sprites/staff1.png"),
+                        custom_size: Some(vec2(0.8, 0.8)),
                         ..default()
                     },
-                    Transform::from_xyz(2., -2., 0.),
+                    Transform::from_xyz(0.5, -0.5, 0.),
+                    Layer::BELOW_PLAYER
                 ),
                 // Right hand
                 (
                     RightHand,
                     Name::new("Right Hand"),
                     Sprite {
-                        image: assets.load("playerHand.png"),
+                        image: assets.load("sprites/playerHand.png"),
                         custom_size: Some(vec2(0.3, 0.3)),
                         ..default()
                     },
-                    Transform::from_xyz(-1., -1., 0.),
+                    Transform::from_xyz(0.5, -0.5, 0.),
+                    Layer::BELOW_PLAYER
                 )
             ],
         ));

@@ -1,6 +1,5 @@
 set shell := ["cmd.exe", "/c"]
 
-
 build:
     rm -fr dist/*
     cargo build --target wasm32-unknown-unknown
@@ -19,5 +18,11 @@ build-release:
         ./target/wasm32-unknown-unknown/debug/frontend.wasm
     cp -r static/* dist
 
+cp-static:
+    cp -r static/* dist
+    
 wasm-opt:
 	wasm-opt -Os -o ./dist/frontend_bg.wasm ./dist/frontend_bg.wasm
+
+conv-assets:
+    sh -c "for f in static/assets/sprites-svg/*.svg; do magick -background none -size 256x256 -depth 8 $f -gravity center -extent 256x256 ${f%.svg}.png; mv static/assets/sprites-svg/*.png static/assets/sprites; done"

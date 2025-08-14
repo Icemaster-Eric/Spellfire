@@ -2,17 +2,15 @@ use bevy::prelude::*;
 
 use crate::{
     client::ClientPlayer,
-    entity::collider::{Collider, Position, Velocity},
+    entity::collider::{Collider, LastTickPosition, LastTickVelocity, Position, Velocity},
 };
 
 pub fn physics_plugin(app: &mut App) {
     app.add_systems(FixedUpdate, move_entities);
 }
-fn move_entities(q_entities: Query<(&mut Position, &Velocity, Option<&ClientPlayer>)>, time: Res<Time>) {
-    for (mut position, velocity, client_player) in q_entities {
-        **position += **velocity * time.delta_secs();
-        if client_player.is_some() {
-           //info!("pos:{:?} vel:{:?}", position, velocity);
-        }
+fn move_entities(q_entities: Query<(&mut LastTickPosition, &mut LastTickVelocity, &mut Position, &mut Velocity, Has<ClientPlayer>)>, time: Res<Time<Fixed>>) {
+    for (mut last_tick_position, mut last_tick_velocity, mut position, mut velocity, is_client_player) in q_entities {
+        **last_tick_position += **last_tick_velocity * time.delta_secs();
+        **last_tick_velocity *= f32::exp(-time.delta_secs() / 0.3);
     }
 }

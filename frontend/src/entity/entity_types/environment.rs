@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{entity::{collider::{Position, Rotation, Velocity}, EntityID}, packet::entity::{BushSpawn, CactusSpawn, DeadBushSpawn, EntitySpawn, RockSpawn, TreeSpawn}};
+use crate::{display::layer::Layer, entity::{collider::{Position, Rotation, Velocity}, EntityID}, packet::entity::{BushSpawn, CactusSpawn, DeadBushSpawn, EntitySpawn, RockSpawn, TreeSpawn}};
 
 #[derive(Component, Debug)]
 pub struct Bush {}
@@ -8,6 +8,7 @@ pub struct Bush {}
 pub fn spawn_bushes(
     mut bush_spawn_reader: EventReader<EntitySpawn<BushSpawn>>,
     mut commands: Commands,
+    assets: Res<AssetServer>
 ) {
     for bush_spawn in bush_spawn_reader.read() {
         commands.spawn((
@@ -18,6 +19,12 @@ pub fn spawn_bushes(
             bush_spawn.shape.clone(),
             EntityID(bush_spawn.entity_id),
             Name::new("Bush"),
+            Sprite {
+                image: assets.load(format!("sprites/bush1.png")),
+                custom_size: Some(Vec2::new(1., 1.)),
+                ..Default::default()
+            },
+            Layer::ABOVE_PLAYER
         ));
     }
 }
@@ -28,6 +35,7 @@ pub struct Tree {}
 pub fn spawn_trees(
     mut tree_spawn_reader: EventReader<EntitySpawn<TreeSpawn>>,
     mut commands: Commands,
+    assets: Res<AssetServer>,
 ) {
     for tree_spawn in tree_spawn_reader.read() {
         commands.spawn((
@@ -38,6 +46,12 @@ pub fn spawn_trees(
             tree_spawn.shape.clone(),
             EntityID(tree_spawn.entity_id),
             Name::new("Tree"),
+            Sprite {
+                image: assets.load(format!("sprites/tree1.png")),
+                custom_size: Some(Vec2::new(1., 1.)),
+                ..Default::default()
+            },
+            Layer::ABOVE_PLAYER
         ));
     }
 }
@@ -47,6 +61,7 @@ pub struct Rock {}
 pub fn spawn_rocks(
     mut rock_spawn_reader: EventReader<EntitySpawn<RockSpawn>>,
     mut commands: Commands,
+    assets: Res<AssetServer>,
 ) {
     for rock_spawn in rock_spawn_reader.read() {
         commands.spawn((
@@ -57,6 +72,12 @@ pub fn spawn_rocks(
             rock_spawn.shape.clone(),
             EntityID(rock_spawn.entity_id),
             Name::new("Rock"),
+            Sprite {
+                image: assets.load(format!("sprites/rock1.png")),
+                custom_size: Some(Vec2::new(1., 1.)),
+                ..Default::default()
+            },
+            Layer::ABOVE_PLAYER
         ));
     }
 }
@@ -67,6 +88,7 @@ pub struct DeadBush {}
 pub fn spawn_dead_bushes(
     mut dead_bush_spawn_reader: EventReader<EntitySpawn<DeadBushSpawn>>,
     mut commands: Commands,
+    assets: Res<AssetServer>,
 ) {
     for dead_bush_spawn in dead_bush_spawn_reader.read() {
         commands.spawn((
@@ -77,6 +99,12 @@ pub fn spawn_dead_bushes(
             dead_bush_spawn.shape.clone(),
             EntityID(dead_bush_spawn.entity_id),
             Name::new("Dead Bush"),
+            Sprite {
+                image: assets.load(format!("sprites/deadBush1.png")),
+                custom_size: Some(Vec2::new(1., 1.)),
+                ..Default::default()
+            },
+            Layer::ABOVE_PLAYER
         ));
     }
 }
@@ -87,6 +115,7 @@ pub struct Cactus {}
 pub fn spawn_cacti(
     mut cactus_spawn_reader: EventReader<EntitySpawn<CactusSpawn>>,
     mut commands: Commands,
+    assets: Res<AssetServer>,
 ) {
     for cactus_spawn in cactus_spawn_reader.read() {
         commands.spawn((
@@ -97,6 +126,12 @@ pub fn spawn_cacti(
             cactus_spawn.shape.clone(),
             EntityID(cactus_spawn.entity_id),
             Name::new("Cactus"),
+            Sprite {
+                image: assets.load(format!("sprites/cactus1.png")),
+                custom_size: Some(Vec2::new(1., 1.)),
+                ..Default::default()
+            },
+            Layer::ABOVE_PLAYER
         ));
     }
 }
