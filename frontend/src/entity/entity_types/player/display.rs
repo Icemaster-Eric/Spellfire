@@ -18,3 +18,9 @@ pub struct HeldItemAnimations {
     pub right_hand: (),
     pub held_item: (),
 }
+
+#[derive(Component)]
+pub struct HealthbarBackground;
+
+#[derive(Component)]
+pub struct HealthbarFill;

@@ -1,4 +1,9 @@
-use bevy::{ecs::system::SystemParam, platform::collections::HashMap, prelude::*};
+use bevy::{
+    ecs::system::SystemParam,
+    input::{ButtonState, keyboard::KeyboardInput, mouse::MouseButtonInput},
+    platform::collections::HashMap,
+    prelude::*,
+};
 use bimap::BiHashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -31,11 +36,29 @@ impl From<MouseButton> for Input {
     }
 }
 #[derive(SystemParam)]
-pub struct InputMethods<'w> {
-    keys: Res<'w, ButtonInput<KeyCode>>,
-    mouse: Res<'w, ButtonInput<MouseButton>>,
+pub struct InputMethods<'w, 's> {
+    keys: Local<'s, ButtonInput<KeyCode>>,
+    mouse: Local<'s, ButtonInput<MouseButton>>,
+    keyboard_input_events: EventReader<'w, 's, KeyboardInput>,
+    mouse_input_events: EventReader<'w, 's, MouseButtonInput>,
 }
-impl<'w> InputMethods<'w> {
+impl<'w, 's> InputMethods<'w, 's> {
+    pub fn update(&mut self) {
+        self.keys.clear();
+        for event in self.keyboard_input_events.read() {
+            match event.state {
+                ButtonState::Pressed => self.keys.press(event.key_code),
+                ButtonState::Released => self.keys.release(event.key_code),
+            }
+        }
+        self.mouse.clear();
+        for event in self.mouse_input_events.read() {
+            match event.state {
+                ButtonState::Pressed => self.mouse.press(event.button),
+                ButtonState::Released => self.mouse.release(event.button),
+            }
+        }
+    }
     pub fn is_pressed(&self, input: Input) -> bool {
         match input {
             Input::Key(key) => self.keys.pressed(key),

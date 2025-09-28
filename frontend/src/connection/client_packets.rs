@@ -17,6 +17,7 @@ use crate::{
 #[derive(Event, Debug)]
 pub enum ClientEvent {
     Move { x: f32, y: f32 },
+    Fire
 }
 
 pub fn send_client_events(
@@ -32,7 +33,8 @@ pub fn send_client_events(
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_millis() as u64;
-    let packet_client_events = client_events
+
+        let packet_client_events = client_events
         .read()
         .map(|client_event| match client_event {
             &ClientEvent::Move { x, y } => PacketClientEvent {
@@ -44,6 +46,10 @@ pub fn send_client_events(
                 }),
                 ..Default::default()
             },
+            &ClientEvent::Fire => PacketClientEvent {
+                type_: PacketClientEventType::CAST_SPELL.into(),
+                ..Default::default()
+            }
         })
         .collect();
     

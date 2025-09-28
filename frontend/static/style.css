@@ -59,6 +59,10 @@ body {
     user-select: none;
     touch-action: none;
     pointer-events: none;
+    display: none;
+}
+#uis > * {
+    pointer-events: auto;
 }
 #inventory {
     position: absolute;

@@ -1,3 +1,7 @@
+use std::{cell::RefCell, mem, ops::DerefMut};
+
+use bevy::{prelude::*, utils::syncunsafecell::SyncUnsafeCell};
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -38,6 +42,7 @@ pub struct SerializedUIEvent {
     pub data1: u32,
     pub data2: u32,
 }
+
 #[wasm_bindgen]
 impl SerializedUIEvent {
     #[wasm_bindgen(constructor)]
@@ -46,8 +51,24 @@ impl SerializedUIEvent {
     }
 }
 
-#[wasm_bindgen(module = "\\static\\uiEvents.js")]
+#[wasm_bindgen]
 unsafe extern "C" {
     pub fn emit_action(action: SerializedUIAction);
-    pub fn get_events() -> Vec<SerializedUIEvent>;
+}
+thread_local! {
+    static UI_EVENTS: RefCell<Vec<SerializedUIEvent>> = RefCell::new(Vec::new());
+}
+
+#[wasm_bindgen(js_name = "addEvent")]
+pub fn add_event(event_type: SerializedUIEventType, data1: u32, data2: u32) {
+    info!("recv {:?} {} {}", event_type, data1, data2);
+    UI_EVENTS.with(|ui_events| {
+        ui_events.borrow_mut().push(SerializedUIEvent { event_type, data1, data2 });
+    });
+}
+
+pub fn get_events() -> Vec<SerializedUIEvent> {
+    UI_EVENTS.with(|ui_events| {
+        return mem::take(ui_events.borrow_mut().deref_mut());
+    })
 }
