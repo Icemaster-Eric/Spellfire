@@ -1,4 +1,4 @@
-use bevy::{platform::time, prelude::*, time::TimeUpdateStrategy};
+use bevy::{platform::time, prelude::*, time::{time_system, TimeUpdateStrategy}};
 use wasm_timer::Instant;
 
 fn shim_fixed_update_time(mut time_update_strategy: ResMut<TimeUpdateStrategy>) {
@@ -6,5 +6,5 @@ fn shim_fixed_update_time(mut time_update_strategy: ResMut<TimeUpdateStrategy>) 
 }
 
 pub fn time_shim_plugin(app: &mut App) {
-    app.add_systems(FixedFirst, shim_fixed_update_time);
+    app.add_systems(First, shim_fixed_update_time.before(time_system));
 }

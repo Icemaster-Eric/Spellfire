@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use crate::{
     display::layer::Layer,
     entity::entity_types::{
-        display::{LeftHand, RightHand},
+        display::{HealthbarFill, LeftHand, RightHand},
         gunner::Gunner,
         mage::{Mage, MageHeldItem},
     },
@@ -23,3 +23,10 @@ pub struct Player {
 
 #[derive(Component, Debug, Deref, DerefMut, Reflect)]
 pub struct Health(pub f32);
+
+pub fn update_health_bar(mut commands: Commands,/* q_changed_health_entities: Query<(&Health, Entity, &Children), (With<Player>, Changed<Health>)>, */q_healthbars: Query<(&mut Transform,), (With<HealthbarFill>)>) {
+    /* 
+    for (health, changed_health_player_entity, changed_health_player_children) in q_changed_health_entities {
+        commands.entity(changed_health_player_entity);
+    }*/
+}

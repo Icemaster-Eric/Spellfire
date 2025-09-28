@@ -1,14 +1,16 @@
 import init from "./frontend.js";
-import "/ui/inventory.js";
-document.getElementById("start-screen-play-btn").onclick =
+//import "/ui/menu.js";
+//import "/ui/eventPropogate.js";
+import "/uiActionHandler.js";
+document.getElementById("start").onclick =
     startGame;
+
 document
     .getElementById("game")
     .addEventListener("resize", () => { });
-async function startGame() {
-    document.getElementById("start-screen").inert = true;
-    document.getElementById("start-screen").remove();
 
+async function startGame() {
+    abc.remove();
     try {
         let startTime = Date.now();
         console.log("starting");

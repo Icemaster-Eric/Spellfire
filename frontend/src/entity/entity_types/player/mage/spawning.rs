@@ -1,11 +1,13 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, render::mesh};
 
-use crate::{display::layer::Layer, entity::{collider::{Position, Rotation, Velocity}, entity_types::{display::{LeftHand, RightHand}, mage::MageHeldItem, Health}, EntityID}, packet::entity::{EntitySpawn, GunnerSpawn, MageSpawn}};
+use crate::{display::layer::Layer, entity::{collider::{Position, Rotation, Velocity}, entity_types::{display::{HealthbarBackground, HealthbarFill, LeftHand, RightHand}, mage::MageHeldItem, Health}, EntityID}, packet::entity::{EntitySpawn, GunnerSpawn, MageSpawn}};
 
 pub fn spawn_mages(
     assets: Res<AssetServer>,
     mut mage_spawn_reader: EventReader<EntitySpawn<MageSpawn>>,
     mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     for mage_spawn in mage_spawn_reader.read() {
         let mut entity: EntityCommands<'_> = commands.spawn_empty();
@@ -58,6 +60,26 @@ pub fn spawn_mages(
                     },
                     Transform::from_xyz(0.5, -0.5, 0.),
                     Layer::BELOW_PLAYER
+                ),
+                // Healthbar bg
+                (
+                    HealthbarBackground,
+                    Name::new("Health Bar"),
+                    Mesh2d(meshes.add(Rectangle::new(2., 0.4))),
+                    MeshMaterial2d(materials.add(ColorMaterial::from(Color::srgb(0.2, 0.3, 0.4)))),
+                    Transform::from_xyz(0., 1., 0.),
+                    Layer::TOP,
+                    children![
+                        // Healthbar health
+                        (
+                            HealthbarFill,
+                            Name::new("Healthbar Fill"),
+                            Layer::TOP,
+                            Mesh2d(meshes.add(Rectangle::new(2., 0.4))),
+                            MeshMaterial2d(materials.add(ColorMaterial::from(Color::srgb(0.8, 0.3, 0.3)))),
+                            
+                        )
+                    ]
                 )
             ],
         ));

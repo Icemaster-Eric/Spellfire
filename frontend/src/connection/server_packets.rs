@@ -22,12 +22,14 @@ pub fn send_server_events(
     mut packet_entities_writer: EventWriter<PacketEntitiesSent>,
     mut initialize_event_writer: EventWriter<InitializeEvent>,
     mut connection: NonSendMut<Connection>,
-    mut has_been_disconnected: Local<Option<bool>>
+    mut has_been_disconnected: Local<Option<bool>>,
 ) {
     let has_been_disconnected = has_been_disconnected.get_or_insert(false);
     match connection.client.status() {
         ConnectionStatus::Disconnected | ConnectionStatus::Error => {
-            if *has_been_disconnected { return;}
+            if *has_been_disconnected {
+                return;
+            }
             info!("disconnected");
             *has_been_disconnected = true;
             return;
@@ -38,8 +40,10 @@ pub fn send_server_events(
         match msg {
             Message::Binary(bin) => {
                 if let Ok(server_packet) = ServerPacket::parse_from_bytes(&bin) {
-                    packet_entities_writer.write(PacketEntitiesSent { entities: server_packet.entities, timestamp: server_packet.timestamp.ms });
-                    info!("received events: {:?}", server_packet.events);
+                    packet_entities_writer.write(PacketEntitiesSent {
+                        entities: server_packet.entities,
+                        timestamp: server_packet.timestamp.ms,
+                    });
                     for event in server_packet.events {
                         match event.type_.enum_value_or_default() {
                             crate::protobuf_codegen::server_packet::server_event::ServerEventType::SERVER_EVENT_TYPE_UNSPECIFIED => unimplemented!(),
@@ -48,7 +52,6 @@ pub fn send_server_events(
                             },
                         }
                     }
-                    
                 } else {
                     error!("parsing server packet failed");
                 }

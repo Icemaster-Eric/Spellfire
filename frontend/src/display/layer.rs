@@ -18,6 +18,7 @@ impl Layer {
     pub const ABOVE_PLAYER: Layer = Layer(4.);
     pub const HIGH: Layer = Layer(5.);
     pub const SKY: Layer = Layer(6.);
+    pub const TOP: Layer = Layer(7.);
 }
 pub fn layer_to_transform(transforms_to_change: Query<(&mut Transform, &Layer)>) {
     for (mut transform, layer) in transforms_to_change {

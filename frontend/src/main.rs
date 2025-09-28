@@ -50,13 +50,13 @@ pub fn main() {
         .add_plugins(DefaultTweenPlugins)
         .add_plugins(HanabiPlugin)
         //.add_plugins(FramepacePlugin)
+        .add_plugins(ui_plugin)
         .add_plugins(camera_plugin)
         .add_plugins(physics_plugin)
         .add_plugins(client_plugin)
         .add_plugins(packet_plugin)
         .add_plugins(display_plugin)
         .add_plugins(entity_plugin)
-        .add_plugins(ui_plugin)
         .add_plugins(ConnectionPlugin::new(
             "https://spellfire-backend.hutao.rip/ws?guest=true",
         ))
@@ -66,17 +66,32 @@ pub fn main() {
         .add_plugins(bevy::render::diagnostic::RenderDiagnosticsPlugin)
         .add_plugins(PerfUiPlugin)
         .add_systems(Startup, spawn_perf_ui)
+        .add_systems(Update, update_perf_ui)
+        .add_systems(FixedUpdate, || {
+            //info!("fixed update");
+        })
         .add_plugins(EguiPlugin::default())
         .add_plugins(WorldInspectorPlugin::new().run_if(input_toggle_active(false, KeyCode::Backquote)))
         .insert_resource(Time::<Fixed>::from_seconds(1. / 20.))
         .add_plugins(time_shim_plugin)
         .run();
 }
+#[derive(Resource)]
+pub struct PerfUI(pub Entity);
 
-fn spawn_perf_ui(mut commands: Commands, mut is_shown: Local<Option<bool>>) {
-    let is_shown = is_shown.get_or_insert(false);
-    commands.spawn(PerfUiDefaultEntries::default());
+fn spawn_perf_ui(mut commands: Commands) {
+    let perf_ui_id = commands.spawn(PerfUiDefaultEntries::default()).id();
+    commands.insert_resource(PerfUI(perf_ui_id));
 }
-fn show_perf_ui() {
-
+fn update_perf_ui(mut commands: Commands, mut is_shown: Local<Option<bool>>, perf_ui: Res<PerfUI>, keys: Res<ButtonInput<KeyCode>>) {
+    let is_shown = is_shown.get_or_insert(false);
+    if keys.just_pressed(KeyCode::Backquote) {
+        *is_shown = !*is_shown;
+        info!("perf ui toggled: {}", *is_shown);
+    }
+    if *is_shown {
+        commands.entity(perf_ui.0).insert(Visibility::Visible);
+    } else {
+        commands.entity(perf_ui.0).insert(Visibility::Hidden);
+    }
 }

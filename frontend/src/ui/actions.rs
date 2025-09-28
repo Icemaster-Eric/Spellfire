@@ -8,6 +8,7 @@ pub enum UIAction {
     ToggleInventoryInterface,
     UpdateInventory { slot_num: u32, item_id: u32 },
 }
+
 impl Into<SerializedUIAction> for UIAction {
     fn into(self) -> SerializedUIAction {
         match self {
