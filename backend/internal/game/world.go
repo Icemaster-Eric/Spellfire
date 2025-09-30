@@ -323,7 +323,7 @@ func (w *World) Tick(dt float64) {
 		vxCol := txn.Float64("VX")
 		vyCol := txn.Float64("VY")
 		rotationCol := txn.Float64("ROTATION")
-		// isFiringCol := txn.Bool("IS_FIRING")
+		isFiringCol := txn.Bool("IS_FIRING")
 		// radiusCol := txn.Float64("RADIUS")
 		// healthCol := txn.Float32("HEALTH")
 
@@ -356,6 +356,10 @@ func (w *World) Tick(dt float64) {
 							newVx, newVy := event.Movement.X/l, event.Movement.Y/l
 							vxCol.Set(newVx * 3) // USE SPEED COMPONENT
 							vyCol.Set(newVy * 3)
+						case pb.ClientEvent_START_FIRE:
+							isFiringCol.Set(true)
+						case pb.ClientEvent_STOP_FIRE:
+							isFiringCol.Set(false)
 						}
 					}
 					cursorDx := packet.Cursor.X - x
@@ -372,6 +376,7 @@ func (w *World) Tick(dt float64) {
 	// Systems
 	w.MoveEntities(dt)
 	w.DecreasePlayerVelocity(dt)
+	w.ProcessBullets(dt)
 	w.KillPlayers(dt) // dt is unneeded
 	if w.ticks % 60 == 0 { // run once per 3s
 		w.SpawnEntities(dt)
