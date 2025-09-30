@@ -58,7 +58,7 @@ pub fn main() {
         .add_plugins(display_plugin)
         .add_plugins(entity_plugin)
         .add_plugins(ConnectionPlugin::new(
-            "https://spellfire-backend.hutao.rip/ws?guest=true",
+            "https://spellfire-backend.coolify.hutao.rip/ws?guest=true",
         ))
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
