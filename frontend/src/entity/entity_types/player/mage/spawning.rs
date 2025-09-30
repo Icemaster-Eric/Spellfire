@@ -60,7 +60,7 @@ pub fn spawn_mages(
                     },
                     Transform::from_xyz(0.5, -0.5, 0.),
                     Layer::BELOW_PLAYER
-                ),
+                ),/*
                 // Healthbar bg
                 (
                     HealthbarBackground,
@@ -80,7 +80,7 @@ pub fn spawn_mages(
                             
                         )
                     ]
-                )
+                )*/
             ],
         ));
     }
