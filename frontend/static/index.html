@@ -28,11 +28,11 @@
                 class="w-full h-full absolute opacity-30 blur-2xl saturate-0 -z-10"
             />
             <div
-                class="flex flex-col gap-4 w-64 p-8 border border-purple-400 shadow-[0px_0px_8px_var(--color-purple-400)]"
+                class="animate-[aga_2s_ease-in-out_infinite_alternate] transition-transform flex flex-col gap-4 w-64 p-8 border border-purple-400 shadow-[0px_0px_8px_var(--color-purple-400),0px_0px_8px_var(--color-purple-400)]"
             >
                 <h1 class="text-5xl text-center py-4">SpellFire</h1>
                 <input
-                    class="w-full p-2 border border-purple-400 shadow-[0px_0px_8px_var(--color-purple-400),0px_0px_8px_var(--color-purple-400),] overflow-visible text-shadow-[0px_0px_8px_var(--color-purple-400),0px_0px_8px_var(--color-purple-400)] placeholder:text-gray-300"
+                    class="w-full p-2 border border-purple-400 shadow-[0px_0px_8px_var(--color-purple-400)] overflow-visible text-shadow-[0px_0px_8px_var(--color-purple-400),0px_0px_8px_var(--color-purple-400)] placeholder:text-gray-300"
                     placeholder="Enter Username..."
                 />
                 <button
@@ -62,29 +62,11 @@
             </div>
         </div>
         <canvas id="game" class="absolute -z-10"></canvas>
-
-        <div id="uis">
-            <!--
-            <div id="menu">
-                <div id="menu-tabs-area">
-                    <div id="menu-tabs">
-                        <div class="menu-tab menu-tab-selected" id="inventory-tab"> Inventory </div>
-                        <div class="menu-tab" id="weapons-tab"> Weapons </div>
-                        <div class="menu-tab" id="inventory-tab"> Settings </div>
-                        <div class="menu-tab" id="inventory-tab"> Menu </div>
-                    </div>
-                    <div id="menu-exit-btn">X</div>
-                </div>
-                <div class="menu-content">
-                    <div id="inventory">
-                        <div id="weapons-view-tabs">
-                            <div class="weapon-veiw-tab">Primary</div>
-                            <div class="weapon-veiw-tab">Secondary</div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-        </div>
         <script type="module" src="/main.js"></script>
+        <style>@keyframes aga{
+        
+        from { translate: 0 0 } 
+            to { translate: 0 2px }
+        }</style>
     </body>
 </html>

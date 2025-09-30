@@ -1,6 +1,6 @@
 import init from "./frontend.js";
 //import "/ui/menu.js";
-//import "/ui/eventPropogate.js";
+import "/ui/eventPropogate.js";
 import "/uiActionHandler.js";
 document.getElementById("start").onclick =
     startGame;
