@@ -1,8 +1,6 @@
 # Spellfire
 A blazingly fast MMO game server.
 
-<img width="1226" height="719" alt="image" src="https://github.com/user-attachments/assets/6a0b383e-797b-44df-9101-f583f778c937" />
-
 ## Features
 The frontend was built with Rust + Bevy, running on the web with WASM. The backend server is written with Golang (I had to learn Golang from scratch to make this) and the highly performant `lxzan/gws` library.
 
