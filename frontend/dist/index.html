@@ -11,12 +11,6 @@
             rel="stylesheet"
         />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <script>
-            let m = Date.now();
-            fetch("https://spellfire.online/ws?").then(async (r) => {
-                status.textContent = (Date.now() - m).toFixed(3) + "ms";
-            }, (status.textContent = "Server Not Found"));
-        </script>
     </head>
     <body
         style="font-family: Lato, sans-serif"
@@ -45,12 +39,6 @@
             <div
                 class="absolute bottom-0 right-0 flex justify-evenly items-center p-3 gap-3 align-middle border-purple-400 shadow-[0px_0px_8px_var(--color-purple-400),0px_0px_8px_var(--color-purple-400)]"
             >
-                <div class="flex gap-2 items-center">
-                    <div
-                        class="rounded-full w-2 h-2 border-purple-400 border bg-red-600"
-                    ></div>
-                    <div id="status">Server Not Found</div>
-                </div>
                 <div class="w-[1px] h-4 bg-purple-400"></div>
                 <a
                     class="underline"
