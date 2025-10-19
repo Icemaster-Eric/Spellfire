@@ -68,8 +68,7 @@ def generate_zones(width, height, speeds, seeds=None, random_seed=None):
                 frontier[region].append((cx, cy))
  
     return biome
- 
-def smooth_regions(biome, sigma=1.0):
+
 def smooth_regions(biome, sigma=2.0):
     """
     Take integer-labeled 'biome' map and return a new map whose region
